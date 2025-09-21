@@ -1,0 +1,17 @@
+{
+  "name": "aj-personal-agent",
+  "version": "1.0.0",
+  "description": "AI Website Studio by AJ STUDIOZ - Cloudflare Pages",
+  "type": "module",
+  "scripts": {
+    "dev": "python3 -m http.server 8788",
+    "deploy": "wrangler pages deploy . --project-name=aj-personal-agent",
+    "build": "echo 'No build process needed'"
+  },
+  "devDependencies": {
+    "wrangler": "^4.38.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}
