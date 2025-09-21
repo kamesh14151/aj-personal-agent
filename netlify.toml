@@ -1,4 +1,5 @@
 [build]
+  publish = "public"
   command = "echo 'No build needed'"
 
 [functions]
@@ -8,3 +9,28 @@
   from = "/api/*"
   to = "/.netlify/functions/:splat"
   status = 200
+
+[[redirects]]
+  from = "/.netlify/functions/chat/health"
+  to = "/.netlify/functions/chat"
+  status = 200
+
+[[redirects]]
+  from = "/.netlify/functions/chat/providers"
+  to = "/.netlify/functions/chat"
+  status = 200
+
+[dev]
+  targetPort = 8888
+  framework = "#static"
+
+# Environment variables (example - you should set these in Netlify UI)
+[context.production.environment]
+  ANTHROPIC_API_KEY = "your-claude-api-key-here"
+  GOOGLE_API_KEY = "your-google-api-key-here"
+  GROQ_API_KEY = "your-groq-api-key-here"
+
+[context.deploy-preview.environment]
+  ANTHROPIC_API_KEY = "your-claude-api-key-here"
+  GOOGLE_API_KEY = "your-google-api-key-here"
+  GROQ_API_KEY = "your-groq-api-key-here"
