@@ -1,0 +1,12 @@
+name = "aj-personal-agent"
+compatibility_date = "2024-09-21"
+
+[env.production]
+pages_build_output_dir = "."
+
+[build]
+command = "echo 'No build needed for static site'"
+
+# For Cloudflare Pages (not Workers)
+[pages]
+bucket = "."
