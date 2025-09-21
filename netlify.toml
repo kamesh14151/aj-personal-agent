@@ -1,17 +1,22 @@
 [build]
-  publish = "public"
-  functions = "functions"
+  functions = "netlify/functions"
+  publish = "."
 
-[dev]
-  port = 8888
-  targetPort = 8888
+[build.environment]
+  NODE_VERSION = "18"
 
+# Redirect API routes to serverless functions
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/api/:splat"
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
   status = 200
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
+  from = "/api/providers"
+  to = "/.netlify/functions/providers"
+  status = 200
+
+[[redirects]]
+  from = "/api/health"
+  to = "/.netlify/functions/health"
   status = 200
