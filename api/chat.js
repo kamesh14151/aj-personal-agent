@@ -34,7 +34,6 @@ const providers = {
   claude: {
     name: 'Claude',
     apiEndpoint: 'https://api.anthropic.com/v1/messages',
-    apiKey: process.env.ANTHROPIC_API_KEY,
     model: 'claude-3-sonnet-20240229',
     headers: (apiKey) => ({
       'Content-Type': 'application/json',
@@ -62,9 +61,8 @@ const providers = {
   gemini: {
     name: 'Gemini',
     apiEndpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`,
-    apiKey: process.env.GOOGLE_API_KEY,
     model: 'gemini-pro',
-    headers: (apiKey) => ({
+    headers: () => ({
       'Content-Type': 'application/json'
     }),
     formatRequest: (messages, options) => {
@@ -89,7 +87,6 @@ const providers = {
   groq: {
     name: 'Groq',
     apiEndpoint: 'https://api.groq.com/openai/v1/chat/completions',
-    apiKey: process.env.GROQ_API_KEY,
     model: 'llama3-8b-8192',
     headers: (apiKey) => ({
       'Authorization': `Bearer ${apiKey}`,
@@ -107,7 +104,6 @@ const providers = {
   },
   mock: {
     name: 'Mock AI (Free)',
-    apiKey: null,
     model: 'mock',
     headers: () => ({}),
     formatRequest: (messages, options) => ({}),
@@ -153,8 +149,18 @@ module.exports = async (req, res) => {
     const providerId = providers[provider] ? provider : 'mock';
     const providerConfig = providers[providerId];
     
+    // Get API key directly from environment variables
+    let apiKey = null;
+    if (providerId === 'claude') {
+      apiKey = process.env.ANTHROPIC_API_KEY;
+    } else if (providerId === 'gemini') {
+      apiKey = process.env.GOOGLE_API_KEY;
+    } else if (providerId === 'groq') {
+      apiKey = process.env.GROQ_API_KEY;
+    }
+    
     // Check if API key is required and available
-    if (providerConfig.apiKey && !providerConfig.apiKey && providerId !== 'mock') {
+    if (providerId !== 'mock' && !apiKey) {
       return res.status(401).json({ 
         error: `API key required for ${providerConfig.name}. Please set the ${providerId.toUpperCase()}_API_KEY environment variable in Vercel.`,
         provider: providerId
@@ -172,8 +178,8 @@ module.exports = async (req, res) => {
     
     // Add API key to endpoint if needed (for Gemini)
     let apiEndpoint = providerConfig.apiEndpoint;
-    if (providerId === 'gemini' && providerConfig.apiKey) {
-      apiEndpoint += `?key=${providerConfig.apiKey}`;
+    if (providerId === 'gemini' && apiKey) {
+      apiEndpoint += `?key=${apiKey}`;
     }
     
     // Make the API call
@@ -181,7 +187,7 @@ module.exports = async (req, res) => {
     try {
       response = await fetch(apiEndpoint, {
         method: 'POST',
-        headers: providerConfig.headers(providerConfig.apiKey),
+        headers: providerConfig.headers(apiKey),
         body: JSON.stringify(requestBody)
       });
     } catch (fetchError) {
