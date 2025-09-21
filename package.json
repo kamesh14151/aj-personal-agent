@@ -2,7 +2,7 @@
   "name": "aj-personal-agent",
   "version": "1.0.0",
   "description": "AI-powered website creation studio",
-  "main": "api/chat.js",
+  "main": "api/index.js",
   "scripts": {
     "dev": "vercel dev",
     "build": "vercel build",
