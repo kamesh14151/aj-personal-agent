@@ -13,8 +13,8 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     
-    <!-- Cloudflare Analytics -->
-    <script defer src='https://static.cloudflareinsights.com/beacon.min.js' data-cf-beacon='{"token": "YOUR_CLOUDFLARE_ANALYTICS_TOKEN"}'></script>
+    <!-- Netlify Identity Widget -->
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
@@ -55,6 +55,8 @@
             overflow-x: hidden;
             margin: 0;
             padding: 0;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
         }
         
         /* Splash Screen Styles */
@@ -1250,6 +1252,51 @@
                 bottom: 14px;
                 right: 60px;
             }
+            
+            /* Mobile-specific adjustments */
+            .chat-header {
+                padding: 12px 16px;
+            }
+            
+            .chat-messages {
+                padding: 16px;
+                padding-bottom: 80px; /* Extra space for input on mobile */
+            }
+            
+            .chat-input-container {
+                padding: 12px;
+            }
+            
+            .modal-content {
+                padding: 16px;
+                max-height: 90vh;
+            }
+            
+            .modal-title {
+                font-size: 20px;
+            }
+            
+            .settings-tabs {
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                scrollbar-width: none; /* Firefox */
+            }
+            
+            .settings-tabs::-webkit-scrollbar {
+                display: none; /* Chrome, Safari, Edge */
+            }
+            
+            .settings-tab {
+                white-space: nowrap;
+                padding: 10px 16px;
+                font-size: 14px;
+            }
+            
+            .notification {
+                right: 10px;
+                left: 10px;
+                max-width: none;
+            }
         }
         
         /* Mobile Menu Overlay */
@@ -1326,9 +1373,9 @@
             background: #FFD700;
         }
         
-        /* Cloudflare-specific optimizations */
-        .cf-hidden { display: none; }
-        .cf-visible { display: block; }
+        /* Netlify-specific optimizations */
+        .netlify-hidden { display: none; }
+        .netlify-visible { display: block; }
         
         /* Reduced motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
@@ -1336,6 +1383,25 @@
                 animation-duration: 0.01ms !important;
                 animation-iteration-count: 1 !important;
                 transition-duration: 0.01ms !important;
+            }
+        }
+        
+        /* iPhone X and up safe area */
+        @supports (padding: max(0px)) {
+            .chat-input-container {
+                padding-left: max(16px, env(safe-area-inset-left));
+                padding-right: max(16px, env(safe-area-inset-right));
+                padding-bottom: max(24px, env(safe-area-inset-bottom));
+            }
+            
+            .chat-messages {
+                padding-left: max(24px, env(safe-area-inset-left));
+                padding-right: max(24px, env(safe-area-inset-right));
+            }
+            
+            .chat-header {
+                padding-left: max(24px, env(safe-area-inset-left));
+                padding-right: max(24px, env(safe-area-inset-right));
             }
         }
     </style>
@@ -1706,11 +1772,11 @@
             uploadedImages: [],
             isRecording: false,
             recognition: null,
-            // Cloudflare-specific settings
-            cf: {
-                deploymentId: '',
-                visitorId: '',
-                cacheEnabled: true
+            // Netlify-specific settings
+            netlify: {
+                functionUrl: '', // Empty since we're using redirects
+                siteId: '',
+                identity: null
             }
         };
         
@@ -1762,9 +1828,6 @@
         
         // Initialize the app
         function init() {
-            // Generate a unique visitor ID for analytics
-            state.cf.visitorId = getVisitorId();
-            
             // Detect mobile device
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
             if (isMobile) {
@@ -1806,32 +1869,49 @@
                 // Check provider status on load
                 checkProviderStatus();
                 
-                // Check Cloudflare deployment status
+                // Check Netlify deployment status
                 checkDeploymentStatus();
+                
+                // Initialize Netlify Identity if available
+                if (window.netlifyIdentity) {
+                    window.netlifyIdentity.on('init', user => {
+                        if (!user) {
+                            window.netlifyIdentity.on('login', () => {
+                                state.netlify.identity = window.netlifyIdentity.currentUser();
+                                updateUserProfile();
+                            });
+                        } else {
+                            state.netlify.identity = user;
+                            updateUserProfile();
+                        }
+                    });
+                }
             }, 2500);
         }
         
-        // Generate a visitor ID for analytics
-        function getVisitorId() {
-            let visitorId = localStorage.getItem('cf_visitor_id');
-            if (!visitorId) {
-                visitorId = 'visitor_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('cf_visitor_id', visitorId);
-            }
-            return visitorId;
-        }
-        
-        // Check Cloudflare deployment status
+        // Check Netlify deployment status
         async function checkDeploymentStatus() {
             try {
                 const response = await fetch('/api/health');
                 if (response.ok) {
                     const health = await response.json();
-                    state.cf.deploymentId = health.deploymentId || 'unknown';
-                    console.log('Cloudflare deployment status:', health);
+                    state.netlify.siteId = health.siteId || 'unknown';
+                    console.log('Netlify deployment status:', health);
                 }
             } catch (error) {
                 console.warn('Could not fetch deployment status:', error);
+            }
+        }
+        
+        // Update user profile from Netlify Identity
+        function updateUserProfile() {
+            if (state.netlify.identity) {
+                elements.userName.textContent = state.netlify.identity.user_metadata.full_name || state.netlify.identity.email;
+                elements.userEmail.textContent = state.netlify.identity.email;
+                
+                if (state.netlify.identity.user_metadata.avatar_url) {
+                    elements.userAvatar.src = state.netlify.identity.user_metadata.avatar_url;
+                }
             }
         }
         
@@ -1846,6 +1926,14 @@
                 }
             } catch (error) {
                 console.error('Error checking provider status:', error);
+                // Use default providers if API fails
+                state.providers = [
+                    { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
+                    { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
+                    { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
+                    { id: 'xai', name: 'XAI', color: '#10B981', status: 'online' }
+                ];
+                renderProviders();
             }
         }
         
@@ -2195,7 +2283,7 @@
             return message;
         }
         
-        // Send a message to the AI (updated for Cloudflare)
+        // Send a message to the AI (updated for Netlify)
         async function sendMessage() {
             const content = elements.chatInput.value.trim();
             if (!content || state.isGenerating) return;
@@ -2240,19 +2328,28 @@
                     }
                 };
                 
-                // Send to Cloudflare Function API
+                // Send to Netlify Function API
                 const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'X-Visitor-ID': state.cf.visitorId
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(request)
                 });
                 
                 if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || `API Error: ${response.status}`);
+                    const errorText = await response.text();
+                    console.error('API Error Response:', errorText);
+                    
+                    let errorMessage = 'API Error';
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        errorMessage = errorData.error || `API Error: ${response.status}`;
+                    } catch (e) {
+                        errorMessage = `API Error: ${response.status} - ${errorText.substring(0, 100)}`;
+                    }
+                    
+                    throw new Error(errorMessage);
                 }
                 
                 // Remove typing indicator
@@ -2622,8 +2719,7 @@
                     const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: {
-                            'Content-Type': 'application/json',
-                            'X-Visitor-ID': state.cf.visitorId
+                            'Content-Type': 'application/json'
                         },
                         body: JSON.stringify(request)
                     });
@@ -2684,13 +2780,18 @@
             
             // User menu
             elements.userMenu.addEventListener('click', () => {
-                if (state.user) {
+                if (state.netlify.identity) {
                     // Sign out
-                    state.user = null;
+                    window.netlifyIdentity.logout();
+                    state.netlify.identity = null;
                     showNotification('Signed out successfully', 'success');
                 } else {
                     // Show sign in options
-                    showNotification('Please sign in to access all features', 'info');
+                    if (window.netlifyIdentity) {
+                        window.netlifyIdentity.open();
+                    } else {
+                        showNotification('Please sign in to access all features', 'info');
+                    }
                 }
             });
             
