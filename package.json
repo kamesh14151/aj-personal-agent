@@ -1,12 +1,12 @@
 {
   "name": "aj-personal-agent",
   "version": "1.0.0",
-  "description": "AI Website Studio by AJ STUDIOZ - Cloudflare Pages",
+  "description": "AI Website Studio by AJ STUDIOZ - Netlify + GitHub Pages",
   "scripts": {
-    "dev": "python3 -m http.server 8788",
+    "dev": "netlify dev",
     "build": "echo 'No build needed'"
   },
   "devDependencies": {
-    "wrangler": "^4.38.0"
+    "netlify-cli": "^17.0.0"
   }
 }
