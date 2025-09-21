@@ -4,6 +4,9 @@
   "description": "AI Website Studio by AJ STUDIOZ - Cloudflare Pages",
   "scripts": {
     "dev": "python3 -m http.server 8788",
-    "build": "echo 'Static site - no build needed'"
+    "build": "echo 'No build needed'"
+  },
+  "devDependencies": {
+    "wrangler": "^4.38.0"
   }
 }
