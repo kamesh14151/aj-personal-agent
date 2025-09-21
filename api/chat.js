@@ -135,8 +135,12 @@ module.exports = async (req, res) => {
     return;
   }
 
+  // Parse URL to handle different endpoints
+  const url = new URL(req.url, `http://${req.headers.host}`);
+  const pathname = url.pathname;
+
   // Handle health check
-  if (req.method === 'GET' && req.url === '/api/chat/health') {
+  if (req.method === 'GET' && pathname === '/api/health') {
     return res.status(200).json({ 
       status: 'OK', 
       timestamp: new Date().toISOString(),
@@ -151,7 +155,7 @@ module.exports = async (req, res) => {
   }
   
   // Handle provider status check
-  if (req.method === 'GET' && req.url === '/api/chat/providers') {
+  if (req.method === 'GET' && pathname === '/api/providers') {
     const providerStatus = Object.keys(providers).map(providerId => {
       const provider = providers[providerId];
       return {
@@ -166,7 +170,7 @@ module.exports = async (req, res) => {
   }
 
   // Only allow POST requests for chat
-  if (req.method !== 'POST') {
+  if (req.method !== 'POST' || pathname !== '/api/chat') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
