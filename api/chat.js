@@ -120,57 +120,8 @@ const providers = {
 };
 
 module.exports = async (req, res) => {
-  // Set CORS headers
-  res.setHeader('Access-Control-Allow-Credentials', true);
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
-  res.setHeader(
-    'Access-Control-Allow-Headers',
-    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
-  );
-
-  // Handle preflight requests
-  if (req.method === 'OPTIONS') {
-    res.status(200).end();
-    return;
-  }
-
-  // Parse URL to handle different endpoints
-  const url = new URL(req.url, `http://${req.headers.host}`);
-  const pathname = url.pathname;
-
-  // Handle health check
-  if (req.method === 'GET' && pathname === '/api/health') {
-    return res.status(200).json({ 
-      status: 'OK', 
-      timestamp: new Date().toISOString(),
-      providers: Object.keys(providers).reduce((acc, key) => {
-        acc[key] = {
-          name: providers[key].name,
-          configured: !!providers[key].apiKey
-        };
-        return acc;
-      }, {})
-    });
-  }
-  
-  // Handle provider status check
-  if (req.method === 'GET' && pathname === '/api/providers') {
-    const providerStatus = Object.keys(providers).map(providerId => {
-      const provider = providers[providerId];
-      return {
-        id: providerId,
-        name: provider.name,
-        status: provider.apiKey ? 'online' : 'offline',
-        configured: !!provider.apiKey
-      };
-    });
-    
-    return res.status(200).json(providerStatus);
-  }
-
   // Only allow POST requests for chat
-  if (req.method !== 'POST' || pathname !== '/api/chat') {
+  if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
