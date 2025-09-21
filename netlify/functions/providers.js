@@ -4,7 +4,7 @@ const providers = {
     name: 'Claude',
     apiEndpoint: 'https://api.anthropic.com/v1/messages',
     apiKey: process.env.ANTHROPIC_API_KEY,
-    model: 'claude-3-sonnet-20240229',
+    model: 'claude-sonnet-4-20250514', // Updated model name
     headers: (apiKey) => ({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
@@ -15,7 +15,7 @@ const providers = {
       const validMessages = messages.filter(msg => msg.content && msg.content.trim() !== '');
       
       return {
-        model: 'claude-3-sonnet-20240229',
+        model: 'claude-sonnet-4-20250514', // Updated model name
         max_tokens: options.length || 1000,
         temperature: options.creativity / 100,
         messages: validMessages.map(msg => ({
@@ -119,18 +119,41 @@ const providers = {
   },
   free: {
     name: 'Free API',
-    apiEndpoint: '/.netlify/functions/freeapi',
     apiKey: null, // No API key needed
     model: 'free',
-    headers: () => ({
-      'Content-Type': 'application/json'
-    }),
+    headers: () => ({}),
     formatRequest: (messages, options) => {
       return { messages: messages };
     },
     formatResponse: (data) => ({
       content: data.content
-    })
+    }),
+    // Custom handler for the free API
+    handler: async (messages, options) => {
+      // Get the last message
+      const lastMessage = messages.length > 0 ? messages[messages.length - 1].content : '';
+      
+      // Simple response based on the input
+      let response = "";
+      
+      if (lastMessage.toLowerCase().includes("hello") || lastMessage.toLowerCase().includes("hi")) {
+        response = "Hello! I'm a simple AI assistant. How can I help you today?";
+      } else if (lastMessage.toLowerCase().includes("help")) {
+        response = "I'm here to help! Please let me know what you need assistance with.";
+      } else if (lastMessage.toLowerCase().includes("thank")) {
+        response = "You're welcome! Is there anything else I can help with?";
+      } else if (lastMessage.toLowerCase().includes("weather")) {
+        response = "I don't have access to real-time weather data, but I hope it's nice where you are!";
+      } else if (lastMessage.toLowerCase().includes("time")) {
+        response = `The current time is ${new Date().toLocaleTimeString()}.`;
+      } else if (lastMessage.toLowerCase().includes("date")) {
+        response = `Today's date is ${new Date().toLocaleDateString()}.`;
+      } else {
+        response = `I understand you said: "${lastMessage}". This is a simple response from a free API. For more advanced AI capabilities, please configure API keys for services like Claude, Gemini, or Groq in your Netlify environment variables.`;
+      }
+      
+      return { content: response };
+    }
   },
   local: {
     name: 'Local Mock',
