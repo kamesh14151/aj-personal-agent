@@ -1885,35 +1885,49 @@
             }
         }
         
-        // Check provider status
-        async function checkProviderStatus() {
-            try {
-                const response = await fetch('/api/providers');
-                if (response.ok) {
-                    const providers = await response.json();
-                    state.providers = providers;
-                    renderProviders();
-                    
-                    // Check if any real providers are configured
-                    const hasRealProvider = providers.some(p => p.id !== 'mock' && p.configured);
-                    if (!hasRealProvider) {
-                        showNotification('No AI providers configured. Using Mock AI. Add API keys in Vercel for full functionality.', 'info');
-                    }
-                }
-            } catch (error) {
-                console.error('Error checking provider status:', error);
-                // Use default providers if API fails
-                state.providers = [
-                    { id: 'mock', name: 'Mock AI (Free)', color: '#4CAF50', status: 'online' },
-                    { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'offline' },
-                    { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'offline' },
-                    { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'offline' },
-                    { id: 'openai', name: 'OpenAI', color: '#10B981', status: 'offline' }
-                ];
-                renderProviders();
-                showNotification('Using Mock AI. Add API keys in Vercel for full functionality.', 'info');
+        // Check Vercel deployment status
+async function checkDeploymentStatus() {
+    try {
+        const response = await fetch('/api/health');
+        if (response.ok) {
+            const health = await response.json();
+            state.vercel.siteId = health.siteId || 'unknown';
+            console.log('Vercel deployment status:', health);
+        }
+    } catch (error) {
+        console.warn('Could not fetch deployment status:', error);
+    }
+}
+
+// Check provider status
+async function checkProviderStatus() {
+    try {
+        const response = await fetch('/api/providers');
+        if (response.ok) {
+            const providers = await response.json();
+            state.providers = providers;
+            renderProviders();
+            
+            // Check if any real providers are configured
+            const hasRealProvider = providers.some(p => p.id !== 'mock' && p.configured);
+            if (!hasRealProvider) {
+                showNotification('No AI providers configured. Using Mock AI. Add API keys in Vercel for full functionality.', 'info');
             }
         }
+    } catch (error) {
+        console.error('Error checking provider status:', error);
+        // Use default providers if API fails
+        state.providers = [
+            { id: 'mock', name: 'Mock AI (Free)', color: '#4CAF50', status: 'online' },
+            { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'offline' },
+            { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'offline' },
+            { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'offline' },
+            { id: 'openai', name: 'OpenAI', color: '#10B981', status: 'offline' }
+        ];
+        renderProviders();
+        showNotification('Using Mock AI. Add API keys in Vercel for full functionality.', 'info');
+    }
+}
         
         // Load settings from localStorage
         function loadSettings() {
