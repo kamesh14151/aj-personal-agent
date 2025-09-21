@@ -1700,12 +1700,14 @@
             messages: [],
             conversations: [],
             currentConversation: null,
-            selectedProvider: 'claude',
+            selectedProvider: 'huggingface', // Default to free provider
             providers: [
                 { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
                 { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
                 { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
-                { id: 'xai', name: 'XAI', color: '#10B981', status: 'online' }
+                { id: 'xai', name: 'XAI', color: '#10B981', status: 'online' },
+                { id: 'zai', name: 'Z.AI', color: '#FF00FF', status: 'online' },
+                { id: 'huggingface', name: 'Hugging Face', color: '#FF9800', status: 'online' }
             ],
             templates: [
                 {
@@ -1931,7 +1933,9 @@
                     { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
                     { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
                     { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
-                    { id: 'xai', name: 'XAI', color: '#10B981', status: 'online' }
+                    { id: 'xai', name: 'XAI', color: '#10B981', status: 'online' },
+                    { id: 'zai', name: 'Z.AI', color: '#FF00FF', status: 'online' },
+                    { id: 'huggingface', name: 'Hugging Face', color: '#FF9800', status: 'online' }
                 ];
                 renderProviders();
             }
@@ -2329,7 +2333,7 @@
                 };
                 
                 // Send to Netlify Function API
-                const response = await fetch('/api/chat', {
+                const response = await fetch('/.netlify/functions/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -2697,7 +2701,7 @@
         // Test all AI providers
         async function testAllProviders() {
             const testMessage = "Hello, please respond with just your provider name and a short greeting.";
-            const providers = ['groq', 'gemini', 'claude', 'xai'];
+            const providers = ['huggingface', 'claude', 'gemini', 'groq', 'xai', 'zai'];
             
             showNotification('Testing all AI providers...', 'info');
             
@@ -2716,7 +2720,7 @@
                         }
                     };
                     
-                    const response = await fetch('/api/chat', {
+                    const response = await fetch('/.netlify/functions/chat', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -3100,19 +3104,6 @@
         
         // Initialize the app when the DOM is fully loaded
         document.addEventListener('DOMContentLoaded', init);
-        
-        // Register service worker for offline functionality
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('/sw.js')
-                    .then((registration) => {
-                        console.log('SW registered: ', registration);
-                    })
-                    .catch((registrationError) => {
-                        console.log('SW registration failed: ', registrationError);
-                    });
-            });
-        }
     </script>
 </body>
 </html>
