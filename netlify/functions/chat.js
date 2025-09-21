@@ -30,17 +30,17 @@ exports.handler = async (event, context) => {
       };
     }
     
-    // Format the request
-    const requestBody = providerConfig.formatRequest(messages, options);
-    
-    // Special handling for local mock provider
-    if (provider === 'local') {
-      const formattedResponse = providerConfig.formatResponse(requestBody);
+    // Check if provider has a custom handler (like the free API)
+    if (providerConfig.handler) {
+      const result = await providerConfig.handler(messages, options);
       return {
         statusCode: 200,
-        body: JSON.stringify(formattedResponse)
+        body: JSON.stringify(result)
       };
     }
+    
+    // Format the request
+    const requestBody = providerConfig.formatRequest(messages, options);
     
     // Make the API call
     let response;
