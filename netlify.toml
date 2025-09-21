@@ -1,22 +1,10 @@
 [build]
-  functions = "netlify/functions"
-  publish = "."
+  command = "echo 'No build needed'"
 
-[build.environment]
-  NODE_VERSION = "18"
-
-# Redirect API routes to serverless functions
-[[redirects]]
-  from = "/api/chat"
-  to = "/.netlify/functions/chat"
-  status = 200
+[functions]
+  directory = "netlify/functions"
 
 [[redirects]]
-  from = "/api/providers"
-  to = "/.netlify/functions/providers"
-  status = 200
-
-[[redirects]]
-  from = "/api/health"
-  to = "/.netlify/functions/health"
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
   status = 200
