@@ -25,7 +25,7 @@ const getMockResponse = (message) => {
   } else if (lowerMessage.includes('saas')) {
     return "A SaaS landing page needs: 1) Compelling hero section with value proposition, 2) Features showcase, 3) Pricing plans, 4) Testimonials, and 5) Clear call-to-action. Let me know if you need help with any specific section or want me to generate the complete HTML/CSS code.";
   } else {
-    return `I understand you're asking about: "${message}". As your personal website assistant, I can help you create portfolio sites, e-commerce stores, blogs, and SaaS landing pages. For more advanced AI capabilities, please add API keys for services like Claude, Gemini, or Groq in your Netlify environment variables.`;
+    return `I understand you're asking about: "${message}". As your personal website assistant, I can help you create portfolio sites, e-commerce stores, blogs, and SaaS landing pages. For more advanced AI capabilities, please add API keys for services like Claude, Gemini, or Groq in your Vercel environment variables.`;
   }
 };
 
@@ -119,28 +119,39 @@ const providers = {
   }
 };
 
-// Health check endpoint
-exports.handler = async (event, context) => {
+module.exports = async (req, res) => {
+  // Set CORS headers
+  res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS,PATCH,DELETE,POST,PUT');
+  res.setHeader(
+    'Access-Control-Allow-Headers',
+    'X-CSRF-Token, X-Requested-With, Accept, Accept-Version, Content-Length, Content-MD5, Content-Type, Date, X-Api-Version'
+  );
+
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
   // Handle health check
-  if (event.httpMethod === 'GET' && event.path === '/.netlify/functions/chat/health') {
-    return {
-      statusCode: 200,
-      body: JSON.stringify({ 
-        status: 'OK', 
-        timestamp: new Date().toISOString(),
-        providers: Object.keys(providers).reduce((acc, key) => {
-          acc[key] = {
-            name: providers[key].name,
-            configured: !!providers[key].apiKey
-          };
-          return acc;
-        }, {})
-      })
-    };
+  if (req.method === 'GET' && req.url === '/api/chat/health') {
+    return res.status(200).json({ 
+      status: 'OK', 
+      timestamp: new Date().toISOString(),
+      providers: Object.keys(providers).reduce((acc, key) => {
+        acc[key] = {
+          name: providers[key].name,
+          configured: !!providers[key].apiKey
+        };
+        return acc;
+      }, {})
+    });
   }
   
   // Handle provider status check
-  if (event.httpMethod === 'GET' && event.path === '/.netlify/functions/chat/providers') {
+  if (req.method === 'GET' && req.url === '/api/chat/providers') {
     const providerStatus = Object.keys(providers).map(providerId => {
       const provider = providers[providerId];
       return {
@@ -151,19 +162,16 @@ exports.handler = async (event, context) => {
       };
     });
     
-    return {
-      statusCode: 200,
-      body: JSON.stringify(providerStatus)
-    };
+    return res.status(200).json(providerStatus);
   }
 
   // Only allow POST requests for chat
-  if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method Not Allowed' });
   }
 
   try {
-    const { messages, provider, options } = JSON.parse(event.body);
+    const { messages, provider, options } = req.body;
     
     // Default to mock provider if invalid provider is specified
     const providerId = providers[provider] ? provider : 'mock';
@@ -171,22 +179,16 @@ exports.handler = async (event, context) => {
     
     // Check if API key is required and available
     if (providerConfig.apiKey && !providerConfig.apiKey && providerId !== 'mock') {
-      return { 
-        statusCode: 401, 
-        body: JSON.stringify({ 
-          error: `API key required for ${providerConfig.name}. Please set the ${providerId.toUpperCase()}_API_KEY environment variable in Netlify.`,
-          provider: providerId
-        }) 
-      };
+      return res.status(401).json({ 
+        error: `API key required for ${providerConfig.name}. Please set the ${providerId.toUpperCase()}_API_KEY environment variable in Vercel.`,
+        provider: providerId
+      });
     }
     
     // Check if provider has a custom handler (like the mock provider)
     if (providerConfig.handler) {
       const result = await providerConfig.handler(messages, options);
-      return {
-        statusCode: 200,
-        body: JSON.stringify(result)
-      };
+      return res.status(200).json(result);
     }
     
     // Format the request
@@ -208,14 +210,11 @@ exports.handler = async (event, context) => {
       });
     } catch (fetchError) {
       console.error(`Network error with ${providerConfig.name}:`, fetchError);
-      return { 
-        statusCode: 503, 
-        body: JSON.stringify({ 
-          error: `Network error with ${providerConfig.name}`,
-          details: fetchError.message,
-          provider: providerId
-        }) 
-      };
+      return res.status(503).json({ 
+        error: `Network error with ${providerConfig.name}`,
+        details: fetchError.message,
+        provider: providerId
+      });
     }
     
     if (!response.ok) {
@@ -224,42 +223,30 @@ exports.handler = async (event, context) => {
       
       // For 401 errors, provide a helpful message
       if (response.status === 401) {
-        return { 
-          statusCode: 401, 
-          body: JSON.stringify({ 
-            error: `Authentication failed for ${providerConfig.name}. Please check your API key.`,
-            details: errorText,
-            provider: providerId
-          }) 
-        };
-      }
-      
-      return { 
-        statusCode: response.status, 
-        body: JSON.stringify({ 
-          error: `${providerConfig.name} API error: ${response.status}`,
+        return res.status(401).json({ 
+          error: `Authentication failed for ${providerConfig.name}. Please check your API key.`,
           details: errorText,
           provider: providerId
-        }) 
-      };
+        });
+      }
+      
+      return res.status(response.status).json({ 
+        error: `${providerConfig.name} API error: ${response.status}`,
+        details: errorText,
+        provider: providerId
+      });
     }
     
     const data = await response.json();
     const formattedResponse = providerConfig.formatResponse(data);
     
-    return {
-      statusCode: 200,
-      body: JSON.stringify(formattedResponse)
-    };
+    return res.status(200).json(formattedResponse);
     
   } catch (error) {
     console.error('Error in chat function:', error);
-    return { 
-      statusCode: 500, 
-      body: JSON.stringify({ 
-        error: 'Internal server error',
-        details: error.message 
-      }) 
-    };
+    return res.status(500).json({ 
+      error: 'Internal server error',
+      details: error.message 
+    });
   }
 };
