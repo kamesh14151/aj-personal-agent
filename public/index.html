@@ -13,9 +13,6 @@
     <link rel="preconnect" href="https://cdn.jsdelivr.net">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     
-    <!-- Netlify Identity Widget -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -1373,9 +1370,9 @@
             background: #FFD700;
         }
         
-        /* Netlify-specific optimizations */
-        .netlify-hidden { display: none; }
-        .netlify-visible { display: block; }
+        /* Vercel-specific optimizations */
+        .vercel-hidden { display: none; }
+        .vercel-visible { display: block; }
         
         /* Reduced motion for accessibility */
         @media (prefers-reduced-motion: reduce) {
@@ -1702,13 +1699,12 @@
             currentConversation: null,
             selectedProvider: 'mock', // Default to mock provider
             providers: [
-    { id: 'mock', name: 'Mock AI (Free)', color: '#4CAF50', status: 'online' },
-    { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
-    { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
-    { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
-    { id: 'xai', name: 'XAI', color: '#10B981', status: 'online' },
-    { id: 'zai', name: 'Z.AI', color: '#FF00FF', status: 'online' }
-],
+                { id: 'mock', name: 'Mock AI (Free)', color: '#4CAF50', status: 'online' },
+                { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
+                { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
+                { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
+                { id: 'openai', name: 'OpenAI', color: '#10B981', status: 'online' }
+            ],
             templates: [
                 {
                     id: 1,
@@ -1774,11 +1770,10 @@
             uploadedImages: [],
             isRecording: false,
             recognition: null,
-            // Netlify-specific settings
-            netlify: {
-                functionUrl: '', // Empty since we're using redirects
-                siteId: '',
-                identity: null
+            // Vercel-specific settings
+            vercel: {
+                functionUrl: '/api/chat',
+                siteId: ''
             }
         };
         
@@ -1871,49 +1866,22 @@
                 // Check provider status on load
                 checkProviderStatus();
                 
-                // Check Netlify deployment status
+                // Check Vercel deployment status
                 checkDeploymentStatus();
-                
-                // Initialize Netlify Identity if available
-                if (window.netlifyIdentity) {
-                    window.netlifyIdentity.on('init', user => {
-                        if (!user) {
-                            window.netlifyIdentity.on('login', () => {
-                                state.netlify.identity = window.netlifyIdentity.currentUser();
-                                updateUserProfile();
-                            });
-                        } else {
-                            state.netlify.identity = user;
-                            updateUserProfile();
-                        }
-                    });
-                }
             }, 2500);
         }
         
-        // Check Netlify deployment status
+        // Check Vercel deployment status
         async function checkDeploymentStatus() {
             try {
                 const response = await fetch('/api/health');
                 if (response.ok) {
                     const health = await response.json();
-                    state.netlify.siteId = health.siteId || 'unknown';
-                    console.log('Netlify deployment status:', health);
+                    state.vercel.siteId = health.siteId || 'unknown';
+                    console.log('Vercel deployment status:', health);
                 }
             } catch (error) {
                 console.warn('Could not fetch deployment status:', error);
-            }
-        }
-        
-        // Update user profile from Netlify Identity
-        function updateUserProfile() {
-            if (state.netlify.identity) {
-                elements.userName.textContent = state.netlify.identity.user_metadata.full_name || state.netlify.identity.email;
-                elements.userEmail.textContent = state.netlify.identity.email;
-                
-                if (state.netlify.identity.user_metadata.avatar_url) {
-                    elements.userAvatar.src = state.netlify.identity.user_metadata.avatar_url;
-                }
             }
         }
         
@@ -1930,12 +1898,11 @@
                 console.error('Error checking provider status:', error);
                 // Use default providers if API fails
                 state.providers = [
+                    { id: 'mock', name: 'Mock AI (Free)', color: '#4CAF50', status: 'online' },
                     { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
                     { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
                     { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
-                    { id: 'xai', name: 'XAI', color: '#10B981', status: 'online' },
-                    { id: 'zai', name: 'Z.AI', color: '#FF00FF', status: 'online' },
-                    { id: 'huggingface', name: 'Hugging Face', color: '#FF9800', status: 'online' }
+                    { id: 'openai', name: 'OpenAI', color: '#10B981', status: 'online' }
                 ];
                 renderProviders();
             }
@@ -2287,7 +2254,7 @@
             return message;
         }
         
-        // Send a message to the AI (updated for Netlify)
+        // Send a message to the AI (updated for Vercel)
         async function sendMessage() {
             const content = elements.chatInput.value.trim();
             if (!content || state.isGenerating) return;
@@ -2332,8 +2299,8 @@
                     }
                 };
                 
-                // Send to Netlify Function API
-                const response = await fetch('/.netlify/functions/chat', {
+                // Send to Vercel API
+                const response = await fetch('/api/chat', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -2701,7 +2668,7 @@
         // Test all AI providers
         async function testAllProviders() {
             const testMessage = "Hello, please respond with just your provider name and a short greeting.";
-            const providers = ['huggingface', 'claude', 'gemini', 'groq', 'xai', 'zai'];
+            const providers = ['claude', 'gemini', 'groq', 'openai'];
             
             showNotification('Testing all AI providers...', 'info');
             
@@ -2720,7 +2687,7 @@
                         }
                     };
                     
-                    const response = await fetch('/.netlify/functions/chat', {
+                    const response = await fetch('/api/chat', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -2784,19 +2751,8 @@
             
             // User menu
             elements.userMenu.addEventListener('click', () => {
-                if (state.netlify.identity) {
-                    // Sign out
-                    window.netlifyIdentity.logout();
-                    state.netlify.identity = null;
-                    showNotification('Signed out successfully', 'success');
-                } else {
-                    // Show sign in options
-                    if (window.netlifyIdentity) {
-                        window.netlifyIdentity.open();
-                    } else {
-                        showNotification('Please sign in to access all features', 'info');
-                    }
-                }
+                // Simple guest user info for now
+                showNotification('Guest user mode. Sign in to save preferences.', 'info');
             });
             
             // Templates button
