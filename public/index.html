@@ -1700,9 +1700,10 @@
             messages: [],
             conversations: [],
             currentConversation: null,
-            selectedProvider: 'huggingface', // Default to free provider
+            selectedProvider: 'free', // Default to free API provider
             providers: [
-    { id: 'local', name: 'Local Mock', color: '#4CAF50', status: 'online' },
+    { id: 'free', name: 'Free API', color: '#4CAF50', status: 'online' },
+    { id: 'local', name: 'Local Mock', color: '#2196F3', status: 'online' },
     { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
     { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
     { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
