@@ -10,15 +10,20 @@ const providers = {
       'x-api-key': apiKey,
       'anthropic-version': '2023-06-01'
     }),
-    formatRequest: (messages, options) => ({
-      model: 'claude-3-sonnet-20240229',
-      max_tokens: options.length || 1000,
-      temperature: options.creativity / 100,
-      messages: messages.map(msg => ({
-        role: msg.role === 'user' ? 'user' : 'assistant',
-        content: msg.content
-      }))
-    }),
+    formatRequest: (messages, options) => {
+      // Filter out empty messages
+      const validMessages = messages.filter(msg => msg.content && msg.content.trim() !== '');
+      
+      return {
+        model: 'claude-3-sonnet-20240229',
+        max_tokens: options.length || 1000,
+        temperature: options.creativity / 100,
+        messages: validMessages.map(msg => ({
+          role: msg.role === 'user' ? 'user' : 'assistant',
+          content: msg.content
+        }))
+      };
+    },
     formatResponse: (data) => ({
       content: data.content[0].text
     })
@@ -112,35 +117,6 @@ const providers = {
       content: data.choices[0].message.content
     })
   },
-  ollama: {
-    name: 'Ollama (Free)',
-    apiEndpoint: 'https://ollama.ai/api/generate',
-    apiKey: null, // No API key needed
-    model: 'llama3',
-    headers: () => ({
-      'Content-Type': 'application/json'
-    }),
-    formatRequest: (messages, options) => {
-      // For Ollama, we only use the last message
-      const lastMessage = messages.length > 0 ? messages[messages.length - 1].content : '';
-      return {
-        model: 'llama3',
-        prompt: lastMessage,
-        stream: false,
-        options: {
-          temperature: options.creativity / 100,
-          num_predict: Math.min(options.length || 100, 2048)
-        }
-      };
-    },
-    formatResponse: (data) => {
-      // Handle different response formats
-      if (data.response) {
-        return { content: data.response };
-      }
-      return { content: "I'm sorry, I couldn't generate a response. Please try again." };
-    }
-  },
   local: {
     name: 'Local Mock',
     apiKey: null, // No API key needed
@@ -151,7 +127,7 @@ const providers = {
       const lastMessage = messages.length > 0 ? messages[messages.length - 1].content : '';
       return { message: lastMessage };
     },
-    formatResponse: () => {
+    formatResponse: (data) => {
       // Return a mock response
       const responses = [
         "I understand you're asking about: ",
@@ -164,7 +140,7 @@ const providers = {
       const randomResponse = responses[Math.floor(Math.random() * responses.length)];
       
       return { 
-        content: randomResponse + "This is a mock response since no AI provider API keys are configured. Please add API keys for Claude, Gemini, Groq, XAI, or Z.AI in your Netlify environment variables to use real AI models." 
+        content: randomResponse + data.message + ".\n\nThis is a mock response since no AI provider API keys are configured. Please add API keys for Claude, Gemini, Groq, XAI, or Z.AI in your Netlify environment variables to use real AI models." 
       };
     }
   }
