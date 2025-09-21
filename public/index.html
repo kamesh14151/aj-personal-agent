@@ -1893,18 +1893,25 @@
                     const providers = await response.json();
                     state.providers = providers;
                     renderProviders();
+                    
+                    // Check if any real providers are configured
+                    const hasRealProvider = providers.some(p => p.id !== 'mock' && p.configured);
+                    if (!hasRealProvider) {
+                        showNotification('No AI providers configured. Using Mock AI. Add API keys in Vercel for full functionality.', 'info');
+                    }
                 }
             } catch (error) {
                 console.error('Error checking provider status:', error);
                 // Use default providers if API fails
                 state.providers = [
                     { id: 'mock', name: 'Mock AI (Free)', color: '#4CAF50', status: 'online' },
-                    { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'online' },
-                    { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'online' },
-                    { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'online' },
-                    { id: 'openai', name: 'OpenAI', color: '#10B981', status: 'online' }
+                    { id: 'claude', name: 'Claude', color: '#8B5CF6', status: 'offline' },
+                    { id: 'gemini', name: 'Gemini', color: '#4285F4', status: 'offline' },
+                    { id: 'groq', name: 'Groq', color: '#FF6B35', status: 'offline' },
+                    { id: 'openai', name: 'OpenAI', color: '#10B981', status: 'offline' }
                 ];
                 renderProviders();
+                showNotification('Using Mock AI. Add API keys in Vercel for full functionality.', 'info');
             }
         }
         
@@ -2347,8 +2354,13 @@
                 // Remove typing indicator
                 removeTypingIndicator();
                 
-                // Add error message
-                addMessage('assistant', `I'm sorry, I encountered an error while processing your request. Please try again later.\n\nError: ${error.message}`);
+                // Check if it's an API key error
+                if (error.message.includes('API key required') || error.message.includes('Authentication failed')) {
+                    addMessage('assistant', `I'm sorry, but the ${getProviderName(state.selectedProvider)} provider isn't properly configured. Please add the required API keys in your Vercel environment variables. You can still use the Mock AI provider for basic responses.`);
+                } else {
+                    // Add error message
+                    addMessage('assistant', `I'm sorry, I encountered an error while processing your request. Please try again later.\n\nError: ${error.message}`);
+                }
             } finally {
                 // Re-enable send button
                 state.isGenerating = false;
