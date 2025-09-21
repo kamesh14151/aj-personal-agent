@@ -1,26 +1,17 @@
 {
   "name": "aj-personal-agent",
   "version": "1.0.0",
-  "description": "AI-powered website creation studio with multiple AI providers",
+  "description": "AI-powered website creation studio",
   "main": "api/chat.js",
   "scripts": {
     "dev": "vercel dev",
-    "build": "echo 'No build needed'",
-    "start": "vercel start"
+    "build": "vercel build",
+    "deploy": "vercel --prod"
   },
   "dependencies": {
     "node-fetch": "^2.6.7"
   },
   "devDependencies": {
-    "vercel": "^28.4.0"
-  },
-  "keywords": [
-    "ai",
-    "chatbot",
-    "website",
-    "portfolio",
-    "ecommerce"
-  ],
-  "author": "AJ Studioz",
-  "license": "MIT"
+    "vercel": "^32.3.0"
+  }
 }
