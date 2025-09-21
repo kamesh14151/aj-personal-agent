@@ -5,27 +5,27 @@ const getMockResponse = (message) => {
   const lowerMessage = message.toLowerCase();
   
   if (lowerMessage.includes('hello') || lowerMessage.includes('hi')) {
-    return "Hello! I'm a simple AI assistant. How can I help you today?";
+    return "Hello! I'm AJ Personal Agent powered by AJ Studioz. How can I help you with your website project today?";
   } else if (lowerMessage.includes('help')) {
-    return "I'm here to help! Please let me know what you need assistance with.";
+    return "I'm here to help you create amazing websites! I can assist with portfolio sites, e-commerce stores, blogs, and SaaS landing pages. What would you like to build?";
   } else if (lowerMessage.includes('thank')) {
-    return "You're welcome! Is there anything else I can help with?";
+    return "You're welcome! Is there anything else I can help you with your website project?";
   } else if (lowerMessage.includes('weather')) {
-    return "I don't have access to real-time weather data, but I hope it's nice where you are!";
+    return "I don't have access to real-time weather data, but I hope it's nice where you are! Let's focus on building your website.";
   } else if (lowerMessage.includes('time')) {
-    return `The current time is ${new Date().toLocaleTimeString()}.`;
+    return `The current time is ${new Date().toLocaleTimeString()}. Perfect time to work on your website!`;
   } else if (lowerMessage.includes('date')) {
-    return `Today's date is ${new Date().toLocaleDateString()}.`;
+    return `Today's date is ${new Date().toLocaleDateString()}. A great day to launch a new website!`;
   } else if (lowerMessage.includes('portfolio')) {
-    return "I can help you create a portfolio website! A good portfolio should include a hero section, about me, skills, projects, and contact sections. Would you like me to elaborate on any of these?";
+    return "I can help you create an impressive portfolio website! A good portfolio should include: 1) Hero section with your introduction, 2) About me section, 3) Skills/technologies you master, 4) Projects showcase with descriptions, and 5) Contact section. Would you like me to generate HTML/CSS code for any of these sections?";
   } else if (lowerMessage.includes('ecommerce')) {
-    return "For an e-commerce website, you'll need product listings, shopping cart functionality, and a checkout process. I can help you design a modern, user-friendly interface.";
+    return "For an e-commerce website, you'll need: 1) Product listings with images and prices, 2) Shopping cart functionality, 3) Checkout process, and 4) User accounts. I can help you design a modern, user-friendly interface with these components. What specific help do you need?";
   } else if (lowerMessage.includes('blog')) {
-    return "A tech blog should have a clean layout with article listings, categories, and search functionality. Dark mode toggle and social sharing are nice additions too.";
+    return "A tech blog should have: 1) Clean layout with article listings, 2) Categories/tags for organization, 3) Search functionality, 4) Comment system, and 5) Social sharing buttons. Dark mode toggle is also a nice addition. Shall I create a blog template for you?";
   } else if (lowerMessage.includes('saas')) {
-    return "A SaaS landing page needs a compelling hero section, features showcase, pricing plans, testimonials, and a clear call-to-action. Let me know if you need help with any specific section.";
+    return "A SaaS landing page needs: 1) Compelling hero section with value proposition, 2) Features showcase, 3) Pricing plans, 4) Testimonials, and 5) Clear call-to-action. Let me know if you need help with any specific section or want me to generate the complete HTML/CSS code.";
   } else {
-    return `I understand you're asking about: "${message}". This is a simple response. For more advanced AI capabilities, please add API keys for services like Claude, Gemini, or Groq in your Netlify environment variables.`;
+    return `I understand you're asking about: "${message}". As your personal website assistant, I can help you create portfolio sites, e-commerce stores, blogs, and SaaS landing pages. For more advanced AI capabilities, please add API keys for services like Claude, Gemini, or Groq in your Netlify environment variables.`;
   }
 };
 
@@ -35,7 +35,7 @@ const providers = {
     name: 'Claude',
     apiEndpoint: 'https://api.anthropic.com/v1/messages',
     apiKey: process.env.ANTHROPIC_API_KEY,
-    model: 'claude-sonnet-4-20250514',
+    model: 'claude-3-sonnet-20240229',
     headers: (apiKey) => ({
       'Content-Type': 'application/json',
       'x-api-key': apiKey,
@@ -43,9 +43,10 @@ const providers = {
     }),
     formatRequest: (messages, options) => {
       const validMessages = messages.filter(msg => msg.content && msg.content.trim() !== '');
+      const lastMessage = validMessages[validMessages.length - 1];
       
       return {
-        model: 'claude-sonnet-4-20250514',
+        model: 'claude-3-sonnet-20240229',
         max_tokens: options.length || 1000,
         temperature: options.creativity / 100,
         messages: validMessages.map(msg => ({
@@ -60,26 +61,21 @@ const providers = {
   },
   gemini: {
     name: 'Gemini',
-    apiEndpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GOOGLE_API_KEY}`,
+    apiEndpoint: `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent`,
     apiKey: process.env.GOOGLE_API_KEY,
     model: 'gemini-pro',
-    headers: () => ({
+    headers: (apiKey) => ({
       'Content-Type': 'application/json'
     }),
     formatRequest: (messages, options) => {
-      const geminiMessages = [];
-      
-      for (const msg of messages) {
-        if (msg.role === 'user' || msg.role === 'assistant') {
-          geminiMessages.push({
-            role: msg.role === 'user' ? 'user' : 'model',
-            parts: [{ text: msg.content }]
-          });
-        }
-      }
+      const lastMessage = messages[messages.length - 1];
       
       return {
-        contents: geminiMessages,
+        contents: [{
+          parts: [{
+            text: lastMessage.content
+          }]
+        }],
         generationConfig: {
           maxOutputTokens: options.length || 1000,
           temperature: options.creativity / 100
@@ -109,44 +105,6 @@ const providers = {
       content: data.choices[0].message.content
     })
   },
-  xai: {
-    name: 'XAI',
-    apiEndpoint: 'https://api.x.ai/v1/chat/completions',
-    apiKey: process.env.XAI_API_KEY,
-    model: 'grok-beta',
-    headers: (apiKey) => ({
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    }),
-    formatRequest: (messages, options) => ({
-      model: 'grok-beta',
-      messages: messages,
-      max_tokens: options.length || 1000,
-      temperature: options.creativity / 100
-    }),
-    formatResponse: (data) => ({
-      content: data.choices[0].message.content
-    })
-  },
-  zai: {
-    name: 'Z.AI',
-    apiEndpoint: 'https://api.z.ai/v1/chat/completions',
-    apiKey: process.env.ZAI_API_KEY,
-    model: 'zai-chat',
-    headers: (apiKey) => ({
-      'Authorization': `Bearer ${apiKey}`,
-      'Content-Type': 'application/json'
-    }),
-    formatRequest: (messages, options) => ({
-      model: 'zai-chat',
-      messages: messages,
-      max_tokens: options.length || 1000,
-      temperature: options.creativity / 100
-    }),
-    formatResponse: (data) => ({
-      content: data.choices[0].message.content
-    })
-  },
   mock: {
     name: 'Mock AI (Free)',
     apiKey: null,
@@ -155,14 +113,51 @@ const providers = {
     formatRequest: (messages, options) => ({}),
     formatResponse: (data) => ({}),
     handler: async (messages, options) => {
-      const lastMessage = messages.length > 0 ? messages[messages.length - 1].content : '';
+      const lastMessage = messages.length > 0 ? messages[messages.length - 1].content : 'Hello';
       return { content: getMockResponse(lastMessage) };
     }
   }
 };
 
+// Health check endpoint
 exports.handler = async (event, context) => {
-  // Only allow POST requests
+  // Handle health check
+  if (event.httpMethod === 'GET' && event.path === '/.netlify/functions/chat/health') {
+    return {
+      statusCode: 200,
+      body: JSON.stringify({ 
+        status: 'OK', 
+        timestamp: new Date().toISOString(),
+        providers: Object.keys(providers).reduce((acc, key) => {
+          acc[key] = {
+            name: providers[key].name,
+            configured: !!providers[key].apiKey
+          };
+          return acc;
+        }, {})
+      })
+    };
+  }
+  
+  // Handle provider status check
+  if (event.httpMethod === 'GET' && event.path === '/.netlify/functions/chat/providers') {
+    const providerStatus = Object.keys(providers).map(providerId => {
+      const provider = providers[providerId];
+      return {
+        id: providerId,
+        name: provider.name,
+        status: provider.apiKey ? 'online' : 'offline',
+        configured: !!provider.apiKey
+      };
+    });
+    
+    return {
+      statusCode: 200,
+      body: JSON.stringify(providerStatus)
+    };
+  }
+
+  // Only allow POST requests for chat
   if (event.httpMethod !== 'POST') {
     return { statusCode: 405, body: 'Method Not Allowed' };
   }
@@ -179,7 +174,8 @@ exports.handler = async (event, context) => {
       return { 
         statusCode: 401, 
         body: JSON.stringify({ 
-          error: `API key required for ${providerConfig.name}. Please set the environment variable.` 
+          error: `API key required for ${providerConfig.name}. Please set the ${providerId.toUpperCase()}_API_KEY environment variable in Netlify.`,
+          provider: providerId
         }) 
       };
     }
@@ -196,10 +192,16 @@ exports.handler = async (event, context) => {
     // Format the request
     const requestBody = providerConfig.formatRequest(messages, options);
     
+    // Add API key to endpoint if needed (for Gemini)
+    let apiEndpoint = providerConfig.apiEndpoint;
+    if (providerId === 'gemini' && providerConfig.apiKey) {
+      apiEndpoint += `?key=${providerConfig.apiKey}`;
+    }
+    
     // Make the API call
     let response;
     try {
-      response = await fetch(providerConfig.apiEndpoint, {
+      response = await fetch(apiEndpoint, {
         method: 'POST',
         headers: providerConfig.headers(providerConfig.apiKey),
         body: JSON.stringify(requestBody)
@@ -210,7 +212,8 @@ exports.handler = async (event, context) => {
         statusCode: 503, 
         body: JSON.stringify({ 
           error: `Network error with ${providerConfig.name}`,
-          details: fetchError.message 
+          details: fetchError.message,
+          provider: providerId
         }) 
       };
     }
@@ -225,7 +228,8 @@ exports.handler = async (event, context) => {
           statusCode: 401, 
           body: JSON.stringify({ 
             error: `Authentication failed for ${providerConfig.name}. Please check your API key.`,
-            details: errorText
+            details: errorText,
+            provider: providerId
           }) 
         };
       }
@@ -234,7 +238,8 @@ exports.handler = async (event, context) => {
         statusCode: response.status, 
         body: JSON.stringify({ 
           error: `${providerConfig.name} API error: ${response.status}`,
-          details: errorText
+          details: errorText,
+          provider: providerId
         }) 
       };
     }
