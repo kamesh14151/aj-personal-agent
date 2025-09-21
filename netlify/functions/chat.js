@@ -33,16 +33,49 @@ exports.handler = async (event, context) => {
     // Format the request
     const requestBody = providerConfig.formatRequest(messages, options);
     
+    // Special handling for local mock provider
+    if (provider === 'local') {
+      const formattedResponse = providerConfig.formatResponse(requestBody);
+      return {
+        statusCode: 200,
+        body: JSON.stringify(formattedResponse)
+      };
+    }
+    
     // Make the API call
-    const response = await fetch(providerConfig.apiEndpoint, {
-      method: 'POST',
-      headers: providerConfig.headers(providerConfig.apiKey),
-      body: JSON.stringify(requestBody)
-    });
+    let response;
+    try {
+      response = await fetch(providerConfig.apiEndpoint, {
+        method: 'POST',
+        headers: providerConfig.headers(providerConfig.apiKey),
+        body: JSON.stringify(requestBody)
+      });
+    } catch (fetchError) {
+      console.error(`Network error with ${providerConfig.name}:`, fetchError);
+      return { 
+        statusCode: 503, 
+        body: JSON.stringify({ 
+          error: `Network error with ${providerConfig.name}`,
+          details: fetchError.message 
+        }) 
+      };
+    }
     
     if (!response.ok) {
       const errorText = await response.text();
       console.error(`${providerConfig.name} API error:`, response.status, errorText);
+      
+      // For 401 errors, provide a helpful message
+      if (response.status === 401) {
+        return { 
+          statusCode: 401, 
+          body: JSON.stringify({ 
+            error: `Authentication failed for ${providerConfig.name}. Please check your API key.`,
+            details: errorText
+          }) 
+        };
+      }
+      
       return { 
         statusCode: response.status, 
         body: JSON.stringify({ 
