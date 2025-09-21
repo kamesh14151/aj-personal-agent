@@ -112,31 +112,60 @@ const providers = {
       content: data.choices[0].message.content
     })
   },
-  huggingface: {
-    name: 'Hugging Face',
-    apiEndpoint: 'https://api-inference.huggingface.co/models/microsoft/DialoGPT-medium',
-    apiKey: null, // No API key needed for this free model
-    model: 'microsoft/DialoGPT-medium',
+  ollama: {
+    name: 'Ollama (Free)',
+    apiEndpoint: 'https://ollama.ai/api/generate',
+    apiKey: null, // No API key needed
+    model: 'llama3',
     headers: () => ({
       'Content-Type': 'application/json'
     }),
     formatRequest: (messages, options) => {
-      // For DialoGPT, we only use the last message
+      // For Ollama, we only use the last message
       const lastMessage = messages.length > 0 ? messages[messages.length - 1].content : '';
       return {
-        inputs: lastMessage,
-        parameters: {
-          max_length: options.length || 100,
-          temperature: options.creativity / 100
+        model: 'llama3',
+        prompt: lastMessage,
+        stream: false,
+        options: {
+          temperature: options.creativity / 100,
+          num_predict: Math.min(options.length || 100, 2048)
         }
       };
     },
     formatResponse: (data) => {
       // Handle different response formats
-      if (Array.isArray(data) && data.length > 0 && data[0].generated_text) {
-        return { content: data[0].generated_text };
+      if (data.response) {
+        return { content: data.response };
       }
       return { content: "I'm sorry, I couldn't generate a response. Please try again." };
+    }
+  },
+  local: {
+    name: 'Local Mock',
+    apiKey: null, // No API key needed
+    model: 'mock',
+    headers: () => ({}),
+    formatRequest: (messages, options) => {
+      // Just return the last message
+      const lastMessage = messages.length > 0 ? messages[messages.length - 1].content : '';
+      return { message: lastMessage };
+    },
+    formatResponse: () => {
+      // Return a mock response
+      const responses = [
+        "I understand you're asking about: ",
+        "That's an interesting question. Based on what you've told me, ",
+        "I can help you with that. Here's what I think: ",
+        "Thanks for your message. I believe you're looking for information about ",
+        "I'd be happy to assist with your request regarding "
+      ];
+      
+      const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+      
+      return { 
+        content: randomResponse + "This is a mock response since no AI provider API keys are configured. Please add API keys for Claude, Gemini, Groq, XAI, or Z.AI in your Netlify environment variables to use real AI models." 
+      };
     }
   }
 };
