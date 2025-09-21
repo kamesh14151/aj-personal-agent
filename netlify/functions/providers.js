@@ -117,6 +117,21 @@ const providers = {
       content: data.choices[0].message.content
     })
   },
+  free: {
+    name: 'Free API',
+    apiEndpoint: '/.netlify/functions/freeapi',
+    apiKey: null, // No API key needed
+    model: 'free',
+    headers: () => ({
+      'Content-Type': 'application/json'
+    }),
+    formatRequest: (messages, options) => {
+      return { messages: messages };
+    },
+    formatResponse: (data) => ({
+      content: data.content
+    })
+  },
   local: {
     name: 'Local Mock',
     apiKey: null, // No API key needed
