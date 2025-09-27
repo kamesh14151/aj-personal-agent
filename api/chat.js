@@ -1,4 +1,3 @@
-// api/chat.js
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== 'POST') {
@@ -11,6 +10,21 @@ export default async function handler(req, res) {
     // Validate messages
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: 'Messages are required and must be an array' });
+    }
+
+    // Validate message roles
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+      if (!message.role || !['system', 'user', 'assistant'].includes(message.role)) {
+        return res.status(400).json({ 
+          error: `Invalid role at messages[${i}]: '${message.role}'. Role must be one of: system, user, assistant` 
+        });
+      }
+      if (!message.content || typeof message.content !== 'string') {
+        return res.status(400).json({ 
+          error: `Invalid content at messages[${i}]: Content must be a non-empty string` 
+        });
+      }
     }
 
     // Get API key from environment variables
