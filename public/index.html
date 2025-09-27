@@ -352,6 +352,10 @@
             flex-direction: row-reverse;
         }
 
+        .message.ai {
+            align-self: flex-start;
+        }
+
         .message-avatar {
             width: 36px;
             height: 36px;
@@ -1414,7 +1418,7 @@
                 // Add welcome message
                 state.messages.push({
                     id: 'welcome-message',
-                    role: 'ai',
+                    role: 'assistant', // Changed from 'ai' to 'assistant'
                     content: 'Hello! I\'m <strong>Lynxa</strong>, an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks including:\n\n* Answering questions and providing information\n* Generating and executing code in multiple languages\n* Creating and analyzing documents\n* Web scraping and data extraction\n* Image generation and analysis\n* Complex multi-step tasks and workflows\n\nI have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?',
                     timestamp: new Date().toISOString()
                 });
@@ -1496,7 +1500,7 @@
             // Add welcome message
             state.messages.push({
                 id: generateId(),
-                role: 'ai',
+                role: 'assistant', // Changed from 'ai' to 'assistant'
                 content: 'Hello! I\'m <strong>Lynxa</strong>, an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. How can I assist you today?',
                 timestamp: new Date().toISOString()
             });
@@ -1593,7 +1597,7 @@
             
             state.messages.forEach(message => {
                 const messageEl = document.createElement('div');
-                messageEl.className = `message ${message.role}`;
+                messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`; // Keep the class as 'ai' for styling
                 
                 const avatar = message.role === 'user' ? 'U' : '';
                 const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1602,7 +1606,7 @@
                     <div class="message-avatar">${avatar}</div>
                     <div class="message-content">
                         <div class="message-text">${formatMessageContent(message.content)}</div>
-                        ${message.role === 'ai' ? `
+                        ${message.role === 'assistant' ? `  <!-- Changed from 'ai' to 'assistant' -->
                             <div class="message-actions">
                                 <button class="message-action-btn" title="Copy" onclick="copyMessage('${message.id}')">
                                     <i class="fas fa-copy"></i>
@@ -1703,7 +1707,10 @@
                 // Prepare messages for API
                 const requestMessages = [
                     { role: 'system', content: 'You are an advanced AI assistant that helps with coding, development, and a wide range of tasks. Provide clear, concise answers with code examples when appropriate.' },
-                    ...state.messages.map(msg => ({ role: msg.role, content: msg.content }))
+                    ...state.messages.map(msg => ({ 
+                        role: msg.role === 'assistant' ? 'assistant' : msg.role, 
+                        content: msg.content 
+                    }))
                 ];
                 
                 // Send request to our backend API
@@ -1732,7 +1739,7 @@
                 // Add AI response
                 const aiMessage = {
                     id: generateId(),
-                    role: 'ai',
+                    role: 'assistant', // Changed from 'ai' to 'assistant'
                     content: aiResponse,
                     timestamp: new Date().toISOString()
                 };
@@ -1748,7 +1755,7 @@
                 // Add error message
                 const errorMessage = {
                     id: generateId(),
-                    role: 'ai',
+                    role: 'assistant', // Changed from 'ai' to 'assistant'
                     content: `I'm sorry, I encountered an error: ${error.message}`,
                     timestamp: new Date().toISOString()
                 };
