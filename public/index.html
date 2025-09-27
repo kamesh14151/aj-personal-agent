@@ -6,7 +6,7 @@
     <title>Nexariq AI - Enterprise Agentic Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.7/purify.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
@@ -38,8 +38,9 @@
             --logo-size: 40px;
             --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
             --gradient-accent: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-            --code-bg: #1e293b;
-            --code-border: #334155;
+            --code-bg: #f6f8fa;
+            --code-border: #e1e4e8;
+            --code-text: #24292e;
         }
 
         * {
@@ -409,6 +410,7 @@
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
             border: 1px solid var(--code-border);
+            color: var(--code-text);
         }
 
         .message-text code {
@@ -605,24 +607,26 @@
         }
 
         .code-header {
-            background-color: var(--surface-highlight);
+            background-color: #f1f3f4;
             padding: 0.5rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.875rem;
-            color: var(--text-secondary);
+            color: #586069;
+            border-bottom: 1px solid var(--code-border);
         }
 
         .code-language {
             font-weight: 600;
             text-transform: uppercase;
+            color: #24292e;
         }
 
         .copy-btn {
-            background-color: transparent;
-            border: 1px solid var(--border);
-            color: var(--text-secondary);
+            background-color: #f1f3f4;
+            border: 1px solid #d1d5da;
+            color: #24292e;
             padding: 0.25rem 0.5rem;
             border-radius: 4px;
             cursor: pointer;
@@ -634,14 +638,20 @@
         }
 
         .copy-btn:hover {
-            background-color: var(--surface-elevated);
-            color: var(--text-primary);
+            background-color: #e1e4e8;
+            color: #24292e;
         }
 
         .copy-btn.copied {
-            background-color: var(--primary);
+            background-color: #2ea44f;
             color: white;
-            border-color: var(--primary);
+            border-color: #2ea44f;
+        }
+
+        /* Typing Effect */
+        .typing-text {
+            overflow: hidden;
+            white-space: pre-wrap;
         }
 
         /* Settings Panel */
@@ -1215,6 +1225,18 @@
                         <option value="large">Large</option>
                     </select>
                 </div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">Typing Speed</div>
+                        <div class="settings-description">Adjust AI response typing speed</div>
+                    </div>
+                    <select class="settings-select" id="typingSpeedSelect">
+                        <option value="slow">Slow</option>
+                        <option value="medium" selected>Medium</option>
+                        <option value="fast">Fast</option>
+                        <option value="instant">Instant</option>
+                    </select>
+                </div>
             </div>
             
             <div class="settings-section">
@@ -1304,6 +1326,7 @@
             settings: {
                 theme: 'dark',
                 fontSize: 'medium',
+                typingSpeed: 'medium',
                 autoExecute: false,
                 sandboxPreview: true,
                 agentic: true,
@@ -1320,6 +1343,14 @@
                 preview: ''
             },
             selectedModel: 'llama-3.3-70b-versatile'
+        };
+
+        // Typing speeds (characters per millisecond)
+        const typingSpeeds = {
+            slow: 50,
+            medium: 30,
+            fast: 15,
+            instant: 0
         };
 
         // DOM Elements
@@ -1346,6 +1377,7 @@
             userMenu: document.getElementById('userMenu'),
             themeSelect: document.getElementById('themeSelect'),
             fontSizeSelect: document.getElementById('fontSizeSelect'),
+            typingSpeedSelect: document.getElementById('typingSpeedSelect'),
             autoExecuteToggle: document.getElementById('autoExecuteToggle'),
             sandboxPreviewToggle: document.getElementById('sandboxPreviewToggle'),
             agenticToggle: document.getElementById('agenticToggle'),
@@ -1435,6 +1467,7 @@
             // Settings
             elements.themeSelect.addEventListener('change', updateTheme);
             elements.fontSizeSelect.addEventListener('change', updateFontSize);
+            elements.typingSpeedSelect.addEventListener('change', updateTypingSpeed);
             elements.autoExecuteToggle.addEventListener('click', toggleAutoExecute);
             elements.sandboxPreviewToggle.addEventListener('click', toggleSandboxPreview);
             elements.agenticToggle.addEventListener('click', toggleAgentic);
@@ -1484,6 +1517,7 @@ I have access to various tools and can execute code in a secure sandbox environm
             // Update settings UI
             elements.themeSelect.value = state.settings.theme;
             elements.fontSizeSelect.value = state.settings.fontSize;
+            elements.typingSpeedSelect.value = state.settings.typingSpeed;
             
             if (state.settings.autoExecute) {
                 elements.autoExecuteToggle.classList.add('active');
@@ -1794,33 +1828,15 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 // Remove typing indicator
                 hideTypingIndicator();
                 
-                // Add AI response
-                const aiMessage = {
-                    id: generateId(),
-                    role: 'assistant',
-                    content: aiResponse,
-                    timestamp: new Date().toISOString()
-                };
-                
-                state.messages.push(aiMessage);
-                renderMessages();
-                saveState();
+                // Add AI response with typing effect
+                addAIMessageWithTyping(aiResponse);
                 
             } catch (error) {
                 console.error('Error:', error);
                 hideTypingIndicator();
                 
-                // Add error message
-                const errorMessage = {
-                    id: generateId(),
-                    role: 'assistant',
-                    content: `I'm sorry, I encountered an error: ${error.message}`,
-                    timestamp: new Date().toISOString()
-                };
-                
-                state.messages.push(errorMessage);
-                renderMessages();
-                saveState();
+                // Add error message with typing effect
+                addAIMessageWithTyping(`I'm sorry, I encountered an error: ${error.message}`);
                 
                 if (state.settings.errorNotifications) {
                     showToast('Error processing your request', 'error');
@@ -1831,6 +1847,112 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 elements.sendBtn.disabled = false;
                 elements.chatInput.focus();
             }
+        }
+
+        // Add AI message with typing effect
+        function addAIMessageWithTyping(content) {
+            const messageId = generateId();
+            const timestamp = new Date().toISOString();
+            
+            // Create message element
+            const messageEl = document.createElement('div');
+            messageEl.className = 'message ai';
+            messageEl.id = `message-${messageId}`;
+            
+            const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageEl.innerHTML = `
+                <div class="message-avatar"></div>
+                <div class="message-content">
+                    <div class="message-text typing-text" id="text-${messageId}"></div>
+                    <div class="message-actions">
+                        <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="message-action-btn" title="Good response">
+                            <i class="fas fa-thumbs-up"></i>
+                        </button>
+                        <button class="message-action-btn" title="Bad response">
+                            <i class="fas fa-thumbs-down"></i>
+                        </button>
+                    </div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            elements.chatMessages.appendChild(messageEl);
+            
+            // Add to state
+            state.messages.push({
+                id: messageId,
+                role: 'assistant',
+                content,
+                timestamp
+            });
+            
+            // Get typing speed
+            const typingSpeed = typingSpeeds[state.settings.typingSpeed] || typingSpeeds.medium;
+            
+            // Start typing effect
+            typeText(content, `text-${messageId}`, typingSpeed, () => {
+                // Highlight code blocks after typing is complete
+                messageEl.querySelectorAll('pre code').forEach(block => {
+                    hljs.highlightElement(block);
+                });
+                
+                // Save state after typing is complete
+                saveState();
+            });
+            
+            // Scroll to bottom
+            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+        }
+
+        // Type text with typing effect
+        function typeText(text, elementId, speed, callback) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let i = 0;
+            const isCodeBlock = text.includes('```');
+            
+            // If instant, just set the content and return
+            if (speed === 0) {
+                element.innerHTML = formatMessageContent(text);
+                if (callback) callback();
+                return;
+            }
+            
+            function type() {
+                if (i < text.length) {
+                    // Check if we're at a code block
+                    if (text.substring(i, i + 3) === '```') {
+                        // Find the end of the code block
+                        const endOfCodeBlock = text.indexOf('```', i + 3);
+                        if (endOfCodeBlock !== -1) {
+                            // Add the entire code block at once
+                            const codeBlock = text.substring(i, endOfCodeBlock + 3);
+                            element.innerHTML = formatMessageContent(text.substring(0, endOfCodeBlock + 3));
+                            i = endOfCodeBlock + 3;
+                            
+                            // Continue typing after a short delay
+                            setTimeout(type, speed * 10);
+                            return;
+                        }
+                    }
+                    
+                    // Add one character at a time
+                    element.innerHTML = formatMessageContent(text.substring(0, i + 1));
+                    i++;
+                    
+                    // Continue typing
+                    setTimeout(type, speed);
+                } else if (callback) {
+                    callback();
+                }
+            }
+            
+            type();
         }
 
         // Show typing indicator
@@ -1965,6 +2087,13 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             document.body.classList.add(`font-${state.settings.fontSize}`);
             saveState();
             showToast('Font size updated', 'success');
+        }
+
+        // Update typing speed
+        function updateTypingSpeed() {
+            state.settings.typingSpeed = elements.typingSpeedSelect.value;
+            saveState();
+            showToast(`Typing speed set to ${state.settings.typingSpeed}`, 'success');
         }
 
         // Toggle auto execute
