@@ -1,17 +1,18 @@
 {
-  "name": "aj-personal-agent",
+  "name": "nexariq-ai",
   "version": "1.0.0",
-  "description": "AI-powered website creation studio",
-  "main": "api/index.js",
+  "description": "Enterprise Agentic Platform",
+  "main": "index.html",
   "scripts": {
-    "dev": "vercel dev",
-    "build": "vercel build",
-    "deploy": "vercel --prod"
+    "dev": "node dev-server.js",
+    "build": "echo 'No build step required'",
+    "start": "node dev-server.js"
   },
   "dependencies": {
-    "node-fetch": "^2.6.7"
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2"
   },
   "devDependencies": {
-    "vercel": "^32.3.0"
+    "vercel": "^latest"
   }
 }
