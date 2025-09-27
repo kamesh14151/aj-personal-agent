@@ -510,9 +510,11 @@
 
         /* Chat Input */
         .chat-input-container {
-            padding: 1.5rem;
+            padding: 1rem;
             background-color: var(--surface);
             border-top: 1px solid var(--border);
+            position: relative;
+            z-index: 5;
         }
 
         .chat-input-wrapper {
@@ -981,10 +983,18 @@
             /* Mobile-specific adjustments */
             .chat-messages {
                 padding: 1rem;
+                padding-bottom: 0.5rem; /* Reduced bottom padding */
             }
             
             .chat-input-container {
-                padding: 1rem;
+                padding: 0.75rem; /* Reduced padding */
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background-color: var(--surface);
+                border-top: 1px solid var(--border);
+                z-index: 10;
             }
             
             .header {
@@ -1008,6 +1018,15 @@
             .copy-btn {
                 padding: 0.2rem 0.4rem;
                 font-size: 0.7rem;
+            }
+            
+            /* Adjust chat container to account for fixed input */
+            .chat-container {
+                height: calc(100vh - 64px); /* Header height */
+            }
+            
+            .chat-messages {
+                height: calc(100% - 80px); /* Account for input height */
             }
         }
 
@@ -1391,6 +1410,46 @@
             setupEventListeners();
             initializeChat();
             applySettings();
+            
+            // Adjust mobile viewport height
+            adjustMobileViewportHeight();
+            window.addEventListener('resize', adjustMobileViewportHeight);
+        });
+
+        // Adjust mobile viewport height to account for keyboard
+        function adjustMobileViewportHeight() {
+            if (window.innerWidth <= 768) {
+                const isKeyboardOpen = window.visualViewport.height < window.innerHeight * 0.8;
+                
+                if (isKeyboardOpen) {
+                    // When keyboard is open, make input container stick to bottom
+                    document.querySelector('.chat-input-container').style.position = 'fixed';
+                    document.querySelector('.chat-messages').style.height = 'calc(100vh - 180px)';
+                } else {
+                    // When keyboard is closed, restore normal layout
+                    document.querySelector('.chat-input-container').style.position = 'fixed';
+                    document.querySelector('.chat-messages').style.height = 'calc(100vh - 160px)';
+                }
+            }
+        }
+
+        // Handle keyboard events for mobile
+        document.addEventListener('focusin', (e) => {
+            if (window.innerWidth <= 768 && e.target.classList.contains('chat-input')) {
+                // When input is focused, scroll to bottom
+                setTimeout(() => {
+                    elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                }, 300);
+            }
+        });
+
+        document.addEventListener('focusout', (e) => {
+            if (window.innerWidth <= 768 && e.target.classList.contains('chat-input')) {
+                // When input loses focus, adjust viewport
+                setTimeout(() => {
+                    adjustMobileViewportHeight();
+                }, 300);
+            }
         });
 
         // Load state from localStorage
@@ -2142,6 +2201,9 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 elements.sidebar.classList.remove('active');
                 elements.overlay.classList.remove('active');
             }
+            
+            // Adjust mobile viewport height on resize
+            adjustMobileViewportHeight();
         }
 
         // Show toast notification
