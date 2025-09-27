@@ -967,6 +967,38 @@
             .toast {
                 min-width: auto;
             }
+            
+            /* Mobile-specific adjustments */
+            .chat-messages {
+                padding: 1rem;
+            }
+            
+            .chat-input-container {
+                padding: 1rem;
+            }
+            
+            .header {
+                padding: 0 1rem;
+            }
+            
+            .header-title {
+                font-size: 1rem;
+            }
+            
+            .message-content {
+                padding: 0.75rem 1rem;
+                font-size: 0.95rem;
+            }
+            
+            .code-header {
+                padding: 0.4rem 0.8rem;
+                font-size: 0.8rem;
+            }
+            
+            .copy-btn {
+                padding: 0.2rem 0.4rem;
+                font-size: 0.7rem;
+            }
         }
 
         /* Loading Spinner */
@@ -1094,7 +1126,8 @@
                         <div class="message-avatar"></div>
                         <div class="message-content">
                             <div class="message-text">
-                                Hello! I'm <strong>Lynxa</strong>, an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks including:
+                                <h2>Hello! I'm <strong>Lynxa</strong></h2>
+                                <p>I'm an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks:</p>
                                 <ul>
                                     <li>Answering questions and providing information</li>
                                     <li>Generating and executing code in multiple languages</li>
@@ -1103,7 +1136,7 @@
                                     <li>Image generation and analysis</li>
                                     <li>Complex multi-step tasks and workflows</li>
                                 </ul>
-                                I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?
+                                <p>I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?</p>
                             </div>
                             <div class="message-actions">
                                 <button class="message-action-btn" title="Copy" onclick="copyMessage('welcome-message')">
@@ -1418,8 +1451,19 @@
                 // Add welcome message
                 state.messages.push({
                     id: 'welcome-message',
-                    role: 'assistant', // Changed from 'ai' to 'assistant'
-                    content: 'Hello! I\'m <strong>Lynxa</strong>, an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks including:\n\n* Answering questions and providing information\n* Generating and executing code in multiple languages\n* Creating and analyzing documents\n* Web scraping and data extraction\n* Image generation and analysis\n* Complex multi-step tasks and workflows\n\nI have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?',
+                    role: 'assistant',
+                    content: `## Hello! I'm **Lynxa**
+
+I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. I can help you with a wide range of tasks:
+
+* Answering questions and providing information
+* Generating and executing code in multiple languages
+* Creating and analyzing documents
+* Web scraping and data extraction
+* Image generation and analysis
+* Complex multi-step tasks and workflows
+
+I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?`,
                     timestamp: new Date().toISOString()
                 });
                 renderMessages();
@@ -1500,8 +1544,10 @@
             // Add welcome message
             state.messages.push({
                 id: generateId(),
-                role: 'assistant', // Changed from 'ai' to 'assistant'
-                content: 'Hello! I\'m <strong>Lynxa</strong>, an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. How can I assist you today?',
+                role: 'assistant',
+                content: `## Hello! I'm **Lynxa**
+
+I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I assist you today?`,
                 timestamp: new Date().toISOString()
             });
             
@@ -1597,7 +1643,7 @@
             
             state.messages.forEach(message => {
                 const messageEl = document.createElement('div');
-                messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`; // Keep the class as 'ai' for styling
+                messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`;
                 
                 const avatar = message.role === 'user' ? 'U' : '';
                 const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
@@ -1606,7 +1652,7 @@
                     <div class="message-avatar">${avatar}</div>
                     <div class="message-content">
                         <div class="message-text">${formatMessageContent(message.content)}</div>
-                        ${message.role === 'assistant' ? `  <!-- Changed from 'ai' to 'assistant' -->
+                        ${message.role === 'assistant' ? `
                             <div class="message-actions">
                                 <button class="message-action-btn" title="Copy" onclick="copyMessage('${message.id}')">
                                     <i class="fas fa-copy"></i>
@@ -1705,13 +1751,25 @@
             
             try {
                 // Prepare messages for API
-                const requestMessages = [
-                    { role: 'system', content: 'You are an advanced AI assistant that helps with coding, development, and a wide range of tasks. Provide clear, concise answers with code examples when appropriate.' },
-                    ...state.messages.map(msg => ({ 
-                        role: msg.role === 'assistant' ? 'assistant' : msg.role, 
-                        content: msg.content 
-                    }))
-                ];
+                const systemMessage = {
+                    role: 'system',
+                    content: 'You are Lynxa, an advanced AI assistant developed by Nexariq (AJ STUDIOZ). Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples.'
+                };
+                
+                // Convert messages to API format
+                const apiMessages = [systemMessage];
+                
+                // Add conversation history, skipping the first message if it's the welcome message
+                const messagesToInclude = state.messages.length > 1 && state.messages[0].role === 'assistant' 
+                    ? state.messages.slice(1) 
+                    : state.messages;
+                
+                messagesToInclude.forEach(msg => {
+                    apiMessages.push({
+                        role: msg.role === 'assistant' ? 'assistant' : 'user',
+                        content: msg.content
+                    });
+                });
                 
                 // Send request to our backend API
                 const response = await fetch('/api/chat', {
@@ -1720,7 +1778,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        messages: requestMessages,
+                        messages: apiMessages,
                         model: state.selectedModel || 'llama-3.3-70b-versatile'
                     })
                 });
@@ -1739,7 +1797,7 @@
                 // Add AI response
                 const aiMessage = {
                     id: generateId(),
-                    role: 'assistant', // Changed from 'ai' to 'assistant'
+                    role: 'assistant',
                     content: aiResponse,
                     timestamp: new Date().toISOString()
                 };
@@ -1755,7 +1813,7 @@
                 // Add error message
                 const errorMessage = {
                     id: generateId(),
-                    role: 'assistant', // Changed from 'ai' to 'assistant'
+                    role: 'assistant',
                     content: `I'm sorry, I encountered an error: ${error.message}`,
                     timestamp: new Date().toISOString()
                 };
