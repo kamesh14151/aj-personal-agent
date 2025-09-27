@@ -6,17 +6,10 @@
     <title>Nexariq AI - Enterprise Agentic Platform</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/theme/monokai.min.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/codemirror.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/javascript/javascript.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/python/python.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/xml/xml.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/css/css.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.2/mode/htmlmixed/htmlmixed.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/vs2015.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/4.3.0/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/2.4.7/purify.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
     <style>
         :root {
             --primary: #6366f1;
@@ -45,6 +38,8 @@
             --logo-size: 40px;
             --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
             --gradient-accent: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
+            --code-bg: #1e293b;
+            --code-border: #334155;
         }
 
         * {
@@ -344,6 +339,12 @@
             display: flex;
             gap: 1rem;
             max-width: 90%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         .message.user {
@@ -396,13 +397,14 @@
         }
 
         .message-text pre {
-            background-color: var(--background);
+            background-color: var(--code-bg);
             border-radius: var(--radius);
             padding: 1rem;
             overflow-x: auto;
             margin: 0.75rem 0;
             font-family: 'JetBrains Mono', monospace;
             font-size: 0.875rem;
+            border: 1px solid var(--code-border);
         }
 
         .message-text code {
@@ -464,6 +466,7 @@
         /* Typing Indicator */
         .typing-indicator {
             display: flex;
+            align-items: center;
             gap: 0.5rem;
             padding: 1rem;
             background-color: var(--surface-elevated);
@@ -588,8 +591,57 @@
             transform: none;
         }
 
-        /* Tools Panel */
-        .tools-panel {
+        /* Code Block Styles */
+        .code-block {
+            margin-top: 1rem;
+            border-radius: 8px;
+            overflow: hidden;
+            background-color: var(--code-bg);
+            border: 1px solid var(--code-border);
+        }
+
+        .code-header {
+            background-color: var(--surface-highlight);
+            padding: 0.5rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .code-language {
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        .copy-btn {
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background-color: var(--surface-elevated);
+            color: var(--text-primary);
+        }
+
+        .copy-btn.copied {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Settings Panel */
+        .settings-panel {
             position: fixed;
             right: -400px;
             top: 0;
@@ -604,11 +656,11 @@
             transition: right 0.3s ease;
         }
 
-        .tools-panel.active {
+        .settings-panel.active {
             right: 0;
         }
 
-        .tools-header {
+        .settings-header {
             padding: 1.5rem;
             border-bottom: 1px solid var(--border);
             display: flex;
@@ -616,7 +668,7 @@
             justify-content: space-between;
         }
 
-        .tools-title {
+        .settings-title {
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.125rem;
             font-weight: 600;
@@ -626,7 +678,7 @@
             -webkit-text-fill-color: transparent;
         }
 
-        .tools-close {
+        .settings-close {
             width: 36px;
             height: 36px;
             border-radius: var(--radius);
@@ -640,22 +692,22 @@
             transition: var(--transition);
         }
 
-        .tools-close:hover {
+        .settings-close:hover {
             background-color: var(--surface-highlight);
             color: var(--text-primary);
         }
 
-        .tools-content {
+        .settings-content {
             flex: 1;
             overflow-y: auto;
             padding: 1.5rem;
         }
 
-        .tool-section {
+        .settings-section {
             margin-bottom: 2rem;
         }
 
-        .tool-section-title {
+        .settings-section-title {
             font-size: 0.875rem;
             font-weight: 600;
             color: var(--text-secondary);
@@ -663,258 +715,138 @@
             text-transform: uppercase;
         }
 
-        .tool-item {
-            background-color: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1rem;
-            margin-bottom: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
+        .form-group {
+            margin-bottom: 1.5rem;
         }
 
-        .tool-item:hover {
-            border-color: var(--primary);
-            box-shadow: var(--shadow-sm);
-        }
-
-        .tool-header {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
+        .form-label {
+            display: block;
             margin-bottom: 0.5rem;
-        }
-
-        .tool-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius);
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-        }
-
-        .tool-name {
             font-weight: 500;
-        }
-
-        .tool-description {
-            font-size: 0.875rem;
-            color: var(--text-tertiary);
-        }
-
-        /* Code Editor */
-        .code-editor-container {
-            margin: 1rem 0;
-            border-radius: var(--radius);
-            overflow: hidden;
-            border: 1px solid var(--border);
-        }
-
-        .code-editor-header {
-            background-color: var(--surface-highlight);
-            padding: 0.75rem 1rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .code-editor-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
-        }
-
-        .code-editor-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .code-editor-action {
-            width: 28px;
-            height: 28px;
-            border-radius: var(--radius-sm);
-            background-color: transparent;
-            border: none;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .code-editor-action:hover {
-            background-color: var(--surface-elevated);
             color: var(--text-primary);
         }
 
-        .code-editor {
-            height: 300px;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-        }
-
-        /* File Upload */
-        .file-upload-container {
-            margin: 1rem 0;
-        }
-
-        .file-upload-area {
-            border: 2px dashed var(--border);
-            border-radius: var(--radius);
-            padding: 2rem;
-            text-align: center;
-            cursor: pointer;
-            transition: var(--transition);
+        .form-input {
+            width: 100%;
             background-color: var(--surface-elevated);
-        }
-
-        .file-upload-area:hover {
-            border-color: var(--primary);
-        }
-
-        .file-upload-area.dragover {
-            border-color: var(--primary);
-            background-color: rgba(99, 102, 241, 0.1);
-        }
-
-        .file-upload-icon {
-            font-size: 2rem;
-            color: var(--text-tertiary);
-            margin-bottom: 0.5rem;
-        }
-
-        .file-upload-text {
-            color: var(--text-secondary);
-            margin-bottom: 0.5rem;
-        }
-
-        .file-upload-button {
-            background: var(--gradient-primary);
-            color: white;
-            border: none;
-            border-radius: var(--radius);
-            padding: 0.5rem 1rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .file-upload-button:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .uploaded-files {
-            margin-top: 1rem;
-        }
-
-        .uploaded-file {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem;
-            background-color: var(--surface-elevated);
-            border-radius: var(--radius);
-            margin-bottom: 0.5rem;
-        }
-
-        .uploaded-file-info {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .uploaded-file-icon {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius);
-            background-color: var(--surface-highlight);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-        }
-
-        .uploaded-file-name {
-            font-weight: 500;
-        }
-
-        .uploaded-file-size {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-        }
-
-        .uploaded-file-remove {
-            width: 28px;
-            height: 28px;
-            border-radius: var(--radius-sm);
-            background-color: transparent;
-            border: none;
-            color: var(--text-tertiary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .uploaded-file-remove:hover {
-            background-color: var(--surface-highlight);
-            color: var(--error);
-        }
-
-        /* Execution Output */
-        .execution-output {
-            margin: 1rem 0;
-            border-radius: var(--radius);
-            overflow: hidden;
             border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
         }
 
-        .execution-output-header {
-            background-color: var(--surface-highlight);
-            padding: 0.75rem 1rem;
+        .form-input:focus {
+            border-color: var(--primary);
+        }
+
+        .form-text {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        .settings-item {
             display: flex;
             align-items: center;
             justify-content: space-between;
+            padding: 0.75rem 0;
             border-bottom: 1px solid var(--border);
         }
 
-        .execution-output-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            color: var(--text-secondary);
+        .settings-item:last-child {
+            border-bottom: none;
         }
 
-        .execution-output-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .settings-label {
+            font-weight: 500;
+        }
+
+        .settings-description {
             font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        .settings-toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            background-color: var(--surface-highlight);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .settings-toggle.active {
+            background-color: var(--primary);
+        }
+
+        .settings-toggle-slider {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            background-color: white;
+            border-radius: 50%;
+            transition: var(--transition);
+        }
+
+        .settings-toggle.active .settings-toggle-slider {
+            transform: translateX(24px);
+        }
+
+        .settings-select {
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            width: 120px;
+            cursor: pointer;
+        }
+
+        .settings-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
             font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
         }
 
-        .execution-output-status.success {
-            color: var(--success);
+        .btn-primary {
+            background-color: var(--primary);
+            color: white;
         }
 
-        .execution-output-status.error {
-            color: var(--error);
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
         }
 
-        .execution-output-content {
-            background-color: var(--background);
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-            white-space: pre-wrap;
-            max-height: 300px;
-            overflow-y: auto;
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--surface-highlight);
         }
 
         /* Toast Notifications */
@@ -1018,7 +950,7 @@
                 max-width: 95%;
             }
 
-            .tools-panel {
+            .settings-panel {
                 width: 100%;
                 right: -100%;
             }
@@ -1082,718 +1014,6 @@
 
         .overlay.active {
             display: block;
-        }
-
-        /* Agentic Task Card */
-        .agent-task-card {
-            background-color: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .agent-task-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .agent-task-title {
-            font-weight: 600;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .agent-task-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-
-        .agent-task-status.pending {
-            color: var(--warning);
-        }
-
-        .agent-task-status.running {
-            color: var(--primary);
-        }
-
-        .agent-task-status.completed {
-            color: var(--success);
-        }
-
-        .agent-task-status.error {
-            color: var(--error);
-        }
-
-        .agent-task-description {
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-        }
-
-        .agent-task-progress {
-            height: 4px;
-            background-color: var(--surface-highlight);
-            border-radius: 2px;
-            overflow: hidden;
-            margin-bottom: 1rem;
-        }
-
-        .agent-task-progress-bar {
-            height: 100%;
-            background: var(--gradient-primary);
-            border-radius: 2px;
-            transition: width 0.3s ease;
-        }
-
-        .agent-task-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .agent-task-action {
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            background-color: var(--surface-highlight);
-            border: none;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .agent-task-action:hover {
-            background-color: var(--border);
-        }
-
-        .agent-task-action.primary {
-            background: var(--gradient-primary);
-            color: white;
-        }
-
-        .agent-task-action.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Advanced Features */
-        .feature-showcase {
-            background-color: var(--surface-elevated);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border: 1px solid var(--border);
-        }
-
-        .feature-showcase-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .feature-showcase-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 600;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .feature-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-        }
-
-        .feature-card {
-            background-color: var(--surface);
-            border-radius: var(--radius);
-            padding: 1rem;
-            border: 1px solid var(--border);
-            transition: var(--transition);
-            cursor: pointer;
-        }
-
-        .feature-card:hover {
-            border-color: var(--primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        .feature-icon {
-            width: 48px;
-            height: 48px;
-            border-radius: var(--radius);
-            background: var(--gradient-primary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            margin-bottom: 0.75rem;
-            font-size: 1.25rem;
-        }
-
-        .feature-title {
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-        }
-
-        .feature-description {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Knowledge Base */
-        .knowledge-base {
-            background-color: var(--surface-elevated);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border: 1px solid var(--border);
-        }
-
-        .knowledge-base-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .knowledge-base-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 600;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .knowledge-search {
-            width: 100%;
-            padding: 0.75rem;
-            background-color: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            margin-bottom: 1rem;
-        }
-
-        .knowledge-search:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
-        }
-
-        .knowledge-items {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .knowledge-item {
-            background-color: var(--surface);
-            border-radius: var(--radius);
-            padding: 1rem;
-            border: 1px solid var(--border);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .knowledge-item:hover {
-            border-color: var(--primary);
-        }
-
-        .knowledge-item-title {
-            font-weight: 500;
-            margin-bottom: 0.25rem;
-        }
-
-        .knowledge-item-description {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-        }
-
-        /* Project Workspace */
-        .project-workspace {
-            background-color: var(--surface-elevated);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border: 1px solid var(--border);
-        }
-
-        .project-workspace-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .project-workspace-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 600;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .project-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .project-tab {
-            padding: 0.75rem 1rem;
-            background: none;
-            border: none;
-            border-bottom: 2px solid transparent;
-            color: var(--text-secondary);
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .project-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .project-tab:hover {
-            color: var(--text-primary);
-        }
-
-        .project-content {
-            min-height: 300px;
-        }
-
-        .file-explorer {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .file-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem;
-            border-radius: var(--radius-sm);
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .file-item:hover {
-            background-color: var(--surface-highlight);
-        }
-
-        .file-icon {
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-secondary);
-        }
-
-        .file-name {
-            font-size: 0.875rem;
-        }
-
-        /* Sandbox Environment */
-        .sandbox-container {
-            background-color: var(--surface-elevated);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border: 1px solid var(--border);
-        }
-
-        .sandbox-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .sandbox-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 600;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .sandbox-tabs {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .sandbox-tab {
-            padding: 0.75rem 1rem;
-            background: none;
-            border: none;
-            border-bottom: 2px solid transparent;
-            color: var(--text-secondary);
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .sandbox-tab.active {
-            color: var(--primary);
-            border-bottom-color: var(--primary);
-        }
-
-        .sandbox-tab:hover {
-            color: var(--text-primary);
-        }
-
-        .sandbox-content {
-            min-height: 300px;
-        }
-
-        .sandbox-preview {
-            background-color: var(--surface);
-            border-radius: var(--radius);
-            padding: 1rem;
-            border: 1px solid var(--border);
-            min-height: 300px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-tertiary);
-        }
-
-        .sandbox-terminal {
-            background-color: var(--background);
-            border-radius: var(--radius);
-            padding: 1rem;
-            font-family: 'JetBrains Mono', monospace;
-            font-size: 0.875rem;
-            min-height: 300px;
-            overflow-y: auto;
-            white-space: pre-wrap;
-        }
-
-        /* Settings Panel */
-        .settings-panel {
-            position: fixed;
-            right: -400px;
-            top: 0;
-            width: 400px;
-            height: 100vh;
-            background-color: var(--surface);
-            border-left: 1px solid var(--border);
-            box-shadow: var(--shadow-lg);
-            z-index: 100;
-            display: flex;
-            flex-direction: column;
-            transition: right 0.3s ease;
-        }
-
-        .settings-panel.active {
-            right: 0;
-        }
-
-        .settings-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .settings-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 600;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .settings-close {
-            width: 36px;
-            height: 36px;
-            border-radius: var(--radius);
-            background-color: transparent;
-            border: none;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .settings-close:hover {
-            background-color: var(--surface-highlight);
-            color: var(--text-primary);
-        }
-
-        .settings-content {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.5rem;
-        }
-
-        .settings-section {
-            margin-bottom: 2rem;
-        }
-
-        .settings-section-title {
-            font-size: 0.875rem;
-            font-weight: 600;
-            color: var(--text-secondary);
-            margin-bottom: 1rem;
-            text-transform: uppercase;
-        }
-
-        .settings-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .settings-item:last-child {
-            border-bottom: none;
-        }
-
-        .settings-label {
-            font-weight: 500;
-        }
-
-        .settings-description {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            margin-top: 0.25rem;
-        }
-
-        .settings-toggle {
-            position: relative;
-            width: 48px;
-            height: 24px;
-            background-color: var(--surface-highlight);
-            border-radius: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .settings-toggle.active {
-            background-color: var(--primary);
-        }
-
-        .settings-toggle-slider {
-            position: absolute;
-            top: 2px;
-            left: 2px;
-            width: 20px;
-            height: 20px;
-            background-color: white;
-            border-radius: 50%;
-            transition: var(--transition);
-        }
-
-        .settings-toggle.active .settings-toggle-slider {
-            transform: translateX(24px);
-        }
-
-        .settings-select {
-            background-color: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            width: 120px;
-            cursor: pointer;
-        }
-
-        .settings-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        /* Agentic Workflow */
-        .workflow-container {
-            background-color: var(--surface-elevated);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            margin: 1rem 0;
-            border: 1px solid var(--border);
-        }
-
-        .workflow-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1rem;
-        }
-
-        .workflow-title {
-            font-family: 'Space Grotesk', sans-serif;
-            font-size: 1.125rem;
-            font-weight: 600;
-            background: var(--gradient-primary);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .workflow-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .workflow-step {
-            display: flex;
-            align-items: flex-start;
-            gap: 1rem;
-            padding: 1rem;
-            background-color: var(--surface);
-            border-radius: var(--radius);
-            border: 1px solid var(--border);
-            position: relative;
-        }
-
-        .workflow-step::before {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 24px;
-            width: 2px;
-            height: 1rem;
-            background-color: var(--border);
-        }
-
-        .workflow-step:last-child::before {
-            display: none;
-        }
-
-        .workflow-step-number {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--gradient-primary);
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .workflow-step-content {
-            flex: 1;
-        }
-
-        .workflow-step-title {
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-        }
-
-        .workflow-step-description {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            margin-bottom: 0.75rem;
-        }
-
-        .workflow-step-status {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-        }
-
-        .workflow-step-status.pending {
-            color: var(--warning);
-        }
-
-        .workflow-step-status.running {
-            color: var(--primary);
-        }
-
-        .workflow-step-status.completed {
-            color: var(--success);
-        }
-
-        .workflow-step-status.error {
-            color: var(--error);
-        }
-
-        .workflow-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .workflow-action {
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius-sm);
-            background-color: var(--surface-highlight);
-            border: none;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .workflow-action:hover {
-            background-color: var(--border);
-        }
-
-        .workflow-action.primary {
-            background: var(--gradient-primary);
-            color: white;
-        }
-
-        .workflow-action.primary:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
-        }
-
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .tools-panel, .settings-panel {
-                width: 100%;
-                right: -100%;
-            }
-            
-            .workflow-step {
-                flex-direction: column;
-                gap: 0.75rem;
-            }
-            
-            .workflow-step::before {
-                display: none;
-            }
-            
-            .feature-grid {
-                grid-template-columns: 1fr;
-            }
         }
     </style>
 </head>
@@ -1882,7 +1102,7 @@
                                 I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?
                             </div>
                             <div class="message-actions">
-                                <button class="message-action-btn" title="Copy">
+                                <button class="message-action-btn" title="Copy" onclick="copyMessage('welcome-message')">
                                     <i class="fas fa-copy"></i>
                                 </button>
                                 <button class="message-action-btn" title="Good response">
@@ -1914,212 +1134,6 @@
         </div>
     </div>
 
-    <!-- Tools Panel -->
-    <div class="tools-panel" id="toolsPanel">
-        <div class="tools-header">
-            <div class="tools-title">AI Tools</div>
-            <button class="tools-close" id="toolsClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="tools-content">
-            <div class="tool-section">
-                <div class="tool-section-title">Code Execution</div>
-                <div class="tool-item" id="pythonTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fab fa-python"></i>
-                        </div>
-                        <div class="tool-name">Python</div>
-                    </div>
-                    <div class="tool-description">Execute Python code in a secure sandbox environment</div>
-                </div>
-                <div class="tool-item" id="javascriptTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fab fa-js-square"></i>
-                        </div>
-                        <div class="tool-name">JavaScript</div>
-                    </div>
-                    <div class="tool-description">Run JavaScript code with Node.js runtime</div>
-                </div>
-                <div class="tool-item" id="webScrapingTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-spider"></i>
-                        </div>
-                        <div class="tool-name">Web Scraping</div>
-                    </div>
-                    <div class="tool-description">Extract data from websites with AI-powered scraping</div>
-                </div>
-            </div>
-            
-            <div class="tool-section">
-                <div class="tool-section-title">Document Generation</div>
-                <div class="tool-item" id="documentTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-file-alt"></i>
-                        </div>
-                        <div class="tool-name">Document Creator</div>
-                    </div>
-                    <div class="tool-description">Generate professional documents, reports, and presentations</div>
-                </div>
-                <div class="tool-item" id="dataAnalysisTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="tool-name">Data Analysis</div>
-                    </div>
-                    <div class="tool-description">Analyze data and create visualizations</div>
-                </div>
-            </div>
-            
-            <div class="tool-section">
-                <div class="tool-section-title">Creative Tools</div>
-                <div class="tool-item" id="imageGenTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <div class="tool-name">Image Generation</div>
-                    </div>
-                    <div class="tool-description">Generate images from text descriptions</div>
-                </div>
-                <div class="tool-item" id="audioTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-music"></i>
-                        </div>
-                        <div class="tool-name">Audio Generation</div>
-                    </div>
-                    <div class="tool-description">Create audio and music from text</div>
-                </div>
-            </div>
-            
-            <div class="tool-section">
-                <div class="tool-section-title">Advanced Agents</div>
-                <div class="tool-item" id="researchAgentTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="tool-name">Research Agent</div>
-                    </div>
-                    <div class="tool-description">Conduct deep research on any topic with web access</div>
-                </div>
-                <div class="tool-item" id="workflowTool">
-                    <div class="tool-header">
-                        <div class="tool-icon">
-                            <i class="fas fa-project-diagram"></i>
-                        </div>
-                        <div class="tool-name">Workflow Automation</div>
-                    </div>
-                    <div class="tool-description">Create and automate complex multi-step workflows</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Knowledge Base Panel -->
-    <div class="tools-panel" id="knowledgePanel">
-        <div class="tools-header">
-            <div class="tools-title">Knowledge Base</div>
-            <button class="tools-close" id="knowledgeClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="tools-content">
-            <input type="text" class="knowledge-search" placeholder="Search knowledge base...">
-            <div class="knowledge-items">
-                <div class="knowledge-item">
-                    <div class="knowledge-item-title">Getting Started with Lynxa AI</div>
-                    <div class="knowledge-item-description">Learn the basics of using Lynxa AI and its features</div>
-                </div>
-                <div class="knowledge-item">
-                    <div class="knowledge-item-title">Code Execution Guide</div>
-                    <div class="knowledge-item-description">How to execute code in the sandbox environment</div>
-                </div>
-                <div class="knowledge-item">
-                    <div class="knowledge-item-title">Document Templates</div>
-                    <div class="knowledge-item-description">Pre-built templates for common document types</div>
-                </div>
-                <div class="knowledge-item">
-                    <div class="knowledge-item-title">API Integration</div>
-                    <div class="knowledge-item-description">How to integrate Lynxa AI with your applications</div>
-                </div>
-                <div class="knowledge-item">
-                    <div class="knowledge-item-title">Best Practices</div>
-                    <div class="knowledge-item-description">Tips and tricks for getting the most out of Lynxa AI</div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Projects Panel -->
-    <div class="tools-panel" id="projectsPanel">
-        <div class="tools-header">
-            <div class="tools-title">Projects</div>
-            <button class="tools-close" id="projectsClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="tools-content">
-            <div class="project-workspace">
-                <div class="project-workspace-header">
-                    <div class="project-workspace-title">My Projects</div>
-                    <button class="btn btn-primary" id="newProjectBtn">New Project</button>
-                </div>
-                <div class="project-tabs">
-                    <button class="project-tab active">All Projects</button>
-                    <button class="project-tab">Recent</button>
-                    <button class="project-tab">Archived</button>
-                </div>
-                <div class="project-content">
-                    <div class="file-explorer">
-                        <div class="file-item">
-                            <div class="file-icon">
-                                <i class="fas fa-folder"></i>
-                            </div>
-                            <div class="file-name">Website Redesign</div>
-                        </div>
-                        <div class="file-item">
-                            <div class="file-icon">
-                                <i class="fas fa-folder"></i>
-                            </div>
-                            <div class="file-name">Mobile App</div>
-                        </div>
-                        <div class="file-item">
-                            <div class="file-icon">
-                                <i class="fas fa-folder"></i>
-                            </div>
-                            <div class="file-name">Data Analysis</div>
-                        </div>
-                        <div class="file-item">
-                            <div class="file-icon">
-                                <i class="fas fa-file-code"></i>
-                            </div>
-                            <div class="file-name">index.html</div>
-                        </div>
-                        <div class="file-item">
-                            <div class="file-icon">
-                                <i class="fas fa-file-code"></i>
-                            </div>
-                            <div class="file-name">app.js</div>
-                        </div>
-                        <div class="file-item">
-                            <div class="file-icon">
-                                <i class="fas fa-file-code"></i>
-                            </div>
-                            <div class="file-name">styles.css</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
     <!-- Settings Panel -->
     <div class="settings-panel" id="settingsPanel">
         <div class="settings-header">
@@ -2129,6 +1143,17 @@
             </button>
         </div>
         <div class="settings-content">
+            <div class="settings-section">
+                <div class="settings-section-title">Model Configuration</div>
+                <div class="form-group">
+                    <label for="model" class="form-label">AI Model</label>
+                    <select id="model" class="form-input">
+                        <option value="llama-3.3-70b-versatile" selected>Llama 3.3 70B Versatile</option>
+                    </select>
+                    <p class="form-text">The Llama 3.3 70B model is used for all conversations</p>
+                </div>
+            </div>
+            
             <div class="settings-section">
                 <div class="settings-section-title">Appearance</div>
                 <div class="settings-item">
@@ -2208,76 +1233,9 @@
                 </div>
             </div>
             
-            <div class="settings-section">
-                <div class="settings-section-title">Account</div>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-label">Email</div>
-                        <div class="settings-description">user@example.com</div>
-                    </div>
-                </div>
-                <div class="settings-item">
-                    <div>
-                        <div class="settings-label">Subscription</div>
-                        <div class="settings-description">Premium Plan</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Sandbox Panel -->
-    <div class="tools-panel" id="sandboxPanel">
-        <div class="tools-header">
-            <div class="tools-title">Sandbox Environment</div>
-            <button class="tools-close" id="sandboxClose">
-                <i class="fas fa-times"></i>
-            </button>
-        </div>
-        <div class="tools-content">
-            <div class="sandbox-container">
-                <div class="sandbox-header">
-                    <div class="sandbox-title">Code Execution</div>
-                    <div class="sandbox-actions">
-                        <button class="btn btn-primary" id="runCodeBtn">Run Code</button>
-                        <button class="btn btn-secondary" id="clearCodeBtn">Clear</button>
-                    </div>
-                </div>
-                <div class="sandbox-tabs">
-                    <button class="sandbox-tab active" data-tab="python">Python</button>
-                    <button class="sandbox-tab" data-tab="javascript">JavaScript</button>
-                    <button class="sandbox-tab" data-tab="html">HTML</button>
-                    <button class="sandbox-tab" data-tab="css">CSS</button>
-                </div>
-                <div class="sandbox-content">
-                    <div class="code-editor-container">
-                        <div class="code-editor-header">
-                            <div class="code-editor-title">Code Editor</div>
-                            <div class="code-editor-actions">
-                                <button class="code-editor-action" title="Run code">
-                                    <i class="fas fa-play"></i>
-                                </button>
-                                <button class="code-editor-action" title="Clear">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <textarea id="sandboxCodeEditor" class="code-editor"></textarea>
-                    </div>
-                    <div class="execution-output" id="sandboxOutput" style="display: none;">
-                        <div class="execution-output-header">
-                            <div class="execution-output-title">Output</div>
-                            <div class="execution-output-status success">
-                                <i class="fas fa-check-circle"></i>
-                                <span>Success</span>
-                            </div>
-                        </div>
-                        <div class="execution-output-content" id="sandboxOutputContent"></div>
-                    </div>
-                    <div class="sandbox-preview" id="sandboxPreview" style="display: none;">
-                        <div id="sandboxPreviewContent">Preview will appear here</div>
-                    </div>
-                </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelSettingsBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveSettingsBtn">Save</button>
             </div>
         </div>
     </div>
@@ -2323,7 +1281,8 @@
                 code: '',
                 output: '',
                 preview: ''
-            }
+            },
+            selectedModel: 'llama-3.3-70b-versatile'
         };
 
         // DOM Elements
@@ -2337,19 +1296,14 @@
             sendBtn: document.getElementById('sendBtn'),
             attachBtn: document.getElementById('attachBtn'),
             toolsBtn: document.getElementById('toolsBtn'),
-            toolsPanel: document.getElementById('toolsPanel'),
-            toolsClose: document.getElementById('toolsClose'),
             knowledgeBtn: document.getElementById('knowledgeBtn'),
-            knowledgePanel: document.getElementById('knowledgePanel'),
-            knowledgeClose: document.getElementById('knowledgeClose'),
             projectsBtn: document.getElementById('projectsBtn'),
-            projectsPanel: document.getElementById('projectsPanel'),
-            projectsClose: document.getElementById('projectsClose'),
             settingsBtn: document.getElementById('settingsBtn'),
             settingsPanel: document.getElementById('settingsPanel'),
             settingsClose: document.getElementById('settingsClose'),
-            sandboxPanel: document.getElementById('sandboxPanel'),
-            sandboxClose: document.getElementById('sandboxClose'),
+            modelSelect: document.getElementById('model'),
+            saveSettingsBtn: document.getElementById('saveSettingsBtn'),
+            cancelSettingsBtn: document.getElementById('cancelSettingsBtn'),
             overlay: document.getElementById('overlay'),
             toastContainer: document.getElementById('toastContainer'),
             userMenu: document.getElementById('userMenu'),
@@ -2359,14 +1313,7 @@
             sandboxPreviewToggle: document.getElementById('sandboxPreviewToggle'),
             agenticToggle: document.getElementById('agenticToggle'),
             taskNotificationToggle: document.getElementById('taskNotificationToggle'),
-            errorNotificationToggle: document.getElementById('errorNotificationToggle'),
-            sandboxCodeEditor: document.getElementById('sandboxCodeEditor'),
-            sandboxOutput: document.getElementById('sandboxOutput'),
-            sandboxOutputContent: document.getElementById('sandboxOutputContent'),
-            sandboxPreview: document.getElementById('sandboxPreview'),
-            sandboxPreviewContent: document.getElementById('sandboxPreviewContent'),
-            runCodeBtn: document.getElementById('runCodeBtn'),
-            clearCodeBtn: document.getElementById('clearCodeBtn')
+            errorNotificationToggle: document.getElementById('errorNotificationToggle')
         };
 
         // Initialize app
@@ -2374,7 +1321,6 @@
             loadState();
             setupEventListeners();
             initializeChat();
-            initializeSandbox();
             applySettings();
         });
 
@@ -2389,6 +1335,12 @@
                     state.settings = { ...state.settings, ...parsedState.settings };
                     state.currentChatId = parsedState.currentChatId;
                     state.workflows = parsedState.workflows || [];
+                    state.selectedModel = parsedState.selectedModel || 'llama-3.3-70b-versatile';
+                    
+                    // Update model select
+                    if (elements.modelSelect) {
+                        elements.modelSelect.value = state.selectedModel;
+                    }
                     
                     renderChatHistory();
                     if (state.currentChatId) {
@@ -2408,7 +1360,8 @@
                     chatHistory: state.chatHistory,
                     settings: state.settings,
                     currentChatId: state.currentChatId,
-                    workflows: state.workflows
+                    workflows: state.workflows,
+                    selectedModel: state.selectedModel
                 };
                 localStorage.setItem('nexariqState', JSON.stringify(stateToSave));
             } catch (error) {
@@ -2433,35 +1386,11 @@
             // Attach file
             elements.attachBtn.addEventListener('click', attachFile);
             
-            // Tools panel
-            elements.toolsBtn.addEventListener('click', toggleToolsPanel);
-            elements.toolsClose.addEventListener('click', closeToolsPanel);
-            
-            // Knowledge panel
-            elements.knowledgeBtn.addEventListener('click', toggleKnowledgePanel);
-            elements.knowledgeClose.addEventListener('click', closeKnowledgePanel);
-            
-            // Projects panel
-            elements.projectsBtn.addEventListener('click', toggleProjectsPanel);
-            elements.projectsClose.addEventListener('click', closeProjectsPanel);
-            
             // Settings panel
             elements.settingsBtn.addEventListener('click', toggleSettingsPanel);
             elements.settingsClose.addEventListener('click', closeSettingsPanel);
-            
-            // Sandbox panel
-            elements.sandboxClose.addEventListener('click', closeSandboxPanel);
-            
-            // Tool items
-            document.getElementById('pythonTool').addEventListener('click', () => openSandbox('python'));
-            document.getElementById('javascriptTool').addEventListener('click', () => openSandbox('javascript'));
-            document.getElementById('webScrapingTool').addEventListener('click', () => openWebScrapingTool());
-            document.getElementById('documentTool').addEventListener('click', () => openDocumentTool());
-            document.getElementById('dataAnalysisTool').addEventListener('click', () => openDataAnalysisTool());
-            document.getElementById('imageGenTool').addEventListener('click', () => openImageGenTool());
-            document.getElementById('audioTool').addEventListener('click', () => openAudioTool());
-            document.getElementById('researchAgentTool').addEventListener('click', () => openResearchAgentTool());
-            document.getElementById('workflowTool').addEventListener('click', () => openWorkflowTool());
+            elements.saveSettingsBtn.addEventListener('click', saveSettings);
+            elements.cancelSettingsBtn.addEventListener('click', closeSettingsPanel);
             
             // User menu
             elements.userMenu.addEventListener('click', toggleUserMenu);
@@ -2475,15 +1404,6 @@
             elements.taskNotificationToggle.addEventListener('click', toggleTaskNotifications);
             elements.errorNotificationToggle.addEventListener('click', toggleErrorNotifications);
             
-            // Sandbox
-            elements.runCodeBtn.addEventListener('click', runSandboxCode);
-            elements.clearCodeBtn.addEventListener('click', clearSandboxCode);
-            
-            // Sandbox tabs
-            document.querySelectorAll('.sandbox-tab').forEach(tab => {
-                tab.addEventListener('click', () => switchSandboxTab(tab.dataset.tab));
-            });
-            
             // Window resize
             window.addEventListener('resize', handleWindowResize);
         }
@@ -2493,7 +1413,7 @@
             if (state.messages.length === 0) {
                 // Add welcome message
                 state.messages.push({
-                    id: generateId(),
+                    id: 'welcome-message',
                     role: 'ai',
                     content: 'Hello! I\'m <strong>Lynxa</strong>, an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks including:\n\n* Answering questions and providing information\n* Generating and executing code in multiple languages\n* Creating and analyzing documents\n* Web scraping and data extraction\n* Image generation and analysis\n* Complex multi-step tasks and workflows\n\nI have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?',
                     timestamp: new Date().toISOString()
@@ -2501,31 +1421,6 @@
                 renderMessages();
             } else {
                 renderMessages();
-            }
-        }
-
-        // Initialize sandbox
-        function initializeSandbox() {
-            // Initialize CodeMirror
-            if (elements.sandboxCodeEditor) {
-                state.sandbox.editor = CodeMirror.fromTextArea(elements.sandboxCodeEditor, {
-                    mode: 'python',
-                    theme: 'monokai',
-                    lineNumbers: true,
-                    autoCloseBrackets: true,
-                    matchBrackets: true,
-                    indentUnit: 4,
-                    tabSize: 4,
-                    lineWrapping: true
-                });
-                
-                state.sandbox.editor.setValue('# Welcome to the Python sandbox\nprint("Hello, World!")');
-                
-                // Set up run button
-                elements.runCodeBtn.addEventListener('click', runSandboxCode);
-                
-                // Set up clear button
-                elements.clearCodeBtn.addEventListener('click', clearSandboxCode);
             }
         }
 
@@ -2709,7 +1604,7 @@
                         <div class="message-text">${formatMessageContent(message.content)}</div>
                         ${message.role === 'ai' ? `
                             <div class="message-actions">
-                                <button class="message-action-btn" title="Copy">
+                                <button class="message-action-btn" title="Copy" onclick="copyMessage('${message.id}')">
                                     <i class="fas fa-copy"></i>
                                 </button>
                                 <button class="message-action-btn" title="Good response">
@@ -2725,45 +1620,45 @@
                 `;
                 
                 elements.chatMessages.appendChild(messageEl);
-                
-                // Add workflow if present
-                if (message.workflow) {
-                    const workflowEl = document.createElement('div');
-                    workflowEl.className = 'workflow-container';
-                    workflowEl.innerHTML = renderWorkflow(message.workflow);
-                    elements.chatMessages.appendChild(workflowEl);
-                }
-                
-                // Add sandbox if present
-                if (message.sandbox) {
-                    const sandboxEl = document.createElement('div');
-                    sandboxEl.className = 'sandbox-container';
-                    sandboxEl.innerHTML = renderSandbox(message.sandbox);
-                    elements.chatMessages.appendChild(sandboxEl);
-                }
             });
             
             // Scroll to bottom
             elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            
+            // Highlight code blocks
+            setTimeout(() => {
+                elements.chatMessages.querySelectorAll('pre code').forEach(block => {
+                    hljs.highlightElement(block);
+                });
+            }, 0);
         }
 
         // Format message content (markdown to HTML)
         function formatMessageContent(content) {
-            // Simple markdown to HTML conversion
-            let formattedContent = content
-                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                .replace(/\*(.*?)\*/g, '<em>$1</em>')
-                .replace(/`(.*?)`/g, '<code>$1</code>')
-                .replace(/\n\n/g, '</p><p>')
-                .replace(/\n/g, '<br>');
+            // Use marked to parse markdown
+            const html = marked.parse(content);
             
-            // Wrap in paragraphs if not already
-            if (!formattedContent.startsWith('<p>')) {
-                formattedContent = `<p>${formattedContent}</p>`;
-            }
+            // Process code blocks
+            const processedHtml = html.replace(/<pre><code class="language-([^"]+)">([\s\S]*?)<\/code><\/pre>/g, (match, language, code) => {
+                const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
+                const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
+                
+                return `
+                    <div class="code-block">
+                        <div class="code-header">
+                            <div class="code-language">${language}</div>
+                            <button class="copy-btn" onclick="copyCode('${codeId}')">
+                                <i class="fas fa-copy"></i>
+                                <span>Copy</span>
+                            </button>
+                        </div>
+                        <pre><code id="${codeId}" class="language-${language}">${escapedCode}</code></pre>
+                    </div>
+                `;
+            });
             
-            // Sanitize HTML to prevent XSS
-            return DOMPurify.sanitize(formattedContent);
+            // Sanitize HTML
+            return DOMPurify.sanitize(processedHtml);
         }
 
         // Handle chat input keydown
@@ -2805,45 +1700,56 @@
             showTypingIndicator();
             
             try {
-                // Process message with AI
-                const response = await processMessageWithAI(message);
+                // Prepare messages for API
+                const requestMessages = [
+                    { role: 'system', content: 'You are an advanced AI assistant that helps with coding, development, and a wide range of tasks. Provide clear, concise answers with code examples when appropriate.' },
+                    ...state.messages.map(msg => ({ role: msg.role, content: msg.content }))
+                ];
+                
+                // Send request to our backend API
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        messages: requestMessages,
+                        model: state.selectedModel || 'llama-3.3-70b-versatile'
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error || 'API request failed');
+                }
+                
+                const data = await response.json();
+                const aiResponse = data.choices[0].message.content;
+                
+                // Remove typing indicator
+                hideTypingIndicator();
                 
                 // Add AI response
                 const aiMessage = {
                     id: generateId(),
                     role: 'ai',
-                    content: response.content,
+                    content: aiResponse,
                     timestamp: new Date().toISOString()
                 };
-                
-                // Add workflow if present
-                if (response.workflow) {
-                    aiMessage.workflow = response.workflow;
-                }
-                
-                // Add sandbox if present
-                if (response.sandbox) {
-                    aiMessage.sandbox = response.sandbox;
-                }
                 
                 state.messages.push(aiMessage);
                 renderMessages();
                 saveState();
                 
-                // Handle any tasks
-                if (response.tasks && response.tasks.length > 0) {
-                    response.tasks.forEach(task => {
-                        executeTask(task);
-                    });
-                }
             } catch (error) {
-                console.error('Error processing message:', error);
+                console.error('Error:', error);
+                hideTypingIndicator();
                 
                 // Add error message
                 const errorMessage = {
                     id: generateId(),
                     role: 'ai',
-                    content: 'I apologize, but I encountered an error processing your request. Please try again later.',
+                    content: `I'm sorry, I encountered an error: ${error.message}`,
                     timestamp: new Date().toISOString()
                 };
                 
@@ -2855,223 +1761,17 @@
                     showToast('Error processing your request', 'error');
                 }
             } finally {
-                hideTypingIndicator();
+                // Re-enable send button
+                state.isTyping = false;
+                elements.sendBtn.disabled = false;
+                elements.chatInput.focus();
             }
-        }
-
-        // Process message with AI (simulated)
-        async function processMessageWithAI(message) {
-            // Simulate AI processing delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            
-            // Check for complex tasks (e.g., building a portfolio website)
-            if (state.settings.agentic && (
-                message.toLowerCase().includes('build') && 
-                (message.toLowerCase().includes('website') || message.toLowerCase().includes('portfolio')) ||
-                message.toLowerCase().includes('create') && message.toLowerCase().includes('app')
-            )) {
-                return await handleComplexTask(message);
-            }
-            
-            // Check for tool usage
-            const toolMatch = message.match(/use the (\w+) tool/i);
-            if (toolMatch) {
-                const toolName = toolMatch[1].toLowerCase();
-                
-                switch (toolName) {
-                    case 'python':
-                    case 'javascript':
-                        return {
-                            content: `I'll help you with ${toolName} code execution. Here's a simple example:\n\n\`\`\`${toolName}\n// Your ${toolName} code here\nconsole.log("Hello from ${toolName}!");\n\`\`\`\n\nYou can execute this code in the sandbox environment.`,
-                            sandbox: {
-                                language: toolName,
-                                code: `console.log("Hello from ${toolName}!");`
-                            }
-                        };
-                    case 'web scraping':
-                        return {
-                            content: 'I can help you with web scraping. Please provide the URL of the website you want to scrape and what information you want to extract.',
-                            tasks: [{
-                                type: 'webScraping',
-                                status: 'pending'
-                            }]
-                        };
-                    case 'document':
-                        return {
-                            content: 'I can help you create a document. What type of document would you like to create? (e.g., report, presentation, memo)',
-                            tasks: [{
-                                type: 'document',
-                                status: 'pending'
-                            }]
-                        };
-                    case 'image':
-                        return {
-                            content: 'I can generate images based on your description. Please describe the image you want to create.',
-                            tasks: [{
-                                type: 'imageGen',
-                                status: 'pending'
-                            }]
-                        };
-                    case 'research':
-                        return {
-                            content: 'I can conduct research on any topic. What would you like me to research?',
-                            tasks: [{
-                                type: 'research',
-                                status: 'pending'
-                            }]
-                        };
-                    default:
-                        return {
-                            content: `I'm not sure what you mean by "${toolName} tool". I can help you with Python, JavaScript, web scraping, document creation, image generation, and research.`
-                        };
-                }
-            }
-            
-            // Check for code execution
-            const codeMatch = message.match(/execute this (python|javascript) code/i);
-            if (codeMatch) {
-                const language = codeMatch[1];
-                const codeBlockMatch = message.match(/```(?:python|javascript)\n([\s\S]*?)```/);
-                
-                if (codeBlockMatch) {
-                    const code = codeBlockMatch[1];
-                    return {
-                        content: `I'll execute this ${language} code for you:\n\n\`\`\`${language}\n${code}\n\`\`\`\n\nExecuting in sandbox environment...`,
-                        sandbox: {
-                            language,
-                            code,
-                            output: 'Code executed successfully.'
-                        }
-                    };
-                }
-            }
-            
-            // Default response
-            const responses = [
-                "I understand your request. Let me help you with that.",
-                "That's an interesting question. Here's what I think...",
-                "I can definitely assist you with that. Here's my analysis:",
-                "Based on my knowledge, here's what I can tell you:",
-                "I'd be happy to help you with that. Let me break it down for you:"
-            ];
-            
-            const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-            
-            return {
-                content: `${randomResponse}\n\n${generateDetailedResponse(message)}`
-            };
-        }
-
-        // Handle complex tasks (e.g., building a portfolio website)
-        async function handleComplexTask(message) {
-            // Create a workflow for the complex task
-            const workflowId = generateId();
-            const workflow = {
-                id: workflowId,
-                title: 'Portfolio Website Development',
-                description: 'Building a portfolio website from scratch',
-                steps: [
-                    {
-                        id: generateId(),
-                        title: 'Planning and Design',
-                        description: 'Create a plan and design for the portfolio website',
-                        status: 'pending',
-                        tasks: [
-                            'Define website structure and sections',
-                            'Choose color scheme and typography',
-                            'Create wireframes and mockups'
-                        ]
-                    },
-                    {
-                        id: generateId(),
-                        title: 'HTML Structure',
-                        description: 'Create the HTML structure for the website',
-                        status: 'pending',
-                        tasks: [
-                            'Create index.html with proper structure',
-                            'Add navigation menu',
-                            'Create sections for home, about, projects, and contact'
-                        ]
-                    },
-                    {
-                        id: generateId(),
-                        title: 'CSS Styling',
-                        description: 'Style the website with CSS',
-                        status: 'pending',
-                        tasks: [
-                            'Create styles.css with responsive design',
-                            'Style navigation and header',
-                            'Style project cards and footer'
-                        ]
-                    },
-                    {
-                        id: generateId(),
-                        title: 'JavaScript Functionality',
-                        description: 'Add interactive features with JavaScript',
-                        status: 'pending',
-                        tasks: [
-                            'Create app.js for interactivity',
-                            'Add smooth scrolling',
-                            'Implement contact form validation'
-                        ]
-                    },
-                    {
-                        id: generateId(),
-                        title: 'Testing and Deployment',
-                        description: 'Test the website and prepare for deployment',
-                        status: 'pending',
-                        tasks: [
-                            'Test on different devices and browsers',
-                            'Optimize for performance',
-                            'Prepare for deployment'
-                        ]
-                    }
-                ],
-                status: 'pending'
-            };
-            
-            // Save workflow
-            state.workflows.push(workflow);
-            saveState();
-            
-            return {
-                content: `I'll help you build a portfolio website! I've created a workflow with all the necessary steps. Let's start with the planning phase.`,
-                workflow: workflow
-            };
-        }
-
-        // Generate detailed response (simulated)
-        function generateDetailedResponse(message) {
-            // This is a simplified response generator
-            // In a real app, this would be replaced with actual AI API calls
-            
-            if (message.toLowerCase().includes('hello') || message.toLowerCase().includes('hi')) {
-                return "Hello! I'm Lynxa, your advanced AI assistant. How can I help you today?";
-            }
-            
-            if (message.toLowerCase().includes('help')) {
-                return "I can help you with a variety of tasks including:\n\n* Answering questions and providing information\n* Generating and executing code\n* Creating and analyzing documents\n* Web scraping and data extraction\n* Image generation and analysis\n* Complex multi-step tasks and workflows\n\nJust let me know what you need assistance with!";
-            }
-            
-            if (message.toLowerCase().includes('weather')) {
-                return "I can help you get weather information. Please let me know your location, and I'll fetch the current weather conditions for you.";
-            }
-            
-            if (message.toLowerCase().includes('time')) {
-                return `The current time is ${new Date().toLocaleTimeString()}.`;
-            }
-            
-            if (message.toLowerCase().includes('date')) {
-                return `Today's date is ${new Date().toLocaleDateString()}.`;
-            }
-            
-            // Default response
-            return "I'm processing your request. This is a simulated response since we're not connected to a real AI API in this demo. In a production environment, this would be replaced with actual AI-generated content.";
         }
 
         // Show typing indicator
         function showTypingIndicator() {
             state.isTyping = true;
+            elements.sendBtn.disabled = true;
             
             const typingIndicator = document.createElement('div');
             typingIndicator.className = 'message ai';
@@ -3095,272 +1795,12 @@
         // Hide typing indicator
         function hideTypingIndicator() {
             state.isTyping = false;
+            elements.sendBtn.disabled = false;
             
             const typingIndicator = document.getElementById('typingIndicator');
             if (typingIndicator) {
                 typingIndicator.remove();
             }
-        }
-
-        // Execute task
-        function executeTask(task) {
-            const taskId = generateId();
-            
-            const taskObj = {
-                id: taskId,
-                ...task,
-                status: 'pending',
-                progress: 0,
-                timestamp: new Date().toISOString()
-            };
-            
-            state.activeTasks.push(taskObj);
-            
-            // Handle different task types
-            switch (task.type) {
-                case 'webScraping':
-                case 'document':
-                case 'dataAnalysis':
-                case 'imageGen':
-                case 'audio':
-                case 'research':
-                    // Add task card to chat
-                    addTaskCard(taskObj);
-                    // Simulate task execution
-                    simulateTaskExecution(taskId);
-                    break;
-                default:
-                    // Add task card to chat
-                    addTaskCard(taskObj);
-                    // Simulate task execution
-                    simulateTaskExecution(taskId);
-                    break;
-            }
-        }
-
-        // Add task card to chat
-        function addTaskCard(task) {
-            const taskCard = document.createElement('div');
-            taskCard.className = 'agent-task-card';
-            taskCard.id = `task-${task.id}`;
-            
-            const statusClass = task.status;
-            const statusText = task.status.charAt(0).toUpperCase() + task.status.slice(1);
-            
-            taskCard.innerHTML = `
-                <div class="agent-task-header">
-                    <div class="agent-task-title">
-                        <i class="fas fa-tasks"></i>
-                        ${getTaskTitle(task.type)}
-                    </div>
-                    <div class="agent-task-status ${statusClass}">
-                        <i class="fas fa-circle"></i>
-                        ${statusText}
-                    </div>
-                </div>
-                <div class="agent-task-description">
-                    ${getTaskDescription(task)}
-                </div>
-                <div class="agent-task-progress">
-                    <div class="agent-task-progress-bar" style="width: ${task.progress}%"></div>
-                </div>
-                <div class="agent-task-actions">
-                    ${task.status === 'pending' ? `
-                        <button class="agent-task-action primary" onclick="startTask('${task.id}')">Start</button>
-                    ` : ''}
-                    ${task.status === 'running' ? `
-                        <button class="agent-task-action" onclick="pauseTask('${task.id}')">Pause</button>
-                        <button class="agent-task-action" onclick="cancelTask('${task.id}')">Cancel</button>
-                    ` : ''}
-                    ${task.status === 'completed' ? `
-                        <button class="agent-task-action primary" onclick="viewTaskResults('${task.id}')">View Results</button>
-                    ` : ''}
-                </div>
-            `;
-            
-            elements.chatMessages.appendChild(taskCard);
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-        }
-
-        // Get task title
-        function getTaskTitle(type) {
-            switch (type) {
-                case 'code': return 'Code Execution';
-                case 'webScraping': return 'Web Scraping';
-                case 'document': return 'Document Generation';
-                case 'dataAnalysis': return 'Data Analysis';
-                case 'imageGen': return 'Image Generation';
-                case 'audio': return 'Audio Generation';
-                case 'research': return 'Research Task';
-                case 'workflow': return 'Workflow Automation';
-                default: return 'Task';
-            }
-        }
-
-        // Get task description
-        function getTaskDescription(task) {
-            switch (task.type) {
-                case 'code':
-                    return `Executing ${task.language} code in sandbox environment`;
-                case 'webScraping':
-                    return 'Extracting data from websites';
-                case 'document':
-                    return 'Creating a professional document';
-                case 'dataAnalysis':
-                    return 'Analyzing data and creating visualizations';
-                case 'imageGen':
-                    return 'Generating image from text description';
-                case 'audio':
-                    return 'Creating audio from text';
-                case 'research':
-                    return 'Conducting research on a specific topic';
-                case 'workflow':
-                    return 'Executing a multi-step workflow';
-                default:
-                    return 'Executing task';
-            }
-        }
-
-        // Simulate task execution
-        function simulateTaskExecution(taskId) {
-            const task = state.activeTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            // Update task status to running
-            task.status = 'running';
-            updateTaskCard(task);
-            
-            // Simulate progress
-            const progressInterval = setInterval(() => {
-                task.progress += Math.random() * 20;
-                
-                if (task.progress >= 100) {
-                    task.progress = 100;
-                    task.status = 'completed';
-                    clearInterval(progressInterval);
-                    
-                    // Add completion message
-                    const completionMessage = {
-                        id: generateId(),
-                        role: 'ai',
-                        content: getTaskCompletionMessage(task),
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    state.messages.push(completionMessage);
-                    renderMessages();
-                    saveState();
-                    
-                    if (state.settings.taskNotifications) {
-                        showToast('Task completed successfully', 'success');
-                    }
-                }
-                
-                updateTaskCard(task);
-            }, 500);
-        }
-
-        // Update task card
-        function updateTaskCard(task) {
-            const taskCard = document.getElementById(`task-${task.id}`);
-            if (!taskCard) return;
-            
-            const statusClass = task.status;
-            const statusText = task.status.charAt(0).toUpperCase() + task.status.slice(1);
-            
-            taskCard.querySelector('.agent-task-status').className = `agent-task-status ${statusClass}`;
-            taskCard.querySelector('.agent-task-status').innerHTML = `<i class="fas fa-circle"></i> ${statusText}`;
-            taskCard.querySelector('.agent-task-progress-bar').style.width = `${task.progress}%`;
-            
-            // Update actions
-            const actionsContainer = taskCard.querySelector('.agent-task-actions');
-            actionsContainer.innerHTML = '';
-            
-            if (task.status === 'pending') {
-                actionsContainer.innerHTML = `
-                    <button class="agent-task-action primary" onclick="startTask('${task.id}')">Start</button>
-                `;
-            } else if (task.status === 'running') {
-                actionsContainer.innerHTML = `
-                    <button class="agent-task-action" onclick="pauseTask('${task.id}')">Pause</button>
-                    <button class="agent-task-action" onclick="cancelTask('${task.id}')">Cancel</button>
-                `;
-            } else if (task.status === 'completed') {
-                actionsContainer.innerHTML = `
-                    <button class="agent-task-action primary" onclick="viewTaskResults('${task.id}')">View Results</button>
-                `;
-            }
-        }
-
-        // Get task completion message
-        function getTaskCompletionMessage(task) {
-            switch (task.type) {
-                case 'code':
-                    return `Code execution completed successfully! Here's the output:\n\n\`\`\`\nHello from ${task.language}!\n\`\`\`\n\nThe code ran without any errors in the sandbox environment.`;
-                case 'webScraping':
-                    return 'Web scraping completed successfully! I\'ve extracted the data from the website and organized it for you.';
-                case 'document':
-                    return 'Document generation completed! Your professional document is ready for review.';
-                case 'dataAnalysis':
-                    return 'Data analysis completed! I\'ve analyzed your data and created visualizations to help you understand the insights.';
-                case 'imageGen':
-                    return 'Image generation completed! Your image has been created based on your description.';
-                case 'audio':
-                    return 'Audio generation completed! Your audio file is ready for download.';
-                case 'research':
-                    return 'Research completed! I\'ve gathered comprehensive information on your topic and summarized the key findings.';
-                case 'workflow':
-                    return 'Workflow automation completed! All steps in your workflow have been executed successfully.';
-                default:
-                    return 'Task completed successfully!';
-            }
-        }
-
-        // Start task
-        function startTask(taskId) {
-            const task = state.activeTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            task.status = 'running';
-            updateTaskCard(task);
-            simulateTaskExecution(taskId);
-            
-            showToast('Task started', 'success');
-        }
-
-        // Pause task
-        function pauseTask(taskId) {
-            const task = state.activeTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            task.status = 'paused';
-            updateTaskCard(task);
-            
-            showToast('Task paused', 'warning');
-        }
-
-        // Cancel task
-        function cancelTask(taskId) {
-            const taskIndex = state.activeTasks.findIndex(t => t.id === taskId);
-            if (taskIndex === -1) return;
-            
-            state.activeTasks.splice(taskIndex, 1);
-            
-            const taskCard = document.getElementById(`task-${taskId}`);
-            if (taskCard) {
-                taskCard.remove();
-            }
-            
-            showToast('Task cancelled', 'warning');
-        }
-
-        // View task results
-        function viewTaskResults(taskId) {
-            const task = state.activeTasks.find(t => t.id === taskId);
-            if (!task) return;
-            
-            // In a real app, this would show detailed results
-            showToast('Viewing task results', 'success');
         }
 
         // Attach file
@@ -3420,55 +1860,9 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Toggle tools panel
-        function toggleToolsPanel() {
-            elements.toolsPanel.classList.toggle('active');
-            closeKnowledgePanel();
-            closeProjectsPanel();
-            closeSettingsPanel();
-            closeSandboxPanel();
-        }
-
-        // Close tools panel
-        function closeToolsPanel() {
-            elements.toolsPanel.classList.remove('active');
-        }
-
-        // Toggle knowledge panel
-        function toggleKnowledgePanel() {
-            elements.knowledgePanel.classList.toggle('active');
-            closeToolsPanel();
-            closeProjectsPanel();
-            closeSettingsPanel();
-            closeSandboxPanel();
-        }
-
-        // Close knowledge panel
-        function closeKnowledgePanel() {
-            elements.knowledgePanel.classList.remove('active');
-        }
-
-        // Toggle projects panel
-        function toggleProjectsPanel() {
-            elements.projectsPanel.classList.toggle('active');
-            closeToolsPanel();
-            closeKnowledgePanel();
-            closeSettingsPanel();
-            closeSandboxPanel();
-        }
-
-        // Close projects panel
-        function closeProjectsPanel() {
-            elements.projectsPanel.classList.remove('active');
-        }
-
         // Toggle settings panel
         function toggleSettingsPanel() {
             elements.settingsPanel.classList.toggle('active');
-            closeToolsPanel();
-            closeKnowledgePanel();
-            closeProjectsPanel();
-            closeSandboxPanel();
         }
 
         // Close settings panel
@@ -3476,402 +1870,13 @@
             elements.settingsPanel.classList.remove('active');
         }
 
-        // Toggle sandbox panel
-        function toggleSandboxPanel() {
-            elements.sandboxPanel.classList.toggle('active');
-            closeToolsPanel();
-            closeKnowledgePanel();
-            closeProjectsPanel();
+        // Save settings
+        function saveSettings() {
+            state.selectedModel = elements.modelSelect.value;
+            
+            saveState();
+            showToast('Settings saved successfully', 'success');
             closeSettingsPanel();
-        }
-
-        // Close sandbox panel
-        function closeSandboxPanel() {
-            elements.sandboxPanel.classList.remove('active');
-        }
-
-        // Open sandbox
-        function openSandbox(language) {
-            state.sandbox.activeTab = language;
-            
-            // Set code editor mode
-            if (state.sandbox.editor) {
-                state.sandbox.editor.setOption('mode', language);
-                
-                // Set default code based on language
-                switch (language) {
-                    case 'python':
-                        state.sandbox.editor.setValue('# Welcome to the Python sandbox\nprint("Hello, World!")');
-                        break;
-                    case 'javascript':
-                        state.sandbox.editor.setValue('// Welcome to the JavaScript sandbox\nconsole.log("Hello, World!");');
-                        break;
-                    case 'html':
-                        state.sandbox.editor.setValue('<!-- Welcome to the HTML sandbox -->\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>');
-                        break;
-                    case 'css':
-                        state.sandbox.editor.setValue('/* Welcome to the CSS sandbox */\nbody {\n    font-family: Arial, sans-serif;\n    background-color: #f0f0f0;\n}\n\nh1 {\n    color: #333;\n}');
-                        break;
-                }
-            }
-            
-            toggleSandboxPanel();
-        }
-
-        // Switch sandbox tab
-        function switchSandboxTab(tab) {
-            state.sandbox.activeTab = tab;
-            
-            // Update tab UI
-            document.querySelectorAll('.sandbox-tab').forEach(t => {
-                t.classList.remove('active');
-            });
-            document.querySelector(`.sandbox-tab[data-tab="${tab}"]`).classList.add('active');
-            
-            // Set code editor mode
-            if (state.sandbox.editor) {
-                state.sandbox.editor.setOption('mode', tab);
-                
-                // Set default code based on language
-                switch (tab) {
-                    case 'python':
-                        state.sandbox.editor.setValue('# Welcome to the Python sandbox\nprint("Hello, World!")');
-                        break;
-                    case 'javascript':
-                        state.sandbox.editor.setValue('// Welcome to the JavaScript sandbox\nconsole.log("Hello, World!");');
-                        break;
-                    case 'html':
-                        state.sandbox.editor.setValue('<!-- Welcome to the HTML sandbox -->\n<!DOCTYPE html>\n<html>\n<head>\n    <title>Hello World</title>\n</head>\n<body>\n    <h1>Hello, World!</h1>\n</body>\n</html>');
-                        break;
-                    case 'css':
-                        state.sandbox.editor.setValue('/* Welcome to the CSS sandbox */\nbody {\n    font-family: Arial, sans-serif;\n    background-color: #f0f0f0;\n}\n\nh1 {\n    color: #333;\n}');
-                        break;
-                }
-            }
-            
-            // Hide output and preview
-            elements.sandboxOutput.style.display = 'none';
-            elements.sandboxPreview.style.display = 'none';
-        }
-
-        // Run sandbox code
-        function runSandboxCode() {
-            const code = state.sandbox.editor.getValue();
-            const language = state.sandbox.activeTab;
-            
-            // Show output
-            elements.sandboxOutput.style.display = 'block';
-            elements.sandboxOutputContent.textContent = 'Running code...';
-            
-            // Simulate code execution
-            setTimeout(() => {
-                let output = '';
-                
-                if (language === 'python') {
-                    if (code.includes('print')) {
-                        const printMatch = code.match(/print\(([^)]+)\)/);
-                        if (printMatch) {
-                            output = printMatch[1].replace(/['"]/g, '');
-                        }
-                    } else {
-                        output = 'Code executed successfully.';
-                    }
-                } else if (language === 'javascript') {
-                    if (code.includes('console.log')) {
-                        const logMatch = code.match(/console\.log\(([^)]+)\)/);
-                        if (logMatch) {
-                            output = logMatch[1].replace(/['"]/g, '');
-                        }
-                    } else {
-                        output = 'Code executed successfully.';
-                    }
-                } else if (language === 'html') {
-                    // Show HTML preview
-                    elements.sandboxPreview.style.display = 'block';
-                    elements.sandboxPreviewContent.innerHTML = code;
-                    output = 'HTML rendered in preview.';
-                } else if (language === 'css') {
-                    output = 'CSS code executed successfully.';
-                }
-                
-                elements.sandboxOutputContent.textContent = output;
-                
-                // Update status
-                const statusElement = elements.sandboxOutput.querySelector('.execution-output-status');
-                statusElement.className = 'execution-output-status success';
-                statusElement.innerHTML = '<i class="fas fa-check-circle"></i><span>Success</span>';
-                
-                showToast('Code executed successfully', 'success');
-            }, 1000);
-        }
-
-        // Clear sandbox code
-        function clearSandboxCode() {
-            state.sandbox.editor.setValue('');
-            elements.sandboxOutput.style.display = 'none';
-            elements.sandboxPreview.style.display = 'none';
-        }
-
-        // Open web scraping tool
-        function openWebScrapingTool() {
-            const webScrapingHtml = `
-                <div class="file-upload-container">
-                    <div class="file-upload-area">
-                        <div class="file-upload-icon">
-                            <i class="fas fa-spider"></i>
-                        </div>
-                        <div class="file-upload-text">Enter the URL of the website you want to scrape</div>
-                        <input type="text" placeholder="https://example.com" style="width: 100%; padding: 0.5rem; margin-top: 1rem; background-color: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary);">
-                        <button class="file-upload-button" style="margin-top: 1rem;">Start Scraping</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add web scraping tool to chat
-            const webScrapingMessage = {
-                id: generateId(),
-                role: 'user',
-                content: 'I want to scrape a website.',
-                timestamp: new Date().toISOString(),
-                webScraping: true
-            };
-            
-            state.messages.push(webScrapingMessage);
-            renderMessages();
-            saveState();
-            
-            closeToolsPanel();
-        }
-
-        // Open document tool
-        function openDocumentTool() {
-            const documentOptions = `
-                <div class="agent-task-card">
-                    <div class="agent-task-header">
-                        <div class="agent-task-title">
-                            <i class="fas fa-file-alt"></i>
-                            Document Generator
-                        </div>
-                    </div>
-                    <div class="agent-task-description">
-                        Select the type of document you want to create:
-                    </div>
-                    <div class="agent-task-actions">
-                        <button class="agent-task-action primary" onclick="createDocument('report')">Report</button>
-                        <button class="agent-task-action primary" onclick="createDocument('presentation')">Presentation</button>
-                        <button class="agent-task-action primary" onclick="createDocument('memo')">Memo</button>
-                        <button class="agent-task-action primary" onclick="createDocument('proposal')">Proposal</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add document tool to chat
-            const documentMessage = {
-                id: generateId(),
-                role: 'user',
-                content: 'I want to create a document.',
-                timestamp: new Date().toISOString(),
-                documentTool: true
-            };
-            
-            state.messages.push(documentMessage);
-            renderMessages();
-            saveState();
-            
-            closeToolsPanel();
-        }
-
-        // Create document
-        function createDocument(type) {
-            const documentMessage = {
-                id: generateId(),
-                role: 'ai',
-                content: `I'll help you create a ${type}. Please provide the content and any specific requirements for your ${type}.`,
-                timestamp: new Date().toISOString()
-            };
-            
-            state.messages.push(documentMessage);
-            renderMessages();
-            saveState();
-            
-            showToast(`Creating ${type}...`, 'success');
-        }
-
-        // Open data analysis tool
-        function openDataAnalysisTool() {
-            const dataAnalysisHtml = `
-                <div class="file-upload-container">
-                    <div class="file-upload-area">
-                        <div class="file-upload-icon">
-                            <i class="fas fa-chart-bar"></i>
-                        </div>
-                        <div class="file-upload-text">Upload a data file (CSV, JSON, Excel)</div>
-                        <input type="file" accept=".csv,.json,.xlsx,.xls" style="display: none;" id="dataFileInput">
-                        <button class="file-upload-button" onclick="document.getElementById('dataFileInput').click()">Choose File</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add data analysis tool to chat
-            const dataAnalysisMessage = {
-                id: generateId(),
-                role: 'user',
-                content: 'I want to analyze data.',
-                timestamp: new Date().toISOString(),
-                dataAnalysis: true
-            };
-            
-            state.messages.push(dataAnalysisMessage);
-            renderMessages();
-            saveState();
-            
-            closeToolsPanel();
-        }
-
-        // Open image generation tool
-        function openImageGenTool() {
-            const imageGenHtml = `
-                <div class="file-upload-container">
-                    <div class="file-upload-area">
-                        <div class="file-upload-icon">
-                            <i class="fas fa-image"></i>
-                        </div>
-                        <div class="file-upload-text">Describe the image you want to generate</div>
-                        <textarea placeholder="A beautiful landscape with mountains and a lake..." style="width: 100%; padding: 0.5rem; margin-top: 1rem; background-color: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); min-height: 100px; resize: vertical;"></textarea>
-                        <button class="file-upload-button" style="margin-top: 1rem;">Generate Image</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add image generation tool to chat
-            const imageGenMessage = {
-                id: generateId(),
-                role: 'user',
-                content: 'I want to generate an image.',
-                timestamp: new Date().toISOString(),
-                imageGen: true
-            };
-            
-            state.messages.push(imageGenMessage);
-            renderMessages();
-            saveState();
-            
-            closeToolsPanel();
-        }
-
-        // Open audio tool
-        function openAudioTool() {
-            const audioHtml = `
-                <div class="file-upload-container">
-                    <div class="file-upload-area">
-                        <div class="file-upload-icon">
-                            <i class="fas fa-music"></i>
-                        </div>
-                        <div class="file-upload-text">Enter the text you want to convert to audio</div>
-                        <textarea placeholder="Enter text here..." style="width: 100%; padding: 0.5rem; margin-top: 1rem; background-color: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary); min-height: 100px; resize: vertical;"></textarea>
-                        <button class="file-upload-button" style="margin-top: 1rem;">Generate Audio</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add audio tool to chat
-            const audioMessage = {
-                id: generateId(),
-                role: 'user',
-                content: 'I want to generate audio.',
-                timestamp: new Date().toISOString(),
-                audio: true
-            };
-            
-            state.messages.push(audioMessage);
-            renderMessages();
-            saveState();
-            
-            closeToolsPanel();
-        }
-
-        // Open research agent tool
-        function openResearchAgentTool() {
-            const researchHtml = `
-                <div class="file-upload-container">
-                    <div class="file-upload-area">
-                        <div class="file-upload-icon">
-                            <i class="fas fa-search"></i>
-                        </div>
-                        <div class="file-upload-text">What would you like me to research?</div>
-                        <input type="text" placeholder="Enter your research topic..." style="width: 100%; padding: 0.5rem; margin-top: 1rem; background-color: var(--surface-elevated); border: 1px solid var(--border); border-radius: var(--radius); color: var(--text-primary);">
-                        <button class="file-upload-button" style="margin-top: 1rem;">Start Research</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add research agent tool to chat
-            const researchMessage = {
-                id: generateId(),
-                role: 'user',
-                content: 'I want to conduct research.',
-                timestamp: new Date().toISOString(),
-                research: true
-            };
-            
-            state.messages.push(researchMessage);
-            renderMessages();
-            saveState();
-            
-            closeToolsPanel();
-        }
-
-        // Open workflow tool
-        function openWorkflowTool() {
-            const workflowHtml = `
-                <div class="agent-task-card">
-                    <div class="agent-task-header">
-                        <div class="agent-task-title">
-                            <i class="fas fa-project-diagram"></i>
-                            Workflow Automation
-                        </div>
-                    </div>
-                    <div class="agent-task-description">
-                        Create a custom workflow by combining multiple tasks:
-                    </div>
-                    <div class="agent-task-actions">
-                        <button class="agent-task-action primary" onclick="createWorkflow('data')">Data Processing</button>
-                        <button class="agent-task-action primary" onclick="createWorkflow('content')">Content Creation</button>
-                        <button class="agent-task-action primary" onclick="createWorkflow('analysis')">Analysis Pipeline</button>
-                    </div>
-                </div>
-            `;
-            
-            // Add workflow tool to chat
-            const workflowMessage = {
-                id: generateId(),
-                role: 'user',
-                content: 'I want to create a workflow.',
-                timestamp: new Date().toISOString(),
-                workflow: true
-            };
-            
-            state.messages.push(workflowMessage);
-            renderMessages();
-            saveState();
-            
-            closeToolsPanel();
-        }
-
-        // Create workflow
-        function createWorkflow(type) {
-            const workflowMessage = {
-                id: generateId(),
-                role: 'ai',
-                content: `I'll help you create a ${type} workflow. Please provide the specific steps and requirements for your workflow.`,
-                timestamp: new Date().toISOString()
-            };
-            
-            state.messages.push(workflowMessage);
-            renderMessages();
-            saveState();
-            
-            showToast(`Creating ${type} workflow...`, 'success');
         }
 
         // Toggle user menu
@@ -3978,120 +1983,45 @@
             }, 3000);
         }
 
-        // Render workflow
-        function renderWorkflow(workflow) {
-            return `
-                <div class="workflow-header">
-                    <div class="workflow-title">${workflow.title}</div>
-                    <div class="workflow-status ${workflow.status}">
-                        <i class="fas fa-circle"></i>
-                        ${workflow.status.charAt(0).toUpperCase() + workflow.status.slice(1)}
-                    </div>
-                </div>
-                <div class="workflow-description">${workflow.description}</div>
-                <div class="workflow-steps">
-                    ${workflow.steps.map((step, index) => `
-                        <div class="workflow-step">
-                            <div class="workflow-step-number">${index + 1}</div>
-                            <div class="workflow-step-content">
-                                <div class="workflow-step-title">${step.title}</div>
-                                <div class="workflow-step-description">${step.description}</div>
-                                <div class="workflow-step-status ${step.status}">
-                                    <i class="fas fa-circle"></i>
-                                    ${step.status.charAt(0).toUpperCase() + step.status.slice(1)}
-                                </div>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-                <div class="workflow-actions">
-                    <button class="workflow-action primary" onclick="startWorkflow('${workflow.id}')">Start Workflow</button>
-                    <button class="workflow-action" onclick="editWorkflow('${workflow.id}')">Edit</button>
-                </div>
-            `;
+        // Copy message
+        function copyMessage(messageId) {
+            const message = state.messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            navigator.clipboard.writeText(message.content)
+                .then(() => {
+                    showToast('Message copied to clipboard', 'success');
+                })
+                .catch(err => {
+                    showToast('Failed to copy message', 'error');
+                    console.error('Failed to copy:', err);
+                });
         }
 
-        // Render sandbox
-        function renderSandbox(sandbox) {
-            return `
-                <div class="sandbox-header">
-                    <div class="sandbox-title">Sandbox Execution</div>
-                    <div class="sandbox-actions">
-                        <button class="btn btn-primary" onclick="openSandbox('${sandbox.language}')">Open in Sandbox</button>
-                    </div>
-                </div>
-                <div class="sandbox-tabs">
-                    <button class="sandbox-tab active">${sandbox.language.charAt(0).toUpperCase() + sandbox.language.slice(1)}</button>
-                </div>
-                <div class="sandbox-content">
-                    <div class="code-editor-container">
-                        <div class="code-editor-header">
-                            <div class="code-editor-title">Code</div>
-                        </div>
-                        <pre><code>${sandbox.code}</code></pre>
-                    </div>
-                    ${sandbox.output ? `
-                        <div class="execution-output">
-                            <div class="execution-output-header">
-                                <div class="execution-output-title">Output</div>
-                                <div class="execution-output-status success">
-                                    <i class="fas fa-check-circle"></i>
-                                    <span>Success</span>
-                                </div>
-                            </div>
-                            <div class="execution-output-content">${sandbox.output}</div>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-        }
-
-        // Start workflow
-        function startWorkflow(workflowId) {
-            const workflow = state.workflows.find(w => w.id === workflowId);
-            if (!workflow) return;
+        // Copy code
+        function copyCode(codeId) {
+            const codeBlock = document.getElementById(codeId);
+            if (!codeBlock) return;
             
-            workflow.status = 'running';
-            
-            // Simulate workflow execution
-            let currentStep = 0;
-            
-            const executeStep = () => {
-                if (currentStep >= workflow.steps.length) {
-                    workflow.status = 'completed';
-                    renderMessages();
-                    saveState();
+            const code = codeBlock.textContent;
+            navigator.clipboard.writeText(code)
+                .then(() => {
+                    const copyBtn = document.querySelector(`button[onclick="copyCode('${codeId}')"]`);
+                    const originalHTML = copyBtn.innerHTML;
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
+                    copyBtn.classList.add('copied');
                     
-                    if (state.settings.taskNotifications) {
-                        showToast('Workflow completed successfully', 'success');
-                    }
-                    return;
-                }
-                
-                const step = workflow.steps[currentStep];
-                step.status = 'running';
-                renderMessages();
-                
-                // Simulate step execution
-                setTimeout(() => {
-                    step.status = 'completed';
-                    currentStep++;
-                    executeStep();
-                }, 1000);
-            };
-            
-            executeStep();
-            
-            showToast('Workflow started', 'success');
-        }
-
-        // Edit workflow
-        function editWorkflow(workflowId) {
-            const workflow = state.workflows.find(w => w.id === workflowId);
-            if (!workflow) return;
-            
-            // In a real app, this would open a workflow editor
-            showToast('Editing workflow', 'success');
+                    setTimeout(() => {
+                        copyBtn.innerHTML = originalHTML;
+                        copyBtn.classList.remove('copied');
+                    }, 2000);
+                    
+                    showToast('Code copied to clipboard', 'success');
+                })
+                .catch(err => {
+                    showToast('Failed to copy code', 'error');
+                    console.error('Failed to copy:', err);
+                });
         }
 
         // Generate ID
@@ -4100,14 +2030,8 @@
         }
 
         // Global functions for onclick handlers
-        window.startTask = startTask;
-        window.pauseTask = pauseTask;
-        window.cancelTask = cancelTask;
-        window.viewTaskResults = viewTaskResults;
-        window.createDocument = createDocument;
-        window.createWorkflow = createWorkflow;
-        window.startWorkflow = startWorkflow;
-        window.editWorkflow = editWorkflow;
+        window.copyMessage = copyMessage;
+        window.copyCode = copyCode;
     </script>
 </body>
 </html>
