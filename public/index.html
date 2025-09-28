@@ -4,8 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexariq AI - Enterprise Agentic Platform</title>
-    <!-- Updated favicon to use Nexariq logo -->
-    <link rel="icon" href="https://z-cdn-media.chatglm.cn/files/435e2ea2-d355-4e35-9472-6bd383299c31_Nexariq-logo.png?auth_key=1790575552-e7e7c686ec8c4066bbded9775ff7729e-0-77227d71b050d9cbe20334e0643bbefd">
+    
+    <!-- Embedded Favicon -->
+    <link rel="icon" href="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwPjxwYXRoIGZpbGw9IiM2MzY2ZjEiIGQ9Ik0yMCA1MEw1MCAyMEw4MCA1MEw1MCA4MFoiLz48cGF0aCBmaWxsPSIjOGI1Y2Y2IiBkPSJNMjAgMzBMMzAgMjBMMzAgMzBaIi8+PHBhdGggZmlsbD0iI2VjNDg5OSIgZD0iTTcwIDMwTDgwIDIwTDgwIDMwWiIvPjwvc3ZnPg==">
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
@@ -125,7 +127,7 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-color: var(--primary);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -141,6 +143,8 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .login-container h1 {
@@ -256,7 +260,7 @@
             width: var(--logo-size);
             height: var(--logo-size);
             border-radius: 50%;
-            background-color: var(--primary);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -277,6 +281,7 @@
             background-clip: text;
             -webkit-text-fill-color: transparent;
             letter-spacing: 0.5px;
+            text-transform: uppercase;
         }
 
         .new-chat-btn {
@@ -455,6 +460,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
 
         .header-actions {
@@ -830,7 +836,12 @@
             color: #24292e;
         }
 
-        .copy-btn {
+        .code-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .copy-btn, .preview-btn {
             background-color: #f1f3f4;
             border: 1px solid #d1d5da;
             color: #24292e;
@@ -844,7 +855,7 @@
             transition: all 0.2s;
         }
 
-        .copy-btn:hover {
+        .copy-btn:hover, .preview-btn:hover {
             background-color: #e1e4e8;
             color: #24292e;
         }
@@ -853,6 +864,91 @@
             background-color: #2ea44f;
             color: white;
             border-color: #2ea44f;
+        }
+
+        /* HTML Preview Modal */
+        .preview-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .preview-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .preview-container {
+            background-color: white;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 900px;
+            height: 80vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: var(--shadow-lg);
+            transform: scale(0.9);
+            transition: transform 0.3s ease;
+        }
+
+        .preview-modal.active .preview-container {
+            transform: scale(1);
+        }
+
+        .preview-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .preview-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .preview-close {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .preview-close:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .preview-content {
+            flex: 1;
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: var(--radius);
         }
 
         /* Typing Effect */
@@ -897,6 +993,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
 
         .settings-close {
@@ -1106,6 +1203,7 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+            text-transform: uppercase;
         }
 
         .user-profile-close {
@@ -1353,7 +1451,7 @@
                 font-size: 0.8rem;
             }
             
-            .copy-btn {
+            .copy-btn, .preview-btn {
                 padding: 0.2rem 0.4rem;
                 font-size: 0.7rem;
             }
@@ -1374,6 +1472,12 @@
             .chat-send-btn {
                 width: 40px;
                 height: 40px;
+            }
+            
+            /* Preview modal adjustments */
+            .preview-container {
+                height: 90vh;
+                width: 95%;
             }
         }
 
@@ -1427,6 +1531,27 @@
         .overlay.active {
             display: block;
         }
+        
+        /* Brand styling */
+        .brand-nexariq {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .brand-lynxa {
+            font-family: 'Space Grotesk', sans-serif;
+            font-weight: 700;
+            text-transform: uppercase;
+            background: var(--gradient-accent);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
     </style>
 </head>
 <body>
@@ -1434,8 +1559,14 @@
     <div class="login-screen" id="loginScreen">
         <div class="login-container">
             <div class="login-logo">
-                <!-- Updated Nexariq logo -->
-                <img src="https://z-cdn-media.chatglm.cn/files/435e2ea2-d355-4e35-9472-6bd383299c31_Nexariq-logo.png?auth_key=1790575552-e7e7c686ec8c4066bbded9775ff7729e-0-77227d71b050d9cbe20334e0643bbefd" alt="Nexariq" class="logo-img">
+                <!-- Embedded Nexariq Logo -->
+                <div class="logo-icon">
+                    <svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                        <path fill="#6366f1" d="M20 50L50 20L80 50L50 80Z"/>
+                        <path fill="#8b5cf6" d="M20 30L30 20L30 30Z"/>
+                        <path fill="#ec4899" d="M70 30L80 20L80 30Z"/>
+                    </svg>
+                </div>
                 <span class="logo-text">Nexariq AI</span>
             </div>
             <h1>Welcome to Nexariq AI</h1>
@@ -1458,8 +1589,14 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="logo">
-                    <!-- Updated Nexariq logo -->
-                    <img src="https://z-cdn-media.chatglm.cn/files/435e2ea2-d355-4e35-9472-6bd383299c31_Nexariq-logo.png?auth_key=1790575552-e7e7c686ec8c4066bbded9775ff7729e-0-77227d71b050d9cbe20334e0643bbefd" alt="Nexariq" class="logo-img">
+                    <!-- Embedded Nexariq Logo -->
+                    <div class="logo-icon">
+                        <svg width="30" height="30" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                            <path fill="#6366f1" d="M20 50L50 20L80 50L50 80Z"/>
+                            <path fill="#8b5cf6" d="M20 30L30 20L30 30Z"/>
+                            <path fill="#ec4899" d="M70 30L80 20L80 30Z"/>
+                        </svg>
+                    </div>
                     <span class="logo-text">Nexariq AI</span>
                 </a>
                 <button class="new-chat-btn" id="newChatBtn">
@@ -1527,13 +1664,15 @@
                 <div class="chat-messages" id="chatMessages">
                     <div class="message ai">
                         <div class="message-avatar">
-                            <!-- Updated Lynxa Pro logo -->
-                            <img src="https://z-cdn-media.chatglm.cn/files/5ab6a2ed-46dd-4865-a60a-bc06e358169c_Lynxa-Pro-logo.png?auth_key=1790575552-9b967c434d074032b9cda2b2ba10e0ce-0-1dc2985004f5bb43db4bbb31c905f5b0" alt="Lynxa Pro" class="message-avatar-img">
+                            <!-- Embedded Lynxa Pro Avatar -->
+                            <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="#6366f1" d="M50,15 C60,15 70,20 75,30 C80,40 80,55 75,65 C70,75 60,85 50,85 C40,85 30,75 25,65 C20,55 20,40 25,30 C30,20 40,15 50,15 Z M50,25 C45,25 40,28 37,33 C34,38 34,48 37,53 C40,58 45,65 50,65 C55,65 60,58 63,53 C66,48 66,38 63,33 C60,28 55,25 50,25 Z M35,40 C37,40 39,42 39,44 C39,46 37,48 35,48 C33,48 31,46 31,44 C31,42 33,40 35,40 Z M65,40 C67,40 69,42 69,44 C69,46 67,48 65,48 C63,48 61,46 61,44 C61,42 63,40 65,40 Z M50,55 C45,55 42,58 42,60 C42,62 45,65 50,65 C55,65 58,62 58,60 C58,58 55,55 50,55 Z"/>
+                            </svg>
                         </div>
                         <div class="message-content">
                             <div class="message-text">
-                                <h2>Hello! I'm <strong>Lynxa Pro</strong></h2>
-                                <p>I'm an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks:</p>
+                                <h2>Hello! I'm <span class="brand-lynxa">Lynxa Pro</span></h2>
+                                <p>I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks:</p>
                                 <ul>
                                     <li>Answering questions and providing information</li>
                                     <li>Generating and executing code in multiple languages</li>
@@ -1758,6 +1897,21 @@
         </div>
     </div>
 
+    <!-- HTML Preview Modal -->
+    <div class="preview-modal" id="previewModal">
+        <div class="preview-container">
+            <div class="preview-header">
+                <div class="preview-title">HTML Preview</div>
+                <button class="preview-close" id="previewClose">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="preview-content">
+                <iframe id="previewIframe" class="preview-iframe"></iframe>
+            </div>
+        </div>
+    </div>
+
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
@@ -1885,7 +2039,10 @@
             sandboxPreviewToggle: document.getElementById('sandboxPreviewToggle'),
             agenticToggle: document.getElementById('agenticToggle'),
             taskNotificationToggle: document.getElementById('taskNotificationToggle'),
-            errorNotificationToggle: document.getElementById('errorNotificationToggle')
+            errorNotificationToggle: document.getElementById('errorNotificationToggle'),
+            previewModal: document.getElementById('previewModal'),
+            previewClose: document.getElementById('previewClose'),
+            previewIframe: document.getElementById('previewIframe')
         };
 
         // Initialize app
@@ -2201,6 +2358,9 @@
             elements.taskNotificationToggle.addEventListener('click', toggleTaskNotifications);
             elements.errorNotificationToggle.addEventListener('click', toggleErrorNotifications);
             
+            // Preview modal
+            elements.previewClose.addEventListener('click', closePreviewModal);
+            
             // Window resize
             window.addEventListener('resize', handleWindowResize);
         }
@@ -2434,12 +2594,12 @@
             // Add welcome message with user's name if available
             const userName = state.userMemory.name || '';
             const welcomeMessage = userName 
-                ? `## Hello, ${userName}! I'm **Lynxa Pro**
+                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I assist you today?`
-                : `## Hello! I'm **Lynxa Pro**
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
+                : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I assist you today?`;
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`;
             
             state.messages.push({
                 id: generateId(),
@@ -2559,7 +2719,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 
                 const avatar = message.role === 'user' 
                     ? (state.userMemory.name ? state.userMemory.name.charAt(0).toUpperCase() : 'U')
-                    : '<img src="https://z-cdn-media.chatglm.cn/files/5ab6a2ed-46dd-4865-a60a-bc06e358169c_Lynxa-Pro-logo.png?auth_key=1790575552-9b967c434d074032b9cda2b2ba10e0ce-0-1dc2985004f5bb43db4bbb31c905f5b0" alt="Lynxa Pro" class="message-avatar-img">';
+                    : '<svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path fill="#6366f1" d="M50,15 C60,15 70,20 75,30 C80,40 80,55 75,65 C70,75 60,85 50,85 C40,85 30,75 25,65 C20,55 20,40 25,30 C30,20 40,15 50,15 Z M50,25 C45,25 40,28 37,33 C34,38 34,48 37,53 C40,58 45,65 50,65 C55,65 60,58 63,53 C66,48 66,38 63,33 C60,28 55,25 50,25 Z M35,40 C37,40 39,42 39,44 C39,46 37,48 35,48 C33,48 31,46 31,44 C31,42 33,40 35,40 Z M65,40 C67,40 69,42 69,44 C69,46 67,48 65,48 C63,48 61,46 61,44 C61,42 63,40 65,40 Z M50,55 C45,55 42,58 42,60 C42,62 45,65 50,65 C55,65 58,62 58,60 C58,58 55,55 50,55 Z"/></svg>';
                 
                 const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
@@ -2612,10 +2772,18 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                     <div class="code-block">
                         <div class="code-header">
                             <div class="code-language">${language}</div>
-                            <button class="copy-btn" onclick="copyCode('${codeId}')">
-                                <i class="fas fa-copy"></i>
-                                <span>Copy</span>
-                            </button>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCode('${codeId}')">
+                                    <i class="fas fa-copy"></i>
+                                    <span>Copy</span>
+                                </button>
+                                ${language === 'html' ? `
+                                    <button class="preview-btn" onclick="previewHTML('${codeId}')">
+                                        <i class="fas fa-eye"></i>
+                                        <span>Preview</span>
+                                    </button>
+                                ` : ''}
+                            </div>
                         </div>
                         <pre><code id="${codeId}" class="language-${language}">${escapedCode}</code></pre>
                     </div>
@@ -2710,7 +2878,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                 
                 messageEl.innerHTML = `
                     <div class="message-avatar">
-                        <img src="https://z-cdn-media.chatglm.cn/files/5ab6a2ed-46dd-4865-a60a-bc06e358169c_Lynxa-Pro-logo.png?auth_key=1790575552-9b967c434d074032b9cda2b2ba10e0ce-0-1dc2985004f5bb43db4bbb31c905f5b0" alt="Lynxa Pro" class="message-avatar-img">
+                        <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path fill="#6366f1" d="M50,15 C60,15 70,20 75,30 C80,40 80,55 75,65 C70,75 60,85 50,85 C40,85 30,75 25,65 C20,55 20,40 25,30 C30,20 40,15 50,15 Z M50,25 C45,25 40,28 37,33 C34,38 34,48 37,53 C40,58 45,65 50,65 C55,65 60,58 63,53 C66,48 66,38 63,33 C60,28 55,25 50,25 Z M35,40 C37,40 39,42 39,44 C39,46 37,48 35,48 C33,48 31,46 31,44 C31,42 33,40 35,40 Z M65,40 C67,40 69,42 69,44 C69,46 67,48 65,48 C63,48 61,46 61,44 C61,42 63,40 65,40 Z M50,55 C45,55 42,58 42,60 C42,62 45,65 50,65 C55,65 58,62 58,60 C58,58 55,55 50,55 Z"/></svg>
                     </div>
                     <div class="message-content">
                         <div class="message-text typing-text" id="text-${messageId}"></div>
@@ -2884,7 +3052,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             
             messageEl.innerHTML = `
                 <div class="message-avatar">
-                    <img src="https://z-cdn-media.chatglm.cn/files/5ab6a2ed-46dd-4865-a60a-bc06e358169c_Lynxa-Pro-logo.png?auth_key=1790575552-9b967c434d074032b9cda2b2ba10e0ce-0-1dc2985004f5bb43db4bbb31c905f5b0" alt="Lynxa Pro" class="message-avatar-img">
+                    <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path fill="#6366f1" d="M50,15 C60,15 70,20 75,30 C80,40 80,55 75,65 C70,75 60,85 50,85 C40,85 30,75 25,65 C20,55 20,40 25,30 C30,20 40,15 50,15 Z M50,25 C45,25 40,28 37,33 C34,38 34,48 37,53 C40,58 45,65 50,65 C55,65 60,58 63,53 C66,48 66,38 63,33 C60,28 55,25 50,25 Z M35,40 C37,40 39,42 39,44 C39,46 37,48 35,48 C33,48 31,46 31,44 C31,42 33,40 35,40 Z M65,40 C67,40 69,42 69,44 C69,46 67,48 65,48 C63,48 61,46 61,44 C61,42 63,40 65,40 Z M50,55 C45,55 42,58 42,60 C42,62 45,65 50,65 C55,65 58,62 58,60 C58,58 55,55 50,55 Z"/></svg>
                 </div>
                 <div class="message-content">
                     <div class="message-text typing-text" id="text-${messageId}"></div>
@@ -2990,7 +3158,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             
             typingIndicator.innerHTML = `
                 <div class="message-avatar">
-                    <img src="https://z-cdn-media.chatglm.cn/files/5ab6a2ed-46dd-4865-a60a-bc06e358169c_Lynxa-Pro-logo.png?auth_key=1790575552-9b967c434d074032b9cda2b2ba10e0ce-0-1dc2985004f5bb43db4bbb31c905f5b0" alt="Lynxa Pro" class="message-avatar-img">
+                    <svg width="36" height="36" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><path fill="#6366f1" d="M50,15 C60,15 70,20 75,30 C80,40 80,55 75,65 C70,75 60,85 50,85 C40,85 30,75 25,65 C20,55 20,40 25,30 C30,20 40,15 50,15 Z M50,25 C45,25 40,28 37,33 C34,38 34,48 37,53 C40,58 45,65 50,65 C55,65 60,58 63,53 C66,48 66,38 63,33 C60,28 55,25 50,25 Z M35,40 C37,40 39,42 39,44 C39,46 37,48 35,48 C33,48 31,46 31,44 C31,42 33,40 35,40 Z M65,40 C67,40 69,42 69,44 C69,46 67,48 65,48 C63,48 61,46 61,44 C61,42 63,40 65,40 Z M50,55 C45,55 42,58 42,60 C42,62 45,65 50,65 C55,65 58,62 58,60 C58,58 55,55 50,55 Z"/></svg>
                 </div>
                 <div class="message-content">
                     <div class="typing-indicator">
@@ -3281,6 +3449,38 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                 });
         }
 
+        // Preview HTML
+        function previewHTML(codeId) {
+            const codeBlock = document.getElementById(codeId);
+            if (!codeBlock) return;
+            
+            const htmlCode = codeBlock.textContent;
+            
+            // Create a blob with the HTML content
+            const blob = new Blob([htmlCode], { type: 'text/html' });
+            const url = URL.createObjectURL(blob);
+            
+            // Set the iframe src to the blob URL
+            elements.previewIframe.src = url;
+            
+            // Show the preview modal
+            elements.previewModal.classList.add('active');
+            
+            // Clean up the blob URL when the modal is closed
+            elements.previewModal.addEventListener('click', function closePreview(e) {
+                if (e.target === elements.previewModal || e.target === elements.previewClose) {
+                    elements.previewModal.classList.remove('active');
+                    URL.revokeObjectURL(url);
+                    elements.previewModal.removeEventListener('click', closePreview);
+                }
+            });
+        }
+
+        // Close preview modal
+        function closePreviewModal() {
+            elements.previewModal.classList.remove('active');
+        }
+
         // Generate ID
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -3289,6 +3489,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
         // Global functions for onclick handlers
         window.copyMessage = copyMessage;
         window.copyCode = copyCode;
+        window.previewHTML = previewHTML;
     </script>
 </body>
 </html>
