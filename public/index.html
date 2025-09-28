@@ -2,8 +2,15 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Nexariq AI - Enterprise Agentic Platform</title>
+    
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-storage-compat.js"></script>
+    
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
@@ -43,10 +50,26 @@
             --code-text: #24292e;
         }
 
+        /* Light theme variables */
+        [data-theme="light"] {
+            --background: #ffffff;
+            --surface: #f8f9fa;
+            --surface-elevated: #ffffff;
+            --surface-highlight: #f1f3f4;
+            --border: #e1e4e8;
+            --text-primary: #24292e;
+            --text-secondary: #586069;
+            --text-tertiary: #6a737d;
+            --code-bg: #f6f8fa;
+            --code-border: #d1d5da;
+            --code-text: #24292e;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -56,6 +79,7 @@
             line-height: 1.6;
             overflow: hidden;
             height: 100vh;
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         /* App Container */
@@ -228,6 +252,13 @@
             justify-content: center;
             color: white;
             font-weight: 600;
+            overflow: hidden;
+        }
+
+        .user-avatar img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
         }
 
         .user-info {
@@ -266,7 +297,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0 1.5rem;
+            padding: 0 1rem;
             z-index: 5;
         }
 
@@ -283,6 +314,14 @@
             color: var(--text-primary);
             font-size: 1.25rem;
             cursor: pointer;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            transition: var(--transition);
+        }
+
+        .mobile-menu-btn:hover {
+            background-color: var(--surface-highlight);
         }
 
         .header-title {
@@ -302,8 +341,8 @@
         }
 
         .header-btn {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius);
             background-color: transparent;
             border: 1px solid var(--border);
@@ -330,7 +369,7 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 1.5rem;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
@@ -445,8 +484,8 @@
         }
 
         .message-action-btn {
-            width: 28px;
-            height: 28px;
+            width: 32px;
+            height: 32px;
             border-radius: var(--radius-sm);
             background-color: rgba(255, 255, 255, 0.1);
             border: none;
@@ -556,8 +595,8 @@
         }
 
         .chat-action-btn {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius);
             background-color: transparent;
             border: none;
@@ -575,8 +614,8 @@
         }
 
         .chat-send-btn {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius);
             background: var(--gradient-primary);
             border: none;
@@ -650,6 +689,42 @@
             border-color: #2ea44f;
         }
 
+        .run-btn {
+            background-color: #2ea44f;
+            border: 1px solid #2ea44f;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+            transition: all 0.2s;
+            margin-left: 0.5rem;
+        }
+
+        .run-btn:hover {
+            background-color: #2c974b;
+        }
+
+        .code-output {
+            background-color: #f6f8fa;
+            border-top: 1px solid var(--code-border);
+            padding: 0.75rem 1rem;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            color: #24292e;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .code-output.error {
+            background-color: #ffebe9;
+            color: #d1242f;
+        }
+
         /* Typing Effect */
         .typing-text {
             overflow: hidden;
@@ -695,8 +770,8 @@
         }
 
         .settings-close {
-            width: 36px;
-            height: 36px;
+            width: 44px;
+            height: 44px;
             border-radius: var(--radius);
             background-color: transparent;
             border: none;
@@ -865,6 +940,555 @@
             background-color: var(--surface-highlight);
         }
 
+        /* Knowledge Base Panel */
+        .knowledge-panel {
+            position: fixed;
+            right: -400px;
+            top: 0;
+            width: 400px;
+            height: 100vh;
+            background-color: var(--surface);
+            border-left: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: right 0.3s ease;
+        }
+
+        .knowledge-panel.active {
+            right: 0;
+        }
+
+        .knowledge-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .knowledge-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .knowledge-close {
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .knowledge-close:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .knowledge-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .upload-area {
+            border: 2px dashed var(--border);
+            border-radius: var(--radius);
+            padding: 2rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .upload-area:hover {
+            border-color: var(--primary);
+            background-color: var(--surface-highlight);
+        }
+
+        .upload-area.dragover {
+            border-color: var(--primary);
+            background-color: var(--surface-highlight);
+        }
+
+        .upload-icon {
+            font-size: 2rem;
+            color: var(--text-tertiary);
+            margin-bottom: 1rem;
+        }
+
+        .upload-text {
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        .upload-subtext {
+            font-size: 0.875rem;
+            color: var(--text-tertiary);
+        }
+
+        .document-list {
+            margin-top: 1.5rem;
+        }
+
+        .document-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            margin-bottom: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .document-item:hover {
+            background-color: var(--surface-highlight);
+        }
+
+        .document-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background-color: var(--surface-elevated);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .document-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .document-name {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .document-size {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .document-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .document-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .document-action-btn:hover {
+            background-color: var(--surface-elevated);
+            color: var(--text-primary);
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .login-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .login-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .login-modal.active .login-container {
+            transform: translateY(0);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .login-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .login-input {
+            width: 100%;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .login-input:focus {
+            border-color: var(--primary);
+        }
+
+        .login-forgot {
+            text-align: right;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-forgot a {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+
+        .login-forgot a:hover {
+            color: var(--primary-dark);
+        }
+
+        .login-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius);
+            color: white;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .login-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border);
+        }
+
+        .login-divider-text {
+            padding: 0 1rem;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .login-social {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .login-social-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .login-social-btn:hover {
+            background-color: var(--surface-highlight);
+        }
+
+        .login-social-btn.google {
+            background-color: #4285f4;
+            color: white;
+            border-color: #4285f4;
+        }
+
+        .login-social-btn.google:hover {
+            background-color: #3367d6;
+            border-color: #3367d6;
+        }
+
+        .login-social-btn.apple {
+            background-color: #000;
+            color: white;
+            border-color: #000;
+        }
+
+        .login-social-btn.apple:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+
+        .login-signup {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .login-signup a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .login-signup a:hover {
+            color: var(--primary-dark);
+        }
+
+        /* Signup Modal */
+        .signup-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+
+        .signup-modal.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .signup-container {
+            width: 100%;
+            max-width: 400px;
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 2rem;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+
+        .signup-modal.active .signup-container {
+            transform: translateY(0);
+        }
+
+        .signup-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .signup-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 0.5rem;
+        }
+
+        .signup-subtitle {
+            color: var(--text-secondary);
+        }
+
+        .signup-form {
+            margin-bottom: 1.5rem;
+        }
+
+        .signup-input {
+            width: 100%;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.75rem 1rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .signup-input:focus {
+            border-color: var(--primary);
+        }
+
+        .signup-submit {
+            width: 100%;
+            padding: 0.75rem;
+            background: var(--gradient-primary);
+            border: none;
+            border-radius: var(--radius);
+            color: white;
+            font-weight: 500;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .signup-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .signup-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .signup-divider::before,
+        .signup-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background-color: var(--border);
+        }
+
+        .signup-divider-text {
+            padding: 0 1rem;
+            color: var(--text-tertiary);
+            font-size: 0.875rem;
+        }
+
+        .signup-social {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .signup-social-btn {
+            width: 100%;
+            padding: 0.75rem;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+
+        .signup-social-btn:hover {
+            background-color: var(--surface-highlight);
+        }
+
+        .signup-social-btn.google {
+            background-color: #4285f4;
+            color: white;
+            border-color: #4285f4;
+        }
+
+        .signup-social-btn.google:hover {
+            background-color: #3367d6;
+            border-color: #3367d6;
+        }
+
+        .signup-social-btn.apple {
+            background-color: #000;
+            color: white;
+            border-color: #000;
+        }
+
+        .signup-social-btn.apple:hover {
+            background-color: #333;
+            border-color: #333;
+        }
+
+        .signup-login {
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+        }
+
+        .signup-login a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+
+        .signup-login a:hover {
+            color: var(--primary-dark);
+        }
+
         /* Toast Notifications */
         .toast-container {
             position: fixed;
@@ -944,7 +1568,7 @@
             color: var(--text-tertiary);
         }
 
-        /* Mobile Responsiveness */
+        /* Mobile Optimizations */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -966,14 +1590,15 @@
                 max-width: 95%;
             }
 
-            .settings-panel {
+            .settings-panel,
+            .knowledge-panel {
                 width: 100%;
                 right: -100%;
             }
 
             .toast-container {
-                left: 1.5rem;
-                right: 1.5rem;
+                left: 1rem;
+                right: 1rem;
             }
 
             .toast {
@@ -982,12 +1607,12 @@
             
             /* Mobile-specific adjustments */
             .chat-messages {
-                padding: 1rem;
-                padding-bottom: 0.5rem; /* Reduced bottom padding */
+                padding: 0.75rem;
+                padding-bottom: 0.5rem;
             }
             
             .chat-input-container {
-                padding: 0.75rem; /* Reduced padding */
+                padding: 0.75rem;
                 position: fixed;
                 bottom: 0;
                 left: 0;
@@ -998,7 +1623,7 @@
             }
             
             .header {
-                padding: 0 1rem;
+                padding: 0 0.75rem;
             }
             
             .header-title {
@@ -1015,18 +1640,46 @@
                 font-size: 0.8rem;
             }
             
-            .copy-btn {
+            .copy-btn,
+            .run-btn {
                 padding: 0.2rem 0.4rem;
                 font-size: 0.7rem;
             }
             
             /* Adjust chat container to account for fixed input */
             .chat-container {
-                height: calc(100vh - 64px); /* Header height */
+                height: calc(100vh - 64px);
             }
             
             .chat-messages {
-                height: calc(100% - 80px); /* Account for input height */
+                height: calc(100% - 80px);
+            }
+            
+            /* Larger touch targets */
+            .chat-action-btn,
+            .message-action-btn,
+            .header-btn,
+            .mobile-menu-btn {
+                width: 48px;
+                height: 48px;
+            }
+            
+            .chat-send-btn {
+                width: 48px;
+                height: 48px;
+            }
+            
+            /* Mobile login/signup modals */
+            .login-container,
+            .signup-container {
+                width: 90%;
+                max-width: none;
+                padding: 1.5rem;
+            }
+            
+            /* Mobile voice input button */
+            .voice-input-btn {
+                display: flex;
             }
         }
 
@@ -1080,27 +1733,510 @@
         .overlay.active {
             display: block;
         }
+
+        /* Virtual Scrolling */
+        .virtual-scroll-container {
+            position: relative;
+            height: 100%;
+            overflow-y: auto;
+        }
+
+        .virtual-scroll-spacer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            pointer-events: none;
+        }
+
+        .virtual-scroll-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+
+        /* Accessibility */
+        .sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+
+        /* Focus styles */
+        *:focus {
+            outline: 2px solid var(--primary);
+            outline-offset: 2px;
+        }
+
+        /* Skip to content link */
+        .skip-link {
+            position: absolute;
+            top: -40px;
+            left: 0;
+            background: var(--primary);
+            color: white;
+            padding: 8px;
+            text-decoration: none;
+            border-radius: 0 0 4px 0;
+            z-index: 100;
+        }
+
+        .skip-link:focus {
+            top: 0;
+        }
+
+        /* Micro-interactions */
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.4);
+            }
+            70% {
+                box-shadow: 0 0 0 10px rgba(99, 102, 241, 0);
+            }
+            100% {
+                box-shadow: 0 0 0 0 rgba(99, 102, 241, 0);
+            }
+        }
+
+        /* File attachment styles */
+        .file-attachment {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background-color: var(--surface-elevated);
+            border-radius: var(--radius);
+            margin-top: 0.75rem;
+        }
+
+        .file-attachment-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background-color: var(--surface-highlight);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-secondary);
+        }
+
+        .file-attachment-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .file-attachment-name {
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .file-attachment-size {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+        }
+
+        .file-attachment-remove {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-attachment-remove:hover {
+            background-color: var(--surface-highlight);
+            color: var(--error);
+        }
+
+        /* Conversation summary */
+        .conversation-summary {
+            background-color: var(--surface-highlight);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin-top: 1rem;
+            border: 1px solid var(--border);
+        }
+
+        .summary-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+        }
+
+        .summary-title {
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .summary-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .summary-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .summary-action-btn:hover {
+            background-color: var(--surface-elevated);
+            color: var(--text-primary);
+        }
+
+        .summary-content {
+            color: var(--text-secondary);
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+
+        /* Progress indicator */
+        .progress-container {
+            width: 100%;
+            height: 4px;
+            background-color: var(--surface-highlight);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 0.5rem;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: var(--gradient-primary);
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        /* Image input */
+        .image-input-container {
+            position: relative;
+            display: inline-block;
+        }
+
+        .image-input {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .image-preview {
+            max-width: 100%;
+            max-height: 200px;
+            border-radius: var(--radius);
+            margin-top: 0.5rem;
+        }
+
+        /* Password strength indicator */
+        .password-strength {
+            height: 4px;
+            background-color: var(--surface-highlight);
+            border-radius: 2px;
+            margin-top: 0.5rem;
+            overflow: hidden;
+        }
+
+        .password-strength-bar {
+            height: 100%;
+            border-radius: 2px;
+            width: 0%;
+            transition: width 0.3s ease, background-color 0.3s ease;
+        }
+
+        .password-strength-bar.weak {
+            width: 33%;
+            background-color: var(--error);
+        }
+
+        .password-strength-bar.medium {
+            width: 66%;
+            background-color: var(--warning);
+        }
+
+        .password-strength-bar.strong {
+            width: 100%;
+            background-color: var(--success);
+        }
+
+        .password-strength-text {
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            color: var(--text-tertiary);
+        }
+
+        /* Voice input button */
+        .voice-input-btn {
+            display: none;
+            width: 44px;
+            height: 44px;
+            border-radius: var(--radius);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .voice-input-btn:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .voice-input-btn.recording {
+            background-color: var(--error);
+            color: white;
+            animation: pulse 1.5s infinite;
+        }
+
+        /* AI Capabilities */
+        .ai-capabilities {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .ai-capability {
+            background-color: var(--surface-highlight);
+            border-radius: var(--radius-sm);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .ai-capability i {
+            color: var(--primary);
+        }
+
+        /* Mobile swipe indicator */
+        .swipe-indicator {
+            display: none;
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--surface-elevated);
+            border-radius: var(--radius-lg);
+            padding: 0.75rem 1rem;
+            box-shadow: var(--shadow-md);
+            z-index: 50;
+            animation: swipePulse 2s infinite;
+        }
+
+        @keyframes swipePulse {
+            0%, 100% { opacity: 0.7; }
+            50% { opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            .swipe-indicator {
+                display: flex;
+                align-items: center;
+                gap: 0.5rem;
+                font-size: 0.875rem;
+                color: var(--text-secondary);
+            }
+        }
+
+        /* Advanced features toggle */
+        .advanced-features {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--border);
+        }
+
+        .advanced-features-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 0.75rem;
+        }
+
+        .feature-toggle {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+        }
+
+        .feature-name {
+            font-size: 0.875rem;
+            color: var(--text-primary);
+        }
+
+        .feature-description {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        /* Real-time typing indicator */
+        .real-time-indicator {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: var(--success);
+            margin-left: 0.5rem;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        /* Quick actions */
+        .quick-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .quick-action {
+            background-color: var(--surface-highlight);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 0.5rem 0.75rem;
+            font-size: 0.75rem;
+            color: var(--text-primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .quick-action:hover {
+            background-color: var(--surface-elevated);
+            border-color: var(--primary);
+        }
+
+        /* Mobile bottom navigation */
+        .mobile-nav {
+            display: none;
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: var(--surface);
+            border-top: 1px solid var(--border);
+            z-index: 20;
+            padding: 0.5rem 0;
+        }
+
+        .mobile-nav-items {
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .mobile-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.25rem;
+            padding: 0.5rem;
+            cursor: pointer;
+            transition: var(--transition);
+            border-radius: var(--radius);
+            width: 60px;
+        }
+
+        .mobile-nav-item:hover {
+            background-color: var(--surface-highlight);
+        }
+
+        .mobile-nav-item i {
+            font-size: 1.25rem;
+            color: var(--text-secondary);
+        }
+
+        .mobile-nav-item.active i {
+            color: var(--primary);
+        }
+
+        .mobile-nav-item span {
+            font-size: 0.625rem;
+            color: var(--text-tertiary);
+        }
+
+        .mobile-nav-item.active span {
+            color: var(--primary);
+        }
+
+        @media (max-width: 768px) {
+            .mobile-nav {
+                display: block;
+            }
+            
+            /* Adjust chat input to account for mobile nav */
+            .chat-input-container {
+                bottom: 60px;
+            }
+            
+            .chat-messages {
+                height: calc(100% - 124px);
+            }
+        }
     </style>
 </head>
 <body>
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <div class="app-container">
         <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar" id="sidebar" role="navigation" aria-label="Chat history">
             <div class="sidebar-header">
-                <a href="#" class="logo">
-                    <div class="logo-icon"></div>
+                <a href="#" class="logo" aria-label="Nexariq AI Home">
+                    <div class="logo-icon" aria-hidden="true"></div>
                     <span class="logo-text">Nexariq AI</span>
                 </a>
-                <button class="new-chat-btn" id="newChatBtn">
-                    <i class="fas fa-plus"></i>
+                <button class="new-chat-btn" id="newChatBtn" aria-label="Start new chat">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
                     <span>New Chat</span>
                 </button>
             </div>
             <div class="chat-history">
                 <div class="chat-history-title">Recent Chats</div>
-                <div id="chatHistory">
-                    <div class="chat-item active">
-                        <div class="chat-item-icon">
+                <div id="chatHistory" role="list">
+                    <div class="chat-item active" role="listitem" tabindex="0">
+                        <div class="chat-item-icon" aria-hidden="true">
                             <i class="fas fa-comment"></i>
                         </div>
                         <div class="chat-item-content">
@@ -1111,13 +2247,13 @@
                 </div>
             </div>
             <div class="sidebar-footer">
-                <div class="user-menu" id="userMenu">
-                    <div class="user-avatar">U</div>
+                <div class="user-menu" id="userMenu" role="button" tabindex="0" aria-label="User menu">
+                    <div class="user-avatar" aria-hidden="true">U</div>
                     <div class="user-info">
-                        <div class="user-name">User Name</div>
-                        <div class="user-email">user@example.com</div>
+                        <div class="user-name">Guest</div>
+                        <div class="user-email">Not logged in</div>
                     </div>
-                    <i class="fas fa-chevron-up"></i>
+                    <i class="fas fa-chevron-up" aria-hidden="true"></i>
                 </div>
             </div>
         </div>
@@ -1125,38 +2261,39 @@
         <!-- Main Content -->
         <div class="main-content">
             <!-- Header -->
-            <div class="header">
+            <header class="header" role="banner">
                 <div class="header-left">
-                    <button class="mobile-menu-btn" id="mobileMenuBtn">
-                        <i class="fas fa-bars"></i>
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" aria-label="Toggle sidebar" aria-expanded="false">
+                        <i class="fas fa-bars" aria-hidden="true"></i>
                     </button>
                     <div class="header-title">Nexariq AI</div>
                 </div>
                 <div class="header-actions">
-                    <button class="header-btn" id="knowledgeBtn" title="Knowledge Base">
-                        <i class="fas fa-book"></i>
+                    <button class="header-btn" id="knowledgeBtn" title="Knowledge Base" aria-label="Open knowledge base">
+                        <i class="fas fa-book" aria-hidden="true"></i>
                     </button>
-                    <button class="header-btn" id="projectsBtn" title="Projects">
-                        <i class="fas fa-folder"></i>
+                    <button class="header-btn" id="projectsBtn" title="Projects" aria-label="Open projects">
+                        <i class="fas fa-folder" aria-hidden="true"></i>
                     </button>
-                    <button class="header-btn" id="toolsBtn" title="Tools">
-                        <i class="fas fa-tools"></i>
+                    <button class="header-btn" id="toolsBtn" title="Tools" aria-label="Open tools">
+                        <i class="fas fa-tools" aria-hidden="true"></i>
                     </button>
-                    <button class="header-btn" id="settingsBtn" title="Settings">
-                        <i class="fas fa-cog"></i>
+                    <button class="header-btn" id="settingsBtn" title="Settings" aria-label="Open settings">
+                        <i class="fas fa-cog" aria-hidden="true"></i>
                     </button>
                 </div>
-            </div>
+            </header>
 
             <!-- Chat Container -->
-            <div class="chat-container">
-                <div class="chat-messages" id="chatMessages">
+            <main class="chat-container" id="main-content" role="main">
+                <div class="chat-messages" id="chatMessages" aria-live="polite" aria-label="Chat messages">
                     <div class="message ai">
-                        <div class="message-avatar"></div>
+                        <div class="message-avatar" aria-hidden="true"></div>
                         <div class="message-content">
                             <div class="message-text">
                                 <h2>Hello! I'm <strong>Lynxa</strong></h2>
-                                <p>I'm an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks:</p>
+                                <p>I'm an AI assistant from <strong>Nexariq</strong>, a growing tech startup from India 🇮🇳</p>
+                                <p>I can help you with:</p>
                                 <ul>
                                     <li>Answering questions and providing information</li>
                                     <li>Generating and executing code in multiple languages</li>
@@ -1165,17 +2302,29 @@
                                     <li>Image generation and analysis</li>
                                     <li>Complex multi-step tasks and workflows</li>
                                 </ul>
-                                <p>I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?</p>
+                                <div class="ai-capabilities">
+                                    <div class="ai-capability"><i class="fas fa-brain"></i> Advanced AI</div>
+                                    <div class="ai-capability"><i class="fas fa-code"></i> Code Execution</div>
+                                    <div class="ai-capability"><i class="fas fa-image"></i> Vision</div>
+                                    <div class="ai-capability"><i class="fas fa-microphone"></i> Voice</div>
+                                </div>
+                                <p>Try me out! What would you like to know or create?</p>
+                                <div class="quick-actions">
+                                    <div class="quick-action" onclick="quickAction('summarize')">Summarize text</div>
+                                    <div class="quick-action" onclick="quickAction('code')">Generate code</div>
+                                    <div class="quick-action" onclick="quickAction('translate')">Translate</div>
+                                    <div class="quick-action" onclick="quickAction('analyze')">Analyze data</div>
+                                </div>
                             </div>
                             <div class="message-actions">
-                                <button class="message-action-btn" title="Copy" onclick="copyMessage('welcome-message')">
-                                    <i class="fas fa-copy"></i>
+                                <button class="message-action-btn" title="Copy" onclick="copyMessage('welcome-message')" aria-label="Copy message">
+                                    <i class="fas fa-copy" aria-hidden="true"></i>
                                 </button>
-                                <button class="message-action-btn" title="Good response">
-                                    <i class="fas fa-thumbs-up"></i>
+                                <button class="message-action-btn" title="Good response" aria-label="Good response">
+                                    <i class="fas fa-thumbs-up" aria-hidden="true"></i>
                                 </button>
-                                <button class="message-action-btn" title="Bad response">
-                                    <i class="fas fa-thumbs-down"></i>
+                                <button class="message-action-btn" title="Bad response" aria-label="Bad response">
+                                    <i class="fas fa-thumbs-down" aria-hidden="true"></i>
                                 </button>
                             </div>
                             <div class="message-time">Just now</div>
@@ -1185,38 +2334,102 @@
 
                 <div class="chat-input-container">
                     <div class="chat-input-wrapper">
-                        <textarea class="chat-input" id="chatInput" placeholder="Message Lynxa..." rows="1"></textarea>
+                        <textarea class="chat-input" id="chatInput" placeholder="Message Lynxa..." rows="1" aria-label="Message input"></textarea>
                         <div class="chat-actions">
-                            <button class="chat-action-btn" id="attachBtn" title="Attach file">
-                                <i class="fas fa-paperclip"></i>
+                            <button class="chat-action-btn" id="attachBtn" title="Attach file" aria-label="Attach file">
+                                <i class="fas fa-paperclip" aria-hidden="true"></i>
                             </button>
-                            <button class="chat-send-btn" id="sendBtn">
-                                <i class="fas fa-paper-plane"></i>
+                            <button class="chat-action-btn" id="imageBtn" title="Upload image" aria-label="Upload image">
+                                <i class="fas fa-image" aria-hidden="true"></i>
+                            </button>
+                            <button class="chat-action-btn voice-input-btn" id="voiceBtn" title="Voice input" aria-label="Voice input">
+                                <i class="fas fa-microphone" aria-hidden="true"></i>
+                            </button>
+                            <button class="chat-send-btn" id="sendBtn" aria-label="Send message">
+                                <i class="fas fa-paper-plane" aria-hidden="true"></i>
                             </button>
                         </div>
                     </div>
+                    <div class="progress-container" id="progressContainer" style="display: none;">
+                        <div class="progress-bar" id="progressBar"></div>
+                    </div>
                 </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Navigation -->
+    <div class="mobile-nav">
+        <div class="mobile-nav-items">
+            <div class="mobile-nav-item active" id="mobileChatBtn">
+                <i class="fas fa-comment"></i>
+                <span>Chat</span>
+            </div>
+            <div class="mobile-nav-item" id="mobileKnowledgeBtn">
+                <i class="fas fa-book"></i>
+                <span>Knowledge</span>
+            </div>
+            <div class="mobile-nav-item" id="mobileToolsBtn">
+                <i class="fas fa-tools"></i>
+                <span>Tools</span>
+            </div>
+            <div class="mobile-nav-item" id="mobileSettingsBtn">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
             </div>
         </div>
     </div>
 
     <!-- Settings Panel -->
-    <div class="settings-panel" id="settingsPanel">
+    <div class="settings-panel" id="settingsPanel" role="dialog" aria-labelledby="settings-title" aria-modal="true">
         <div class="settings-header">
-            <div class="settings-title">Settings</div>
-            <button class="settings-close" id="settingsClose">
-                <i class="fas fa-times"></i>
+            <div class="settings-title" id="settings-title">Settings</div>
+            <button class="settings-close" id="settingsClose" aria-label="Close settings">
+                <i class="fas fa-times" aria-hidden="true"></i>
             </button>
         </div>
         <div class="settings-content">
             <div class="settings-section">
-                <div class="settings-section-title">Model Configuration</div>
+                <div class="settings-section-title">AI Configuration</div>
                 <div class="form-group">
                     <label for="model" class="form-label">AI Model</label>
                     <select id="model" class="form-input">
                         <option value="llama-3.3-70b-versatile" selected>Llama 3.3 70B Versatile</option>
+                        <option value="gpt-4">GPT-4</option>
+                        <option value="claude-3-opus">Claude 3 Opus</option>
                     </select>
-                    <p class="form-text">The Llama 3.3 70B model is used for all conversations</p>
+                    <p class="form-text">Select the AI model for conversations</p>
+                </div>
+                
+                <div class="advanced-features">
+                    <div class="advanced-features-title">Advanced Features</div>
+                    <div class="feature-toggle">
+                        <div>
+                            <div class="feature-name">Real-time Responses</div>
+                            <div class="feature-description">Stream responses as they're generated</div>
+                        </div>
+                        <div class="settings-toggle active" id="realtimeToggle" role="switch" aria-checked="true" tabindex="0">
+                            <div class="settings-toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="feature-toggle">
+                        <div>
+                            <div class="feature-name">Memory & Context</div>
+                            <div class="feature-description">Remember previous conversations</div>
+                        </div>
+                        <div class="settings-toggle active" id="memoryToggle" role="switch" aria-checked="true" tabindex="0">
+                            <div class="settings-toggle-slider"></div>
+                        </div>
+                    </div>
+                    <div class="feature-toggle">
+                        <div>
+                            <div class="feature-name">Multi-modal Processing</div>
+                            <div class="feature-description">Analyze images, audio, and documents</div>
+                        </div>
+                        <div class="settings-toggle active" id="multimodalToggle" role="switch" aria-checked="true" tabindex="0">
+                            <div class="settings-toggle-slider"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             
@@ -1265,7 +2478,7 @@
                         <div class="settings-label">Auto-execute Code</div>
                         <div class="settings-description">Automatically execute code snippets</div>
                     </div>
-                    <div class="settings-toggle" id="autoExecuteToggle">
+                    <div class="settings-toggle" id="autoExecuteToggle" role="switch" aria-checked="false" tabindex="0">
                         <div class="settings-toggle-slider"></div>
                     </div>
                 </div>
@@ -1274,7 +2487,7 @@
                         <div class="settings-label">Sandbox Preview</div>
                         <div class="settings-description">Show preview of sandbox execution</div>
                     </div>
-                    <div class="settings-toggle active" id="sandboxPreviewToggle">
+                    <div class="settings-toggle active" id="sandboxPreviewToggle" role="switch" aria-checked="true" tabindex="0">
                         <div class="settings-toggle-slider"></div>
                     </div>
                 </div>
@@ -1283,7 +2496,7 @@
                         <div class="settings-label">Agentic Workflows</div>
                         <div class="settings-description">Enable advanced agentic features</div>
                     </div>
-                    <div class="settings-toggle active" id="agenticToggle">
+                    <div class="settings-toggle active" id="agenticToggle" role="switch" aria-checked="true" tabindex="0">
                         <div class="settings-toggle-slider"></div>
                     </div>
                 </div>
@@ -1296,7 +2509,7 @@
                         <div class="settings-label">Task Completion</div>
                         <div class="settings-description">Notify when tasks are completed</div>
                     </div>
-                    <div class="settings-toggle active" id="taskNotificationToggle">
+                    <div class="settings-toggle active" id="taskNotificationToggle" role="switch" aria-checked="true" tabindex="0">
                         <div class="settings-toggle-slider"></div>
                     </div>
                 </div>
@@ -1305,9 +2518,20 @@
                         <div class="settings-label">Error Alerts</div>
                         <div class="settings-description">Notify when errors occur</div>
                     </div>
-                    <div class="settings-toggle active" id="errorNotificationToggle">
+                    <div class="settings-toggle active" id="errorNotificationToggle" role="switch" aria-checked="true" tabindex="0">
                         <div class="settings-toggle-slider"></div>
                     </div>
+                </div>
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Account</div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">Sign In</div>
+                        <div class="settings-description">Access your account and sync data</div>
+                    </div>
+                    <button class="btn btn-primary" id="accountSignInBtn">Sign In</button>
                 </div>
             </div>
             
@@ -1318,13 +2542,149 @@
         </div>
     </div>
 
+    <!-- Knowledge Base Panel -->
+    <div class="knowledge-panel" id="knowledgePanel" role="dialog" aria-labelledby="knowledge-title" aria-modal="true">
+        <div class="knowledge-header">
+            <div class="knowledge-title" id="knowledge-title">Knowledge Base</div>
+            <button class="knowledge-close" id="knowledgeClose" aria-label="Close knowledge base">
+                <i class="fas fa-times" aria-hidden="true"></i>
+            </button>
+        </div>
+        <div class="knowledge-content">
+            <div class="upload-area" id="uploadArea" role="button" tabindex="0" aria-label="Upload documents">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt" aria-hidden="true"></i>
+                </div>
+                <div class="upload-text">Drag & drop files here</div>
+                <div class="upload-subtext">or click to browse (PDF, DOC, TXT up to 10MB)</div>
+                <input type="file" id="fileInput" class="sr-only" multiple accept=".pdf,.doc,.docx,.txt" aria-label="File upload">
+            </div>
+            
+            <div class="document-list" id="documentList">
+                <div class="settings-section-title">Uploaded Documents</div>
+                <!-- Documents will be added here dynamically -->
+            </div>
+            
+            <div class="settings-section">
+                <div class="settings-section-title">Search Knowledge Base</div>
+                <div class="form-group">
+                    <input type="text" class="form-input" id="knowledgeSearch" placeholder="Search your documents..." aria-label="Search knowledge base">
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="searchKnowledgeBtn">Search</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal -->
+    <div class="login-modal" id="loginModal" role="dialog" aria-labelledby="login-title" aria-modal="true">
+        <div class="login-container">
+            <div class="login-header">
+                <h1 class="login-title" id="login-title">Welcome to Nexariq AI</h1>
+                <p class="login-subtitle">India's growing AI startup</p>
+            </div>
+            <form class="login-form" id="loginForm">
+                <input type="email" class="login-input" id="loginEmail" placeholder="Email address" required aria-label="Email address">
+                <input type="password" class="login-input" id="loginPassword" placeholder="Password" required aria-label="Password">
+                <div class="login-forgot">
+                    <a href="#" id="forgotPasswordLink">Forgot password?</a>
+                </div>
+                <button type="submit" class="login-submit">Sign In</button>
+            </form>
+            
+            <div class="login-divider">
+                <span class="login-divider-text">or continue with</span>
+            </div>
+            
+            <div class="login-social">
+                <button class="login-social-btn google" id="googleLoginBtn">
+                    <i class="fab fa-google" aria-hidden="true"></i>
+                    Continue with Google
+                </button>
+                <button class="login-social-btn apple" id="appleLoginBtn">
+                    <i class="fab fa-apple" aria-hidden="true"></i>
+                    Continue with Apple
+                </button>
+            </div>
+            
+            <div class="login-signup">
+                Don't have an account? <a href="#" id="signupLink">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Signup Modal -->
+    <div class="signup-modal" id="signupModal" role="dialog" aria-labelledby="signup-title" aria-modal="true">
+        <div class="signup-container">
+            <div class="signup-header">
+                <h1 class="signup-title" id="signup-title">Join Nexariq AI</h1>
+                <p class="signup-subtitle">Be part of India's AI revolution</p>
+            </div>
+            <form class="signup-form" id="signupForm">
+                <input type="text" class="signup-input" id="signupName" placeholder="Full Name" required aria-label="Full Name">
+                <input type="email" class="signup-input" id="signupEmail" placeholder="Email address" required aria-label="Email address">
+                <input type="password" class="signup-input" id="signupPassword" placeholder="Password" required aria-label="Password">
+                <div class="password-strength">
+                    <div class="password-strength-bar" id="passwordStrengthBar"></div>
+                </div>
+                <div class="password-strength-text" id="passwordStrengthText">Password strength</div>
+                <button type="submit" class="signup-submit">Create Account</button>
+            </form>
+            
+            <div class="signup-divider">
+                <span class="signup-divider-text">or continue with</span>
+            </div>
+            
+            <div class="signup-social">
+                <button class="signup-social-btn google" id="googleSignupBtn">
+                    <i class="fab fa-google" aria-hidden="true"></i>
+                    Continue with Google
+                </button>
+                <button class="signup-social-btn apple" id="appleSignupBtn">
+                    <i class="fab fa-apple" aria-hidden="true"></i>
+                    Continue with Apple
+                </button>
+            </div>
+            
+            <div class="signup-login">
+                Already have an account? <a href="#" id="loginFromSignupLink">Sign in</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
+    <!-- Swipe Indicator -->
+    <div class="swipe-indicator" id="swipeIndicator">
+        <i class="fas fa-hand-point-left"></i>
+        <span>Swipe right for menu</span>
+    </div>
+
     <!-- Toast Container -->
-    <div class="toast-container" id="toastContainer"></div>
+    <div class="toast-container" id="toastContainer" aria-live="polite" aria-label="Notifications"></div>
 
     <script>
+        // Initialize Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyA9DeoYavkrMh8kUIwWzH01fNCaYymH4Ow",
+            authDomain: "nexariq-7e82e.firebaseapp.com",
+            projectId: "nexariq-7e82e",
+            storageBucket: "nexariq-7e82e.firebasestorage.app",
+            messagingSenderId: "1032564587257",
+            appId: "1:1032564587257:web:601db80255d02988850028",
+            measurementId: "G-95WKNHWNB7"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        
+        // Initialize Firebase services
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
         // Global state
         const state = {
             messages: [],
@@ -1350,9 +2710,15 @@
                 sandboxPreview: true,
                 agentic: true,
                 taskNotifications: true,
-                errorNotifications: true
+                errorNotifications: true,
+                twoFactor: false,
+                encryption: true,
+                realtime: true,
+                memory: true,
+                multimodal: true
             },
             uploadedFiles: [],
+            knowledgeDocuments: [],
             activeTasks: [],
             workflows: [],
             sandbox: {
@@ -1361,7 +2727,26 @@
                 output: '',
                 preview: ''
             },
-            selectedModel: 'llama-3.3-70b-versatile'
+            selectedModel: 'llama-3.3-70b-versatile',
+            user: {
+                isAuthenticated: false,
+                uid: null,
+                name: 'Guest',
+                email: 'guest@nexariq.ai',
+                photoURL: null,
+                token: null
+            },
+            virtualScroll: {
+                itemHeight: 150,
+                containerHeight: 0,
+                scrollTop: 0,
+                startIndex: 0,
+                endIndex: 0
+            },
+            voiceRecognition: null,
+            isRecording: false,
+            touchStartX: 0,
+            touchEndX: 0
         };
 
         // Typing speeds (characters per millisecond)
@@ -1382,12 +2767,16 @@
             chatInput: document.getElementById('chatInput'),
             sendBtn: document.getElementById('sendBtn'),
             attachBtn: document.getElementById('attachBtn'),
+            imageBtn: document.getElementById('imageBtn'),
+            voiceBtn: document.getElementById('voiceBtn'),
             toolsBtn: document.getElementById('toolsBtn'),
             knowledgeBtn: document.getElementById('knowledgeBtn'),
             projectsBtn: document.getElementById('projectsBtn'),
             settingsBtn: document.getElementById('settingsBtn'),
             settingsPanel: document.getElementById('settingsPanel'),
             settingsClose: document.getElementById('settingsClose'),
+            knowledgePanel: document.getElementById('knowledgePanel'),
+            knowledgeClose: document.getElementById('knowledgeClose'),
             modelSelect: document.getElementById('model'),
             saveSettingsBtn: document.getElementById('saveSettingsBtn'),
             cancelSettingsBtn: document.getElementById('cancelSettingsBtn'),
@@ -1401,20 +2790,590 @@
             sandboxPreviewToggle: document.getElementById('sandboxPreviewToggle'),
             agenticToggle: document.getElementById('agenticToggle'),
             taskNotificationToggle: document.getElementById('taskNotificationToggle'),
-            errorNotificationToggle: document.getElementById('errorNotificationToggle')
+            errorNotificationToggle: document.getElementById('errorNotificationToggle'),
+            twoFactorToggle: document.getElementById('twoFactorToggle'),
+            encryptionToggle: document.getElementById('encryptionToggle'),
+            realtimeToggle: document.getElementById('realtimeToggle'),
+            memoryToggle: document.getElementById('memoryToggle'),
+            multimodalToggle: document.getElementById('multimodalToggle'),
+            accountSignInBtn: document.getElementById('accountSignInBtn'),
+            loginModal: document.getElementById('loginModal'),
+            loginForm: document.getElementById('loginForm'),
+            loginEmail: document.getElementById('loginEmail'),
+            loginPassword: document.getElementById('loginPassword'),
+            forgotPasswordLink: document.getElementById('forgotPasswordLink'),
+            signupLink: document.getElementById('signupLink'),
+            googleLoginBtn: document.getElementById('googleLoginBtn'),
+            appleLoginBtn: document.getElementById('appleLoginBtn'),
+            signupModal: document.getElementById('signupModal'),
+            signupForm: document.getElementById('signupForm'),
+            signupName: document.getElementById('signupName'),
+            signupEmail: document.getElementById('signupEmail'),
+            signupPassword: document.getElementById('signupPassword'),
+            passwordStrengthBar: document.getElementById('passwordStrengthBar'),
+            passwordStrengthText: document.getElementById('passwordStrengthText'),
+            googleSignupBtn: document.getElementById('googleSignupBtn'),
+            appleSignupBtn: document.getElementById('appleSignupBtn'),
+            loginFromSignupLink: document.getElementById('loginFromSignupLink'),
+            uploadArea: document.getElementById('uploadArea'),
+            fileInput: document.getElementById('fileInput'),
+            documentList: document.getElementById('documentList'),
+            knowledgeSearch: document.getElementById('knowledgeSearch'),
+            searchKnowledgeBtn: document.getElementById('searchKnowledgeBtn'),
+            progressContainer: document.getElementById('progressContainer'),
+            progressBar: document.getElementById('progressBar'),
+            swipeIndicator: document.getElementById('swipeIndicator'),
+            mobileNavItems: document.querySelectorAll('.mobile-nav-item'),
+            mobileChatBtn: document.getElementById('mobileChatBtn'),
+            mobileKnowledgeBtn: document.getElementById('mobileKnowledgeBtn'),
+            mobileToolsBtn: document.getElementById('mobileToolsBtn'),
+            mobileSettingsBtn: document.getElementById('mobileSettingsBtn')
         };
 
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
+            // Initialize Firebase Auth
+            initializeFirebaseAuth();
+            
             loadState();
             setupEventListeners();
             initializeChat();
             applySettings();
+            setupVirtualScrolling();
+            initializeVoiceRecognition();
+            setupTouchGestures();
             
             // Adjust mobile viewport height
             adjustMobileViewportHeight();
             window.addEventListener('resize', adjustMobileViewportHeight);
+            
+            // Initialize accessibility
+            initializeAccessibility();
+            
+            // Hide swipe indicator after 5 seconds
+            setTimeout(() => {
+                elements.swipeIndicator.style.display = 'none';
+            }, 5000);
         });
+
+        // Initialize Firebase Auth
+        function initializeFirebaseAuth() {
+            // Set up authentication state observer
+            auth.onAuthStateChanged(user => {
+                if (user) {
+                    // User is signed in
+                    state.user.isAuthenticated = true;
+                    state.user.uid = user.uid;
+                    state.user.name = user.displayName || 'User';
+                    state.user.email = user.email;
+                    state.user.photoURL = user.photoURL;
+                    
+                    // Get ID token
+                    user.getIdToken().then(token => {
+                        state.user.token = token;
+                        saveState();
+                    });
+                    
+                    // Update UI
+                    updateUserInterface();
+                    
+                    // Load user data from Firestore
+                    loadUserData(user.uid);
+                    
+                    // Close login modal if open
+                    closeLoginModal();
+                } else {
+                    // User is signed out
+                    state.user.isAuthenticated = false;
+                    state.user.uid = null;
+                    state.user.token = null;
+                    state.user.name = 'Guest';
+                    state.user.email = 'guest@nexariq.ai';
+                    
+                    // Update UI
+                    updateUserInterface();
+                }
+            });
+        }
+
+        // Load user data from Firestore
+        function loadUserData(uid) {
+            const userRef = db.collection('users').doc(uid);
+            
+            userRef.get().then(doc => {
+                if (doc.exists) {
+                    const userData = doc.data();
+                    
+                    // Load user settings
+                    if (userData.settings) {
+                        state.settings = { ...state.settings, ...userData.settings };
+                        applySettings();
+                    }
+                    
+                    // Load user chat history
+                    if (userData.chatHistory) {
+                        state.chatHistory = userData.chatHistory;
+                        renderChatHistory();
+                    }
+                    
+                    // Load knowledge documents
+                    if (userData.knowledgeDocuments) {
+                        state.knowledgeDocuments = userData.knowledgeDocuments;
+                        renderKnowledgeDocuments();
+                    }
+                } else {
+                    // Create user document if it doesn't exist
+                    userRef.set({
+                        name: state.user.name,
+                        email: state.user.email,
+                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                        settings: state.settings,
+                        chatHistory: [],
+                        knowledgeDocuments: []
+                    });
+                }
+            }).catch(error => {
+                console.error('Error loading user data:', error);
+            });
+        }
+
+        // Save user data to Firestore
+        function saveUserData() {
+            if (!state.user.isAuthenticated || !state.user.uid) return;
+            
+            const userRef = db.collection('users').doc(state.user.uid);
+            
+            userRef.update({
+                settings: state.settings,
+                chatHistory: state.chatHistory,
+                knowledgeDocuments: state.knowledgeDocuments,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(error => {
+                console.error('Error saving user data:', error);
+            });
+        }
+
+        // Initialize voice recognition
+        function initializeVoiceRecognition() {
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                state.voiceRecognition = new SpeechRecognition();
+                
+                state.voiceRecognition.continuous = false;
+                state.voiceRecognition.interimResults = false;
+                state.voiceRecognition.lang = 'en-US';
+                
+                state.voiceRecognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    elements.chatInput.value = transcript;
+                    autoResizeTextarea();
+                    stopRecording();
+                };
+                
+                state.voiceRecognition.onerror = function(event) {
+                    console.error('Speech recognition error', event.error);
+                    stopRecording();
+                    showToast('Voice recognition error', 'error');
+                };
+                
+                state.voiceRecognition.onend = function() {
+                    stopRecording();
+                };
+            } else {
+                // Voice recognition not supported
+                elements.voiceBtn.style.display = 'none';
+            }
+        }
+
+        // Setup touch gestures for mobile
+        function setupTouchGestures() {
+            // Touch events for swipe gestures
+            document.addEventListener('touchstart', handleTouchStart, { passive: true });
+            document.addEventListener('touchend', handleTouchEnd, { passive: true });
+            
+            // Mobile navigation
+            elements.mobileChatBtn.addEventListener('click', () => {
+                closeAllPanels();
+                setActiveMobileNav('mobileChatBtn');
+            });
+            
+            elements.mobileKnowledgeBtn.addEventListener('click', () => {
+                closeAllPanels();
+                toggleKnowledgePanel();
+                setActiveMobileNav('mobileKnowledgeBtn');
+            });
+            
+            elements.mobileToolsBtn.addEventListener('click', () => {
+                closeAllPanels();
+                setActiveMobileNav('mobileToolsBtn');
+                showToast('Tools coming soon', 'success');
+            });
+            
+            elements.mobileSettingsBtn.addEventListener('click', () => {
+                closeAllPanels();
+                toggleSettingsPanel();
+                setActiveMobileNav('mobileSettingsBtn');
+            });
+        }
+
+        // Handle touch start
+        function handleTouchStart(e) {
+            state.touchStartX = e.changedTouches[0].screenX;
+        }
+
+        // Handle touch end
+        function handleTouchEnd(e) {
+            state.touchEndX = e.changedTouches[0].screenX;
+            handleSwipe();
+        }
+
+        // Handle swipe gesture
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = state.touchStartX - state.touchEndX;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe left - close sidebar
+                    if (elements.sidebar.classList.contains('active')) {
+                        closeSidebar();
+                    }
+                } else {
+                    // Swipe right - open sidebar
+                    if (!elements.sidebar.classList.contains('active')) {
+                        toggleSidebar();
+                    }
+                }
+            }
+        }
+
+        // Set active mobile navigation
+        function setActiveMobileNav(activeId) {
+            elements.mobileNavItems.forEach(item => {
+                if (item.id === activeId) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Close all panels
+        function closeAllPanels() {
+            closeSidebar();
+            closeSettingsPanel();
+            closeKnowledgePanel();
+        }
+
+        // Start voice recording
+        function startRecording() {
+            if (!state.voiceRecognition) return;
+            
+            try {
+                state.voiceRecognition.start();
+                state.isRecording = true;
+                elements.voiceBtn.classList.add('recording');
+                showToast('Listening...', 'success');
+            } catch (error) {
+                console.error('Error starting voice recognition:', error);
+                showToast('Error starting voice recognition', 'error');
+            }
+        }
+
+        // Stop voice recording
+        function stopRecording() {
+            if (!state.voiceRecognition || !state.isRecording) return;
+            
+            try {
+                state.voiceRecognition.stop();
+                state.isRecording = false;
+                elements.voiceBtn.classList.remove('recording');
+            } catch (error) {
+                console.error('Error stopping voice recognition:', error);
+            }
+        }
+
+        // Initialize accessibility features
+        function initializeAccessibility() {
+            // Add keyboard navigation
+            document.addEventListener('keydown', handleKeyboardNavigation);
+            
+            // Add ARIA attributes to dynamic elements
+            updateAriaAttributes();
+            
+            // Add focus management
+            manageFocus();
+        }
+
+        // Handle keyboard navigation
+        function handleKeyboardNavigation(e) {
+            // Tab navigation
+            if (e.key === 'Tab') {
+                // Handle focus trapping in modals
+                if (elements.settingsPanel.classList.contains('active') || 
+                    elements.knowledgePanel.classList.contains('active') ||
+                    elements.loginModal.classList.contains('active') ||
+                    elements.signupModal.classList.contains('active')) {
+                    trapFocus(e);
+                }
+            }
+            
+            // Escape key to close modals
+            if (e.key === 'Escape') {
+                if (elements.settingsPanel.classList.contains('active')) {
+                    closeSettingsPanel();
+                } else if (elements.knowledgePanel.classList.contains('active')) {
+                    closeKnowledgePanel();
+                } else if (elements.loginModal.classList.contains('active')) {
+                    closeLoginModal();
+                } else if (elements.signupModal.classList.contains('active')) {
+                    closeSignupModal();
+                } else if (elements.sidebar.classList.contains('active')) {
+                    closeSidebar();
+                }
+            }
+        }
+
+        // Trap focus within modal
+        function trapFocus(e) {
+            const activeModal = document.querySelector('.settings-panel.active, .knowledge-panel.active, .login-modal.active, .signup-modal.active');
+            if (!activeModal) return;
+            
+            const focusableElements = activeModal.querySelectorAll(
+                'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+            );
+            
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+            
+            if (e.shiftKey && document.activeElement === firstElement) {
+                e.preventDefault();
+                lastElement.focus();
+            } else if (!e.shiftKey && document.activeElement === lastElement) {
+                e.preventDefault();
+                firstElement.focus();
+            }
+        }
+
+        // Update ARIA attributes
+        function updateAriaAttributes() {
+            // Update sidebar expanded state
+            elements.mobileMenuBtn.setAttribute('aria-expanded', elements.sidebar.classList.contains('active'));
+            
+            // Update settings panel visibility
+            elements.settingsPanel.setAttribute('aria-hidden', !elements.settingsPanel.classList.contains('active'));
+            
+            // Update knowledge panel visibility
+            elements.knowledgePanel.setAttribute('aria-hidden', !elements.knowledgePanel.classList.contains('active'));
+            
+            // Update login modal visibility
+            elements.loginModal.setAttribute('aria-hidden', !elements.loginModal.classList.contains('active'));
+            
+            // Update signup modal visibility
+            elements.signupModal.setAttribute('aria-hidden', !elements.signupModal.classList.contains('active'));
+        }
+
+        // Manage focus for modals
+        function manageFocus() {
+            // When a modal opens, focus the first focusable element
+            const observer = new MutationObserver((mutations) => {
+                mutations.forEach((mutation) => {
+                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+                        const target = mutation.target;
+                        
+                        if (target.classList.contains('active')) {
+                            if (target === elements.settingsPanel) {
+                                elements.settingsClose.focus();
+                            } else if (target === elements.knowledgePanel) {
+                                elements.knowledgeClose.focus();
+                            } else if (target === elements.loginModal) {
+                                elements.loginEmail.focus();
+                            } else if (target === elements.signupModal) {
+                                elements.signupName.focus();
+                            }
+                        }
+                    }
+                });
+            });
+            
+            observer.observe(elements.settingsPanel, { attributes: true });
+            observer.observe(elements.knowledgePanel, { attributes: true });
+            observer.observe(elements.loginModal, { attributes: true });
+            observer.observe(elements.signupModal, { attributes: true });
+        }
+
+        // Setup virtual scrolling
+        function setupVirtualScrolling() {
+            const container = elements.chatMessages;
+            
+            // Calculate container height
+            state.virtualScroll.containerHeight = container.clientHeight;
+            
+            // Handle scroll events
+            container.addEventListener('scroll', handleVirtualScroll);
+            
+            // Handle resize events
+            window.addEventListener('resize', () => {
+                state.virtualScroll.containerHeight = container.clientHeight;
+                renderVirtualMessages();
+            });
+        }
+
+        // Handle virtual scroll
+        function handleVirtualScroll() {
+            const container = elements.chatMessages;
+            state.virtualScroll.scrollTop = container.scrollTop;
+            
+            // Calculate visible range
+            const startIndex = Math.floor(state.virtualScroll.scrollTop / state.virtualScroll.itemHeight);
+            const endIndex = Math.min(
+                startIndex + Math.ceil(state.virtualScroll.containerHeight / state.virtualScroll.itemHeight) + 1,
+                state.messages.length - 1
+            );
+            
+            // Update state if range changed
+            if (startIndex !== state.virtualScroll.startIndex || endIndex !== state.virtualScroll.endIndex) {
+                state.virtualScroll.startIndex = startIndex;
+                state.virtualScroll.endIndex = endIndex;
+                renderVirtualMessages();
+            }
+        }
+
+        // Render virtual messages
+        function renderVirtualMessages() {
+            const container = elements.chatMessages;
+            const { startIndex, endIndex, itemHeight } = state.virtualScroll;
+            
+            // Clear container
+            container.innerHTML = '';
+            
+            // Create spacer for top offset
+            const topSpacer = document.createElement('div');
+            topSpacer.className = 'virtual-scroll-spacer';
+            topSpacer.style.height = `${startIndex * itemHeight}px`;
+            container.appendChild(topSpacer);
+            
+            // Create content container
+            const contentContainer = document.createElement('div');
+            contentContainer.className = 'virtual-scroll-content';
+            
+            // Render visible messages
+            for (let i = startIndex; i <= endIndex; i++) {
+                const message = state.messages[i];
+                if (!message) continue;
+                
+                const messageEl = createMessageElement(message, i);
+                contentContainer.appendChild(messageEl);
+            }
+            
+            container.appendChild(contentContainer);
+            
+            // Create spacer for bottom offset
+            const bottomSpacer = document.createElement('div');
+            bottomSpacer.className = 'virtual-scroll-spacer';
+            bottomSpacer.style.height = `${(state.messages.length - endIndex - 1) * itemHeight}px`;
+            container.appendChild(bottomSpacer);
+        }
+
+        // Create message element
+        function createMessageElement(message, index) {
+            const messageEl = document.createElement('div');
+            messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`;
+            messageEl.dataset.index = index;
+            
+            const avatar = message.role === 'user' ? 'U' : '';
+            const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            messageEl.innerHTML = `
+                <div class="message-avatar">${avatar}</div>
+                <div class="message-content">
+                    <div class="message-text">${formatMessageContent(message.content)}</div>
+                    ${message.role === 'assistant' ? `
+                        <div class="message-actions">
+                            <button class="message-action-btn" title="Copy" onclick="copyMessage('${message.id}')" aria-label="Copy message">
+                                <i class="fas fa-copy" aria-hidden="true"></i>
+                            </button>
+                            <button class="message-action-btn" title="Good response" aria-label="Good response">
+                                <i class="fas fa-thumbs-up" aria-hidden="true"></i>
+                            </button>
+                            <button class="message-action-btn" title="Bad response" aria-label="Bad response">
+                                <i class="fas fa-thumbs-down" aria-hidden="true"></i>
+                            </button>
+                        </div>
+                    ` : ''}
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            // Add file attachments if any
+            if (message.attachments && message.attachments.length > 0) {
+                const attachmentsContainer = document.createElement('div');
+                attachmentsContainer.className = 'file-attachments';
+                
+                message.attachments.forEach(attachment => {
+                    const attachmentEl = document.createElement('div');
+                    attachmentEl.className = 'file-attachment';
+                    
+                    const icon = getFileIcon(attachment.type);
+                    
+                    attachmentEl.innerHTML = `
+                        <div class="file-attachment-icon">
+                            <i class="${icon}" aria-hidden="true"></i>
+                        </div>
+                        <div class="file-attachment-info">
+                            <div class="file-attachment-name">${attachment.name}</div>
+                            <div class="file-attachment-size">${formatFileSize(attachment.size)}</div>
+                        </div>
+                        <button class="file-attachment-remove" onclick="removeAttachment('${message.id}', '${attachment.id}')" aria-label="Remove attachment">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                    `;
+                    
+                    attachmentsContainer.appendChild(attachmentEl);
+                });
+                
+                messageEl.querySelector('.message-content').appendChild(attachmentsContainer);
+            }
+            
+            return messageEl;
+        }
+
+        // Get file icon based on type
+        function getFileIcon(type) {
+            if (type.startsWith('image/')) {
+                return 'fas fa-image';
+            } else if (type === 'application/pdf') {
+                return 'fas fa-file-pdf';
+            } else if (type.includes('word')) {
+                return 'fas fa-file-word';
+            } else if (type.includes('excel') || type.includes('spreadsheet')) {
+                return 'fas fa-file-excel';
+            } else if (type.includes('powerpoint') || type.includes('presentation')) {
+                return 'fas fa-file-powerpoint';
+            } else if (type.startsWith('text/')) {
+                return 'fas fa-file-alt';
+            } else if (type.startsWith('audio/')) {
+                return 'fas fa-file-audio';
+            } else if (type.startsWith('video/')) {
+                return 'fas fa-file-video';
+            } else if (type.includes('zip') || type.includes('compressed')) {
+                return 'fas fa-file-archive';
+            } else {
+                return 'fas fa-file';
+            }
+        }
+
+        // Remove attachment
+        function removeAttachment(messageId, attachmentId) {
+            const message = state.messages.find(m => m.id === messageId);
+            if (!message) return;
+            
+            message.attachments = message.attachments.filter(a => a.id !== attachmentId);
+            renderMessages();
+            saveState();
+            
+            showToast('Attachment removed', 'success');
+        }
 
         // Adjust mobile viewport height to account for keyboard
         function adjustMobileViewportHeight() {
@@ -1464,6 +3423,7 @@
                     state.currentChatId = parsedState.currentChatId;
                     state.workflows = parsedState.workflows || [];
                     state.selectedModel = parsedState.selectedModel || 'llama-3.3-70b-versatile';
+                    state.knowledgeDocuments = parsedState.knowledgeDocuments || [];
                     
                     // Update model select
                     if (elements.modelSelect) {
@@ -1474,6 +3434,9 @@
                     if (state.currentChatId) {
                         loadChat(state.currentChatId);
                     }
+                    
+                    // Render knowledge documents
+                    renderKnowledgeDocuments();
                 }
             } catch (error) {
                 console.error('Error loading state:', error);
@@ -1489,9 +3452,15 @@
                     settings: state.settings,
                     currentChatId: state.currentChatId,
                     workflows: state.workflows,
-                    selectedModel: state.selectedModel
+                    selectedModel: state.selectedModel,
+                    knowledgeDocuments: state.knowledgeDocuments
                 };
                 localStorage.setItem('nexariqState', JSON.stringify(stateToSave));
+                
+                // Save to Firestore if user is authenticated
+                if (state.user.isAuthenticated) {
+                    saveUserData();
+                }
             } catch (error) {
                 console.error('Error saving state:', error);
             }
@@ -1513,12 +3482,22 @@
             
             // Attach file
             elements.attachBtn.addEventListener('click', attachFile);
+            elements.imageBtn.addEventListener('click', attachImage);
+            
+            // Voice input
+            elements.voiceBtn.addEventListener('click', toggleVoiceInput);
             
             // Settings panel
             elements.settingsBtn.addEventListener('click', toggleSettingsPanel);
             elements.settingsClose.addEventListener('click', closeSettingsPanel);
             elements.saveSettingsBtn.addEventListener('click', saveSettings);
             elements.cancelSettingsBtn.addEventListener('click', closeSettingsPanel);
+            elements.accountSignInBtn.addEventListener('click', showLoginModal);
+            
+            // Knowledge panel
+            elements.knowledgeBtn.addEventListener('click', toggleKnowledgePanel);
+            elements.knowledgeClose.addEventListener('click', closeKnowledgePanel);
+            elements.searchKnowledgeBtn.addEventListener('click', searchKnowledgeBase);
             
             // User menu
             elements.userMenu.addEventListener('click', toggleUserMenu);
@@ -1532,9 +3511,49 @@
             elements.agenticToggle.addEventListener('click', toggleAgentic);
             elements.taskNotificationToggle.addEventListener('click', toggleTaskNotifications);
             elements.errorNotificationToggle.addEventListener('click', toggleErrorNotifications);
+            elements.twoFactorToggle.addEventListener('click', toggleTwoFactor);
+            elements.encryptionToggle.addEventListener('click', toggleEncryption);
+            elements.realtimeToggle.addEventListener('click', toggleRealtime);
+            elements.memoryToggle.addEventListener('click', toggleMemory);
+            elements.multimodalToggle.addEventListener('click', toggleMultimodal);
+            
+            // Login form
+            elements.loginForm.addEventListener('submit', handleLogin);
+            elements.forgotPasswordLink.addEventListener('click', handleForgotPassword);
+            elements.signupLink.addEventListener('click', showSignupModal);
+            elements.googleLoginBtn.addEventListener('click', () => handleSocialLogin('google'));
+            elements.appleLoginBtn.addEventListener('click', () => handleSocialLogin('apple'));
+            
+            // Signup form
+            elements.signupForm.addEventListener('submit', handleSignup);
+            elements.signupPassword.addEventListener('input', checkPasswordStrength);
+            elements.googleSignupBtn.addEventListener('click', () => handleSocialSignup('google'));
+            elements.appleSignupBtn.addEventListener('click', () => handleSocialSignup('apple'));
+            elements.loginFromSignupLink.addEventListener('click', showLoginModal);
+            
+            // File upload
+            elements.uploadArea.addEventListener('click', () => elements.fileInput.click());
+            elements.uploadArea.addEventListener('dragover', handleDragOver);
+            elements.uploadArea.addEventListener('dragleave', handleDragLeave);
+            elements.uploadArea.addEventListener('drop', handleDrop);
+            elements.fileInput.addEventListener('change', handleFileSelect);
             
             // Window resize
             window.addEventListener('resize', handleWindowResize);
+            
+            // Handle visibility change for performance optimization
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
+
+        // Handle visibility change for performance optimization
+        function handleVisibilityChange() {
+            if (document.hidden) {
+                // Page is hidden, pause any animations or heavy operations
+                console.log('Page hidden, pausing operations');
+            } else {
+                // Page is visible again, resume operations
+                console.log('Page visible, resuming operations');
+            }
         }
 
         // Initialize chat
@@ -1546,8 +3565,9 @@
                     role: 'assistant',
                     content: `## Hello! I'm **Lynxa**
 
-I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. I can help you with a wide range of tasks:
+I'm an AI assistant from **Nexariq**, a growing tech startup from India 🇮🇳
 
+I can help you with:
 * Answering questions and providing information
 * Generating and executing code in multiple languages
 * Creating and analyzing documents
@@ -1555,7 +3575,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. I can help y
 * Image generation and analysis
 * Complex multi-step tasks and workflows
 
-I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?`,
+Try me out! What would you like to know or create?`,
                     timestamp: new Date().toISOString()
                 });
                 renderMessages();
@@ -1580,22 +3600,52 @@ I have access to various tools and can execute code in a secure sandbox environm
             
             if (state.settings.autoExecute) {
                 elements.autoExecuteToggle.classList.add('active');
+                elements.autoExecuteToggle.setAttribute('aria-checked', 'true');
             }
             
             if (state.settings.sandboxPreview) {
                 elements.sandboxPreviewToggle.classList.add('active');
+                elements.sandboxPreviewToggle.setAttribute('aria-checked', 'true');
             }
             
             if (state.settings.agentic) {
                 elements.agenticToggle.classList.add('active');
+                elements.agenticToggle.setAttribute('aria-checked', 'true');
             }
             
             if (state.settings.taskNotifications) {
                 elements.taskNotificationToggle.classList.add('active');
+                elements.taskNotificationToggle.setAttribute('aria-checked', 'true');
             }
             
             if (state.settings.errorNotifications) {
                 elements.errorNotificationToggle.classList.add('active');
+                elements.errorNotificationToggle.setAttribute('aria-checked', 'true');
+            }
+            
+            if (state.settings.twoFactor) {
+                elements.twoFactorToggle.classList.add('active');
+                elements.twoFactorToggle.setAttribute('aria-checked', 'true');
+            }
+            
+            if (state.settings.encryption) {
+                elements.encryptionToggle.classList.add('active');
+                elements.encryptionToggle.setAttribute('aria-checked', 'true');
+            }
+            
+            if (state.settings.realtime) {
+                elements.realtimeToggle.classList.add('active');
+                elements.realtimeToggle.setAttribute('aria-checked', 'true');
+            }
+            
+            if (state.settings.memory) {
+                elements.memoryToggle.classList.add('active');
+                elements.memoryToggle.setAttribute('aria-checked', 'true');
+            }
+            
+            if (state.settings.multimodal) {
+                elements.multimodalToggle.classList.add('active');
+                elements.multimodalToggle.setAttribute('aria-checked', 'true');
             }
         }
 
@@ -1603,12 +3653,14 @@ I have access to various tools and can execute code in a secure sandbox environm
         function toggleSidebar() {
             elements.sidebar.classList.toggle('active');
             elements.overlay.classList.toggle('active');
+            updateAriaAttributes();
         }
 
         // Close sidebar
         function closeSidebar() {
             elements.sidebar.classList.remove('active');
             elements.overlay.classList.remove('active');
+            updateAriaAttributes();
         }
 
         // Start new chat
@@ -1640,7 +3692,9 @@ I have access to various tools and can execute code in a secure sandbox environm
                 role: 'assistant',
                 content: `## Hello! I'm **Lynxa**
 
-I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I assist you today?`,
+I'm an AI assistant from **Nexariq**, a growing tech startup from India 🇮🇳
+
+What would you like to know or create today?`,
                 timestamp: new Date().toISOString()
             });
             
@@ -1656,7 +3710,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             activeChat.className = 'chat-item active';
             activeChat.innerHTML = `
                 <div class="chat-item-icon">
-                    <i class="fas fa-comment"></i>
+                    <i class="fas fa-comment" aria-hidden="true"></i>
                 </div>
                 <div class="chat-item-content">
                     <div class="chat-item-title">Current Conversation</div>
@@ -1697,7 +3751,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 activeChat.className = 'chat-item active';
                 activeChat.innerHTML = `
                     <div class="chat-item-icon">
-                        <i class="fas fa-comment"></i>
+                        <i class="fas fa-comment" aria-hidden="true"></i>
                     </div>
                     <div class="chat-item-content">
                         <div class="chat-item-title">Current Conversation</div>
@@ -1718,7 +3772,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 
                 chatItem.innerHTML = `
                     <div class="chat-item-icon">
-                        <i class="fas fa-comment"></i>
+                        <i class="fas fa-comment" aria-hidden="true"></i>
                     </div>
                     <div class="chat-item-content">
                         <div class="chat-item-title">${chat.title}</div>
@@ -1732,48 +3786,28 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
 
         // Render messages
         function renderMessages() {
-            elements.chatMessages.innerHTML = '';
-            
-            state.messages.forEach(message => {
-                const messageEl = document.createElement('div');
-                messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`;
+            // Use virtual scrolling for large message lists
+            if (state.messages.length > 50) {
+                renderVirtualMessages();
+            } else {
+                // Fallback to simple rendering for small lists
+                elements.chatMessages.innerHTML = '';
                 
-                const avatar = message.role === 'user' ? 'U' : '';
-                const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
-                messageEl.innerHTML = `
-                    <div class="message-avatar">${avatar}</div>
-                    <div class="message-content">
-                        <div class="message-text">${formatMessageContent(message.content)}</div>
-                        ${message.role === 'assistant' ? `
-                            <div class="message-actions">
-                                <button class="message-action-btn" title="Copy" onclick="copyMessage('${message.id}')">
-                                    <i class="fas fa-copy"></i>
-                                </button>
-                                <button class="message-action-btn" title="Good response">
-                                    <i class="fas fa-thumbs-up"></i>
-                                </button>
-                                <button class="message-action-btn" title="Bad response">
-                                    <i class="fas fa-thumbs-down"></i>
-                                </button>
-                            </div>
-                        ` : ''}
-                        <div class="message-time">${time}</div>
-                    </div>
-                `;
-                
-                elements.chatMessages.appendChild(messageEl);
-            });
-            
-            // Scroll to bottom
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-            
-            // Highlight code blocks
-            setTimeout(() => {
-                elements.chatMessages.querySelectorAll('pre code').forEach(block => {
-                    hljs.highlightElement(block);
+                state.messages.forEach((message, index) => {
+                    const messageEl = createMessageElement(message, index);
+                    elements.chatMessages.appendChild(messageEl);
                 });
-            }, 0);
+                
+                // Scroll to bottom
+                elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                
+                // Highlight code blocks
+                setTimeout(() => {
+                    elements.chatMessages.querySelectorAll('pre code').forEach(block => {
+                        hljs.highlightElement(block);
+                    });
+                }, 0);
+            }
         }
 
         // Format message content (markdown to HTML)
@@ -1790,18 +3824,68 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                     <div class="code-block">
                         <div class="code-header">
                             <div class="code-language">${language}</div>
-                            <button class="copy-btn" onclick="copyCode('${codeId}')">
-                                <i class="fas fa-copy"></i>
-                                <span>Copy</span>
-                            </button>
+                            <div>
+                                <button class="copy-btn" onclick="copyCode('${codeId}')">
+                                    <i class="fas fa-copy" aria-hidden="true"></i>
+                                    <span>Copy</span>
+                                </button>
+                                <button class="run-btn" onclick="executeCode('${codeId}', '${language}')">
+                                    <i class="fas fa-play" aria-hidden="true"></i>
+                                    <span>Run</span>
+                                </button>
+                            </div>
                         </div>
                         <pre><code id="${codeId}" class="language-${language}">${escapedCode}</code></pre>
+                        <div class="code-output" id="output-${codeId}" style="display: none;"></div>
                     </div>
                 `;
             });
             
             // Sanitize HTML
             return DOMPurify.sanitize(processedHtml);
+        }
+
+        // Execute code in sandbox
+        function executeCode(codeId, language) {
+            const codeElement = document.getElementById(codeId);
+            const outputElement = document.getElementById(`output-${codeId}`);
+            
+            if (!codeElement || !outputElement) return;
+            
+            const code = codeElement.textContent;
+            
+            // Show output container
+            outputElement.style.display = 'block';
+            outputElement.textContent = 'Running...';
+            outputElement.classList.remove('error');
+            
+            try {
+                let result;
+                
+                if (language === 'javascript') {
+                    // Execute JavaScript code
+                    result = eval(code);
+                    outputElement.textContent = result !== undefined ? String(result) : 'Code executed successfully';
+                } else if (language === 'python') {
+                    // Simulate Python execution
+                    outputElement.textContent = 'Python execution simulated. In a real implementation, this would run in a secure sandbox.';
+                } else {
+                    outputElement.textContent = `Execution for ${language} not implemented yet`;
+                }
+                
+                // Show success notification
+                if (state.settings.taskNotifications) {
+                    showToast('Code executed successfully', 'success');
+                }
+            } catch (error) {
+                outputElement.textContent = `Error: ${error.message}`;
+                outputElement.classList.add('error');
+                
+                // Show error notification
+                if (state.settings.errorNotifications) {
+                    showToast('Error executing code', 'error');
+                }
+            }
         }
 
         // Handle chat input keydown
@@ -1816,6 +3900,78 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         function autoResizeTextarea() {
             elements.chatInput.style.height = 'auto';
             elements.chatInput.style.height = Math.min(elements.chatInput.scrollHeight, 200) + 'px';
+        }
+
+        // Toggle voice input
+        function toggleVoiceInput() {
+            if (state.isRecording) {
+                stopRecording();
+            } else {
+                startRecording();
+            }
+        }
+
+        // Quick action
+        function quickAction(action) {
+            let prompt = '';
+            
+            switch (action) {
+                case 'summarize':
+                    prompt = 'Please summarize the following text for me. I\'ll provide the text in my next message.';
+                    break;
+                case 'code':
+                    prompt = 'I need help with coding. Please tell me what programming language you\'re using and what you\'d like to accomplish.';
+                    break;
+                case 'translate':
+                    prompt = 'I need help with translation. Please tell me what text you\'d like to translate and which languages you\'re translating between.';
+                    break;
+                case 'analyze':
+                    prompt = 'I need help with data analysis. Please tell me about your data and what kind of analysis you\'re looking for.';
+                    break;
+                default:
+                    prompt = 'How can I help you today?';
+            }
+            
+            // Add the prompt as a user message
+            const userMessage = {
+                id: generateId(),
+                role: 'user',
+                content: prompt,
+                timestamp: new Date().toISOString()
+            };
+            
+            state.messages.push(userMessage);
+            renderMessages();
+            saveState();
+            
+            // Show typing indicator and generate AI response
+            showTypingIndicator();
+            
+            setTimeout(() => {
+                hideTypingIndicator();
+                
+                let aiResponse = '';
+                
+                switch (action) {
+                    case 'summarize':
+                        aiResponse = 'I\'d be happy to help you summarize text! Please paste the text you\'d like me to summarize, and I\'ll provide a concise summary of the key points.';
+                        break;
+                    case 'code':
+                        aiResponse = 'I can help you with coding! Let me know what programming language you\'re using and what you\'re trying to accomplish. I can generate code, debug issues, or explain concepts.';
+                        break;
+                    case 'translate':
+                        aiResponse = 'I can help with translation! Please provide the text you\'d like to translate and let me know which languages you\'re translating between.';
+                        break;
+                    case 'analyze':
+                        aiResponse = 'I can help with data analysis! Please tell me about your data (format, size, etc.) and what kind of insights you\'re looking for.';
+                        break;
+                    default:
+                        aiResponse = 'How can I assist you today?';
+                }
+                
+                // Add AI response with typing effect
+                addAIMessageWithTyping(aiResponse);
+            }, 1000);
         }
 
         // Send message
@@ -1846,7 +4002,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 // Prepare messages for API
                 const systemMessage = {
                     role: 'system',
-                    content: 'You are Lynxa, an advanced AI assistant developed by Nexariq (AJ STUDIOZ). Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples.'
+                    content: 'You are Lynxa, an AI assistant from Nexariq, a growing tech startup from India. Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples.'
                 };
                 
                 // Convert messages to API format
@@ -1864,31 +4020,27 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                     });
                 });
                 
-                // Send request to our backend API
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        messages: apiMessages,
-                        model: state.selectedModel || 'llama-3.3-70b-versatile'
-                    })
-                });
-                
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'API request failed');
+                // Check if we should search knowledge base
+                let knowledgeResults = [];
+                if (state.knowledgeDocuments.length > 0 && shouldSearchKnowledgeBase(message)) {
+                    knowledgeResults = await searchKnowledgeDocuments(message);
                 }
                 
-                const data = await response.json();
-                const aiResponse = data.choices[0].message.content;
+                // Add knowledge results to system message if any
+                if (knowledgeResults.length > 0) {
+                    systemMessage.content += `\n\nRelevant information from knowledge base:\n${knowledgeResults.map(r => `- ${r.title}: ${r.content.substring(0, 200)}...`).join('\n')}`;
+                }
                 
-                // Remove typing indicator
-                hideTypingIndicator();
-                
-                // Add AI response with typing effect
-                addAIMessageWithTyping(aiResponse);
+                // Simulate AI response (in a real implementation, this would call an API)
+                setTimeout(() => {
+                    hideTypingIndicator();
+                    
+                    // Generate a contextual response
+                    let aiResponse = generateAIResponse(message, knowledgeResults);
+                    
+                    // Add AI response with typing effect
+                    addAIMessageWithTyping(aiResponse);
+                }, 1500);
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -1908,6 +4060,111 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             }
         }
 
+        // Generate AI response based on message
+        function generateAIResponse(message, knowledgeResults) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Check for code-related requests
+            if (lowerMessage.includes('code') || lowerMessage.includes('program') || lowerMessage.includes('function')) {
+                return `I can help you with coding! Here's a simple example in JavaScript:
+
+\`\`\`javascript
+function greet(name) {
+    return \`Hello, \${name}!\`;
+}
+
+console.log(greet("World"));
+\`\`\`
+
+This function takes a name as input and returns a greeting. You can run this code using the "Run" button above. What specific coding task would you like help with?`;
+            }
+            
+            // Check for translation requests
+            if (lowerMessage.includes('translate') || lowerMessage.includes('language')) {
+                return `I can help with translation! However, I need more information:
+
+1. What text would you like me to translate?
+2. What is the source language?
+3. What language would you like it translated to?
+
+Once you provide this information, I'll be able to help you with the translation.`;
+            }
+            
+            // Check for summarization requests
+            if (lowerMessage.includes('summarize') || lowerMessage.includes('summary')) {
+                return `I'd be happy to help you summarize text! Please paste the text you'd like me to summarize, and I'll provide a concise summary of the key points.
+
+For best results, the text should be at least a few sentences long. What would you like me to summarize?`;
+            }
+            
+            // Check for data analysis requests
+            if (lowerMessage.includes('analyze') || lowerMessage.includes('data') || lowerMessage.includes('chart')) {
+                return `I can help with data analysis! To get started, I'll need to know:
+
+1. What kind of data do you have? (text, numbers, etc.)
+2. What format is it in? (CSV, JSON, etc.)
+3. What kind of analysis are you looking for? (trends, patterns, etc.)
+
+If you have a dataset you'd like me to analyze, please share it and let me know what insights you're looking for.`;
+            }
+            
+            // Check for image-related requests
+            if (lowerMessage.includes('image') || lowerMessage.includes('picture') || lowerMessage.includes('photo')) {
+                return `I can help with image-related tasks! I can:
+
+1. Analyze images to identify objects, text, or people
+2. Generate images based on descriptions
+3. Edit or enhance images
+
+For image analysis, please upload an image using the image button. For image generation, please describe what you'd like me to create. What would you like to do?`;
+            }
+            
+            // Check for knowledge base questions
+            if (knowledgeResults.length > 0) {
+                return `Based on your question, I found some relevant information in your knowledge base:
+
+ ${knowledgeResults.map(r => `- **${r.title}**: ${r.content.substring(0, 150)}...`).join('\n')}
+
+Would you like me to provide more details about any of these topics?`;
+            }
+            
+            // Default response
+            return `I'm here to help! As an AI assistant from Nexariq, I can assist with a wide range of tasks including:
+
+- Answering questions and providing information
+- Generating and executing code in multiple languages
+- Creating and analyzing documents
+- Web scraping and data extraction
+- Image generation and analysis
+- Translation and summarization
+
+What would you like to know or create today?`;
+        }
+
+        // Determine if we should search knowledge base
+        function shouldSearchKnowledgeBase(message) {
+            const keywords = ['document', 'file', 'information', 'knowledge', 'search', 'find', 'look up', 'reference'];
+            const lowerMessage = message.toLowerCase();
+            
+            return keywords.some(keyword => lowerMessage.includes(keyword));
+        }
+
+        // Search knowledge documents
+        async function searchKnowledgeDocuments(query) {
+            // Simulate search - in a real implementation, this would use a proper search algorithm
+            const results = [];
+            
+            for (const doc of state.knowledgeDocuments) {
+                // Simple keyword matching
+                if (doc.content.toLowerCase().includes(query.toLowerCase()) || 
+                    doc.title.toLowerCase().includes(query.toLowerCase())) {
+                    results.push(doc);
+                }
+            }
+            
+            return results.slice(0, 3); // Return top 3 results
+        }
+
         // Add AI message with typing effect
         function addAIMessageWithTyping(content) {
             const messageId = generateId();
@@ -1921,18 +4178,18 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             messageEl.innerHTML = `
-                <div class="message-avatar"></div>
+                <div class="message-avatar" aria-hidden="true"></div>
                 <div class="message-content">
                     <div class="message-text typing-text" id="text-${messageId}"></div>
                     <div class="message-actions">
-                        <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')">
-                            <i class="fas fa-copy"></i>
+                        <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')" aria-label="Copy message">
+                            <i class="fas fa-copy" aria-hidden="true"></i>
                         </button>
-                        <button class="message-action-btn" title="Good response">
-                            <i class="fas fa-thumbs-up"></i>
+                        <button class="message-action-btn" title="Good response" aria-label="Good response">
+                            <i class="fas fa-thumbs-up" aria-hidden="true"></i>
                         </button>
-                        <button class="message-action-btn" title="Bad response">
-                            <i class="fas fa-thumbs-down"></i>
+                        <button class="message-action-btn" title="Bad response" aria-label="Bad response">
+                            <i class="fas fa-thumbs-down" aria-hidden="true"></i>
                         </button>
                     </div>
                     <div class="message-time">${time}</div>
@@ -1961,10 +4218,29 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 
                 // Save state after typing is complete
                 saveState();
+                
+                // Generate conversation summary if enabled
+                if (state.settings.agentic && state.messages.length > 3) {
+                    generateConversationSummary();
+                }
             });
             
             // Scroll to bottom
             elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+        }
+
+        // Generate conversation summary
+        function generateConversationSummary() {
+            // In a real implementation, this would call an API to generate a summary
+            // For now, we'll just create a simple summary based on the last few messages
+            const lastMessages = state.messages.slice(-3);
+            const summary = `This conversation covers ${lastMessages.length} messages about various topics.`;
+            
+            // Update the summary in the last message
+            const lastMessageEl = document.querySelector('.message:last-child .summary-content');
+            if (lastMessageEl) {
+                lastMessageEl.textContent = summary;
+            }
         }
 
         // Type text with typing effect
@@ -2024,7 +4300,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             typingIndicator.id = 'typingIndicator';
             
             typingIndicator.innerHTML = `
-                <div class="message-avatar"></div>
+                <div class="message-avatar" aria-hidden="true"></div>
                 <div class="message-content">
                     <div class="typing-indicator">
                         <div class="typing-dot"></div>
@@ -2058,6 +4334,15 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             input.click();
         }
 
+        // Attach image
+        function attachImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = handleImageSelect;
+            input.click();
+        }
+
         // Handle file select
         function handleFileSelect(event) {
             const files = event.target.files;
@@ -2066,54 +4351,380 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 const file = files[i];
                 const fileId = generateId();
                 
-                state.uploadedFiles.push({
-                    id: fileId,
-                    name: file.name,
-                    size: file.size,
-                    type: file.type,
-                    file: file
-                });
+                // Validate file size (10MB limit)
+                if (file.size > 10 * 1024 * 1024) {
+                    showToast(`File ${file.name} exceeds the 10MB limit`, 'error');
+                    continue;
+                }
                 
-                // Add file to chat
-                const fileMessage = {
-                    id: generateId(),
-                    role: 'user',
-                    content: `Attached file: ${file.name} (${formatFileSize(file.size)})`,
-                    timestamp: new Date().toISOString(),
-                    attachments: [{
+                // Validate file type
+                const allowedTypes = [
+                    'application/pdf',
+                    'application/msword',
+                    'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+                    'text/plain'
+                ];
+                
+                if (!allowedTypes.includes(file.type)) {
+                    showToast(`File type ${file.type} is not supported`, 'error');
+                    continue;
+                }
+                
+                // Add file to knowledge base
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const content = e.target.result;
+                    
+                    state.knowledgeDocuments.push({
                         id: fileId,
                         name: file.name,
                         size: file.size,
-                        type: file.type
-                    }]
+                        type: file.type,
+                        content: content,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    renderKnowledgeDocuments();
+                    saveState();
+                    
+                    showToast(`File ${file.name} added to knowledge base`, 'success');
                 };
                 
-                state.messages.push(fileMessage);
+                reader.readAsText(file);
             }
             
-            renderMessages();
-            saveState();
-            
-            showToast(`${files.length} file(s) attached`, 'success');
+            // Reset file input
+            event.target.value = '';
         }
 
-        // Format file size
-        function formatFileSize(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        // Handle image select
+        function handleImageSelect(event) {
+            const files = event.target.files;
+            
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const fileId = generateId();
+                
+                // Validate file size (5MB limit for images)
+                if (file.size > 5 * 1024 * 1024) {
+                    showToast(`Image ${file.name} exceeds the 5MB limit`, 'error');
+                    continue;
+                }
+                
+                // Validate file type
+                if (!file.type.startsWith('image/')) {
+                    showToast(`File ${file.name} is not an image`, 'error');
+                    continue;
+                }
+                
+                // Add file to uploaded files
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const dataUrl = e.target.result;
+                    
+                    state.uploadedFiles.push({
+                        id: fileId,
+                        name: file.name,
+                        size: file.size,
+                        type: file.type,
+                        dataUrl: dataUrl,
+                        timestamp: new Date().toISOString()
+                    });
+                    
+                    // Add file to chat
+                    const fileMessage = {
+                        id: generateId(),
+                        role: 'user',
+                        content: `I've uploaded an image: ${file.name}`,
+                        timestamp: new Date().toISOString(),
+                        attachments: [{
+                            id: fileId,
+                            name: file.name,
+                            size: file.size,
+                            type: file.type,
+                            dataUrl: dataUrl
+                        }]
+                    };
+                    
+                    state.messages.push(fileMessage);
+                    renderMessages();
+                    saveState();
+                    
+                    // Analyze image if agentic workflows are enabled
+                    if (state.settings.agentic) {
+                        analyzeImage(fileId, dataUrl);
+                    }
+                    
+                    showToast(`Image ${file.name} uploaded successfully`, 'success');
+                };
+                
+                reader.readAsDataURL(file);
+            }
+            
+            // Reset file input
+            event.target.value = '';
+        }
+
+        // Analyze image
+        async function analyzeImage(fileId, dataUrl) {
+            try {
+                // Show progress indicator
+                showProgress();
+                
+                // Simulate image analysis - in a real implementation, this would call an API
+                await new Promise(resolve => setTimeout(resolve, 2000));
+                
+                // Add analysis result as a message
+                const analysisMessage = {
+                    id: generateId(),
+                    role: 'assistant',
+                    content: `I've analyzed your image. It appears to be a photograph with various elements. The image has a resolution that suggests it was taken with a modern camera or smartphone.`,
+                    timestamp: new Date().toISOString()
+                };
+                
+                state.messages.push(analysisMessage);
+                renderMessages();
+                saveState();
+                
+                // Hide progress indicator
+                hideProgress();
+                
+                if (state.settings.taskNotifications) {
+                    showToast('Image analysis completed', 'success');
+                }
+            } catch (error) {
+                console.error('Error analyzing image:', error);
+                hideProgress();
+                
+                if (state.settings.errorNotifications) {
+                    showToast('Error analyzing image', 'error');
+                }
+            }
+        }
+
+        // Show progress indicator
+        function showProgress() {
+            elements.progressContainer.style.display = 'block';
+            elements.progressBar.style.width = '0%';
+            
+            // Simulate progress
+            let progress = 0;
+            const interval = setInterval(() => {
+                progress += 10;
+                elements.progressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 200);
+        }
+
+        // Hide progress indicator
+        function hideProgress() {
+            elements.progressContainer.style.display = 'none';
+        }
+
+        // Handle drag over
+        function handleDragOver(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            elements.uploadArea.classList.add('dragover');
+        }
+
+        // Handle drag leave
+        function handleDragLeave(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            elements.uploadArea.classList.remove('dragover');
+        }
+
+        // Handle drop
+        function handleDrop(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            elements.uploadArea.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                // Process files
+                elements.fileInput.files = files;
+                handleFileSelect({ target: { files, value: '' } });
+            }
+        }
+
+        // Render knowledge documents
+        function renderKnowledgeDocuments() {
+            const documentsContainer = elements.documentList;
+            
+            // Clear existing documents except the title
+            const title = documentsContainer.querySelector('.settings-section-title');
+            documentsContainer.innerHTML = '';
+            documentsContainer.appendChild(title);
+            
+            if (state.knowledgeDocuments.length === 0) {
+                const noDocuments = document.createElement('div');
+                noDocuments.className = 'settings-item';
+                noDocuments.innerHTML = `
+                    <div class="settings-description">No documents uploaded yet</div>
+                `;
+                documentsContainer.appendChild(noDocuments);
+                return;
+            }
+            
+            state.knowledgeDocuments.forEach(doc => {
+                const documentItem = document.createElement('div');
+                documentItem.className = 'document-item';
+                
+                const icon = getFileIcon(doc.type);
+                const size = formatFileSize(doc.size);
+                
+                documentItem.innerHTML = `
+                    <div class="document-icon">
+                        <i class="${icon}" aria-hidden="true"></i>
+                    </div>
+                    <div class="document-info">
+                        <div class="document-name">${doc.name}</div>
+                        <div class="document-size">${size}</div>
+                    </div>
+                    <div class="document-actions">
+                        <button class="document-action-btn" title="View document" onclick="viewDocument('${doc.id}')" aria-label="View document">
+                            <i class="fas fa-eye" aria-hidden="true"></i>
+                        </button>
+                        <button class="document-action-btn" title="Delete document" onclick="deleteDocument('${doc.id}')" aria-label="Delete document">
+                            <i class="fas fa-trash" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                `;
+                
+                documentsContainer.appendChild(documentItem);
+            });
+        }
+
+        // View document
+        function viewDocument(docId) {
+            const doc = state.knowledgeDocuments.find(d => d.id === docId);
+            if (!doc) return;
+            
+            // Create a modal to view the document
+            const modal = document.createElement('div');
+            modal.className = 'file-preview';
+            modal.innerHTML = `
+                <div class="file-preview-header">
+                    <div class="file-preview-title">${doc.name}</div>
+                    <button class="file-preview-close" onclick="this.parentElement.parentElement.remove()" aria-label="Close preview">
+                        <i class="fas fa-times" aria-hidden="true"></i>
+                    </button>
+                </div>
+                <div class="file-preview-content">
+                    <div class="file-preview-text">${doc.content.substring(0, 1000)}${doc.content.length > 1000 ? '...' : ''}</div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+        }
+
+        // Delete document
+        function deleteDocument(docId) {
+            state.knowledgeDocuments = state.knowledgeDocuments.filter(d => d.id !== docId);
+            renderKnowledgeDocuments();
+            saveState();
+            
+            showToast('Document deleted', 'success');
         }
 
         // Toggle settings panel
         function toggleSettingsPanel() {
             elements.settingsPanel.classList.toggle('active');
+            updateAriaAttributes();
         }
 
         // Close settings panel
         function closeSettingsPanel() {
             elements.settingsPanel.classList.remove('active');
+            updateAriaAttributes();
+        }
+
+        // Toggle knowledge panel
+        function toggleKnowledgePanel() {
+            elements.knowledgePanel.classList.toggle('active');
+            updateAriaAttributes();
+        }
+
+        // Close knowledge panel
+        function closeKnowledgePanel() {
+            elements.knowledgePanel.classList.remove('active');
+            updateAriaAttributes();
+        }
+
+        // Search knowledge base
+        function searchKnowledgeBase() {
+            const query = elements.knowledgeSearch.value.trim();
+            if (!query) {
+                showToast('Please enter a search query', 'warning');
+                return;
+            }
+            
+            // Show progress
+            showProgress();
+            
+            // Simulate search
+            setTimeout(() => {
+                const results = state.knowledgeDocuments.filter(doc => 
+                    doc.content.toLowerCase().includes(query.toLowerCase()) || 
+                    doc.name.toLowerCase().includes(query.toLowerCase())
+                );
+                
+                hideProgress();
+                
+                if (results.length === 0) {
+                    showToast('No documents found matching your query', 'warning');
+                    return;
+                }
+                
+                // Create a modal to show results
+                const modal = document.createElement('div');
+                modal.className = 'file-preview';
+                modal.style.maxWidth = '600px';
+                modal.style.maxHeight = '80vh';
+                modal.style.top = '10vh';
+                modal.style.left = '50%';
+                modal.style.transform = 'translateX(-50%)';
+                modal.style.position = 'fixed';
+                
+                let resultsHtml = `
+                    <div class="file-preview-header">
+                        <div class="file-preview-title">Search Results for "${query}"</div>
+                        <button class="file-preview-close" onclick="this.parentElement.parentElement.remove()" aria-label="Close results">
+                            <i class="fas fa-times" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="file-preview-content">
+                `;
+                
+                results.forEach(doc => {
+                    const snippet = doc.content.substring(
+                        Math.max(0, doc.content.toLowerCase().indexOf(query.toLowerCase()) - 100),
+                        doc.content.toLowerCase().indexOf(query.toLowerCase()) + 200
+                    );
+                    
+                    resultsHtml += `
+                        <div class="document-item" style="margin-bottom: 1rem;">
+                            <div class="document-info">
+                                <div class="document-name">${doc.name}</div>
+                                <div class="document-size">${formatFileSize(doc.size)}</div>
+                            </div>
+                            <div class="file-preview-text" style="margin-top: 0.5rem;">...${snippet}...</div>
+                        </div>
+                    `;
+                });
+                
+                resultsHtml += '</div>';
+                modal.innerHTML = resultsHtml;
+                
+                document.body.appendChild(modal);
+                
+                showToast(`Found ${results.length} document(s)`, 'success');
+            }, 1000);
         }
 
         // Save settings
@@ -2128,7 +4739,11 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         // Toggle user menu
         function toggleUserMenu() {
             // In a real app, this would show a dropdown menu
-            showToast('User menu', 'success');
+            if (state.user.isAuthenticated) {
+                showToast('User menu', 'success');
+            } else {
+                showLoginModal();
+            }
         }
 
         // Update theme
@@ -2159,6 +4774,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         function toggleAutoExecute() {
             state.settings.autoExecute = !state.settings.autoExecute;
             elements.autoExecuteToggle.classList.toggle('active');
+            elements.autoExecuteToggle.setAttribute('aria-checked', state.settings.autoExecute);
             saveState();
             showToast(`Auto-execute ${state.settings.autoExecute ? 'enabled' : 'disabled'}`, 'success');
         }
@@ -2167,6 +4783,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         function toggleSandboxPreview() {
             state.settings.sandboxPreview = !state.settings.sandboxPreview;
             elements.sandboxPreviewToggle.classList.toggle('active');
+            elements.sandboxPreviewToggle.setAttribute('aria-checked', state.settings.sandboxPreview);
             saveState();
             showToast(`Sandbox preview ${state.settings.sandboxPreview ? 'enabled' : 'disabled'}`, 'success');
         }
@@ -2175,6 +4792,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         function toggleAgentic() {
             state.settings.agentic = !state.settings.agentic;
             elements.agenticToggle.classList.toggle('active');
+            elements.agenticToggle.setAttribute('aria-checked', state.settings.agentic);
             saveState();
             showToast(`Agentic features ${state.settings.agentic ? 'enabled' : 'disabled'}`, 'success');
         }
@@ -2183,6 +4801,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         function toggleTaskNotifications() {
             state.settings.taskNotifications = !state.settings.taskNotifications;
             elements.taskNotificationToggle.classList.toggle('active');
+            elements.taskNotificationToggle.setAttribute('aria-checked', state.settings.taskNotifications);
             saveState();
             showToast(`Task notifications ${state.settings.taskNotifications ? 'enabled' : 'disabled'}`, 'success');
         }
@@ -2191,8 +4810,405 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         function toggleErrorNotifications() {
             state.settings.errorNotifications = !state.settings.errorNotifications;
             elements.errorNotificationToggle.classList.toggle('active');
+            elements.errorNotificationToggle.setAttribute('aria-checked', state.settings.errorNotifications);
             saveState();
             showToast(`Error notifications ${state.settings.errorNotifications ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        // Toggle two-factor authentication
+        function toggleTwoFactor() {
+            state.settings.twoFactor = !state.settings.twoFactor;
+            elements.twoFactorToggle.classList.toggle('active');
+            elements.twoFactorToggle.setAttribute('aria-checked', state.settings.twoFactor);
+            saveState();
+            showToast(`Two-factor authentication ${state.settings.twoFactor ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        // Toggle encryption
+        function toggleEncryption() {
+            state.settings.encryption = !state.settings.encryption;
+            elements.encryptionToggle.classList.toggle('active');
+            elements.encryptionToggle.setAttribute('aria-checked', state.settings.encryption);
+            saveState();
+            showToast(`Data encryption ${state.settings.encryption ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        // Toggle realtime
+        function toggleRealtime() {
+            state.settings.realtime = !state.settings.realtime;
+            elements.realtimeToggle.classList.toggle('active');
+            elements.realtimeToggle.setAttribute('aria-checked', state.settings.realtime);
+            saveState();
+            showToast(`Real-time responses ${state.settings.realtime ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        // Toggle memory
+        function toggleMemory() {
+            state.settings.memory = !state.settings.memory;
+            elements.memoryToggle.classList.toggle('active');
+            elements.memoryToggle.setAttribute('aria-checked', state.settings.memory);
+            saveState();
+            showToast(`Memory & context ${state.settings.memory ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        // Toggle multimodal
+        function toggleMultimodal() {
+            state.settings.multimodal = !state.settings.multimodal;
+            elements.multimodalToggle.classList.toggle('active');
+            elements.multimodalToggle.setAttribute('aria-checked', state.settings.multimodal);
+            saveState();
+            showToast(`Multi-modal processing ${state.settings.multimodal ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        // Show login modal
+        function showLoginModal() {
+            elements.loginModal.classList.add('active');
+            elements.overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            updateAriaAttributes();
+        }
+
+        // Close login modal
+        function closeLoginModal() {
+            elements.loginModal.classList.remove('active');
+            elements.overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            updateAriaAttributes();
+        }
+
+        // Show signup modal
+        function showSignupModal() {
+            closeLoginModal();
+            elements.signupModal.classList.add('active');
+            elements.overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            updateAriaAttributes();
+        }
+
+        // Close signup modal
+        function closeSignupModal() {
+            elements.signupModal.classList.remove('active');
+            elements.overlay.classList.remove('active');
+            document.body.style.overflow = '';
+            updateAriaAttributes();
+        }
+
+        // Handle login
+        function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = elements.loginEmail.value;
+            const password = elements.loginPassword.value;
+            
+            // Show progress
+            showProgress();
+            
+            // Sign in with Firebase
+            auth.signInWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed in
+                    const user = userCredential.user;
+                    console.log('User signed in:', user);
+                    
+                    // Hide progress
+                    hideProgress();
+                    
+                    // Close login modal
+                    closeLoginModal();
+                    
+                    showToast('Login successful', 'success');
+                })
+                .catch((error) => {
+                    // Hide progress
+                    hideProgress();
+                    
+                    // Handle errors
+                    let errorMessage = 'Login failed';
+                    
+                    switch (error.code) {
+                        case 'auth/user-not-found':
+                            errorMessage = 'No account found with this email';
+                            break;
+                        case 'auth/wrong-password':
+                            errorMessage = 'Incorrect password';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Invalid email address';
+                            break;
+                        case 'auth/user-disabled':
+                            errorMessage = 'This account has been disabled';
+                            break;
+                        default:
+                            errorMessage = error.message;
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                    console.error('Login error:', error);
+                });
+        }
+
+        // Handle signup
+        function handleSignup(e) {
+            e.preventDefault();
+            
+            const name = elements.signupName.value;
+            const email = elements.signupEmail.value;
+            const password = elements.signupPassword.value;
+            
+            // Validate password strength
+            if (!isPasswordStrong(password)) {
+                showToast('Password is not strong enough', 'error');
+                return;
+            }
+            
+            // Show progress
+            showProgress();
+            
+            // Create user with Firebase
+            auth.createUserWithEmailAndPassword(email, password)
+                .then((userCredential) => {
+                    // Signed up
+                    const user = userCredential.user;
+                    console.log('User signed up:', user);
+                    
+                    // Update user profile with name
+                    return user.updateProfile({
+                        displayName: name
+                    });
+                })
+                .then(() => {
+                    // Hide progress
+                    hideProgress();
+                    
+                    // Close signup modal
+                    closeSignupModal();
+                    
+                    showToast('Account created successfully', 'success');
+                })
+                .catch((error) => {
+                    // Hide progress
+                    hideProgress();
+                    
+                    // Handle errors
+                    let errorMessage = 'Signup failed';
+                    
+                    switch (error.code) {
+                        case 'auth/email-already-in-use':
+                            errorMessage = 'An account with this email already exists';
+                            break;
+                        case 'auth/invalid-email':
+                            errorMessage = 'Invalid email address';
+                            break;
+                        case 'auth/operation-not-allowed':
+                            errorMessage = 'Email/password accounts are not enabled';
+                            break;
+                        case 'auth/weak-password':
+                            errorMessage = 'Password is too weak';
+                            break;
+                        default:
+                            errorMessage = error.message;
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                    console.error('Signup error:', error);
+                });
+        }
+
+        // Check password strength
+        function checkPasswordStrength() {
+            const password = elements.signupPassword.value;
+            const strengthBar = elements.passwordStrengthBar;
+            const strengthText = elements.passwordStrengthText;
+            
+            // Reset strength indicators
+            strengthBar.className = 'password-strength-bar';
+            
+            if (password.length === 0) {
+                strengthBar.style.width = '0%';
+                strengthText.textContent = 'Password strength';
+                return;
+            }
+            
+            // Calculate password strength
+            let strength = 0;
+            
+            // Length check
+            if (password.length >= 8) strength += 1;
+            if (password.length >= 12) strength += 1;
+            
+            // Complexity checks
+            if (/[a-z]/.test(password)) strength += 1; // Lowercase
+            if (/[A-Z]/.test(password)) strength += 1; // Uppercase
+            if (/[0-9]/.test(password)) strength += 1; // Numbers
+            if (/[^A-Za-z0-9]/.test(password)) strength += 1; // Special characters
+            
+            // Update UI based on strength
+            if (strength <= 2) {
+                strengthBar.classList.add('weak');
+                strengthText.textContent = 'Weak password';
+            } else if (strength <= 4) {
+                strengthBar.classList.add('medium');
+                strengthText.textContent = 'Medium password';
+            } else {
+                strengthBar.classList.add('strong');
+                strengthText.textContent = 'Strong password';
+            }
+        }
+
+        // Check if password is strong enough
+        function isPasswordStrong(password) {
+            // At least 8 characters
+            if (password.length < 8) return false;
+            
+            // Contains at least 3 of the following: lowercase, uppercase, numbers, special characters
+            const checks = [
+                /[a-z]/.test(password), // Lowercase
+                /[A-Z]/.test(password), // Uppercase
+                /[0-9]/.test(password), // Numbers
+                /[^A-Za-z0-9]/.test(password) // Special characters
+            ];
+            
+            return checks.filter(check => check).length >= 3;
+        }
+
+        // Handle social login
+        function handleSocialLogin(provider) {
+            let authProvider;
+            
+            switch (provider) {
+                case 'google':
+                    authProvider = new firebase.auth.GoogleAuthProvider();
+                    break;
+                case 'apple':
+                    authProvider = new firebase.auth.OAuthProvider('apple.com');
+                    break;
+                default:
+                    showToast('Invalid provider', 'error');
+                    return;
+            }
+            
+            // Show progress
+            showProgress();
+            
+            // Sign in with popup
+            auth.signInWithPopup(authProvider)
+                .then((result) => {
+                    // Signed in
+                    const user = result.user;
+                    console.log('User signed in with social provider:', user);
+                    
+                    // Hide progress
+                    hideProgress();
+                    
+                    // Close login modal
+                    closeLoginModal();
+                    
+                    showToast(`Login successful with ${provider}`, 'success');
+                })
+                .catch((error) => {
+                    // Hide progress
+                    hideProgress();
+                    
+                    // Handle errors
+                    let errorMessage = `Login with ${provider} failed`;
+                    
+                    if (error.code === 'auth/account-exists-with-different-credential') {
+                        errorMessage = 'An account already exists with the same email address but different sign-in credentials';
+                    } else if (error.code === 'auth/auth-domain-config-required') {
+                        errorMessage = 'Authentication domain configuration is required';
+                    } else if (error.code === 'auth/cancelled-popup-request') {
+                        errorMessage = 'Popup was closed before completing authentication';
+                    } else if (error.code === 'auth/operation-not-allowed') {
+                        errorMessage = `${provider} authentication is not enabled`;
+                    } else if (error.code === 'auth/operation-not-supported-in-this-environment') {
+                        errorMessage = 'This operation is not supported in the environment this application is running on';
+                    } else if (error.code === 'auth/popup-blocked') {
+                        errorMessage = 'Popup was blocked by the browser';
+                    } else if (error.code === 'auth/popup-closed-by-user') {
+                        errorMessage = 'Popup was closed by the user before finalizing authentication';
+                    } else {
+                        errorMessage = error.message;
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                    console.error(`${provider} login error:`, error);
+                });
+        }
+
+        // Handle social signup
+        function handleSocialSignup(provider) {
+            // For social signup, we use the same flow as login
+            // Firebase will automatically create an account if it doesn't exist
+            handleSocialLogin(provider);
+        }
+
+        // Handle forgot password
+        function handleForgotPassword(e) {
+            e.preventDefault();
+            
+            const email = elements.loginEmail.value;
+            
+            if (!email) {
+                showToast('Please enter your email address', 'warning');
+                return;
+            }
+            
+            // Show progress
+            showProgress();
+            
+            // Send password reset email
+            auth.sendPasswordResetEmail(email)
+                .then(() => {
+                    // Hide progress
+                    hideProgress();
+                    
+                    showToast('Password reset email sent', 'success');
+                })
+                .catch((error) => {
+                    // Hide progress
+                    hideProgress();
+                    
+                    // Handle errors
+                    let errorMessage = 'Failed to send password reset email';
+                    
+                    switch (error.code) {
+                        case 'auth/invalid-email':
+                            errorMessage = 'Invalid email address';
+                            break;
+                        case 'auth/user-not-found':
+                            errorMessage = 'No account found with this email';
+                            break;
+                        default:
+                            errorMessage = error.message;
+                    }
+                    
+                    showToast(errorMessage, 'error');
+                    console.error('Password reset error:', error);
+                });
+        }
+
+        // Update user interface
+        function updateUserInterface() {
+            // Update user info in sidebar
+            const userAvatar = document.querySelector('.user-avatar');
+            const userName = document.querySelector('.user-name');
+            const userEmail = document.querySelector('.user-email');
+            
+            if (userAvatar) {
+                if (state.user.photoURL) {
+                    userAvatar.innerHTML = `<img src="${state.user.photoURL}" alt="User avatar">`;
+                } else {
+                    userAvatar.textContent = state.user.name.charAt(0).toUpperCase();
+                }
+            }
+            
+            if (userName) {
+                userName.textContent = state.user.name;
+            }
+            
+            if (userEmail) {
+                userEmail.textContent = state.user.email;
+            }
         }
 
         // Handle window resize
@@ -2204,6 +5220,10 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             
             // Adjust mobile viewport height on resize
             adjustMobileViewportHeight();
+            
+            // Update virtual scrolling
+            state.virtualScroll.containerHeight = elements.chatMessages.clientHeight;
+            renderVirtualMessages();
         }
 
         // Show toast notification
@@ -2218,7 +5238,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             
             toast.innerHTML = `
                 <div class="toast-icon">
-                    <i class="${icon}"></i>
+                    <i class="${icon}" aria-hidden="true"></i>
                 </div>
                 <div class="toast-message">
                     <div class="toast-title">${type.charAt(0).toUpperCase() + type.slice(1)}</div>
@@ -2264,7 +5284,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 .then(() => {
                     const copyBtn = document.querySelector(`button[onclick="copyCode('${codeId}')"]`);
                     const originalHTML = copyBtn.innerHTML;
-                    copyBtn.innerHTML = '<i class="fas fa-check"></i> <span>Copied!</span>';
+                    copyBtn.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i> <span>Copied!</span>';
                     copyBtn.classList.add('copied');
                     
                     setTimeout(() => {
@@ -2280,6 +5300,15 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 });
         }
 
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
         // Generate ID
         function generateId() {
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -2288,6 +5317,11 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         // Global functions for onclick handlers
         window.copyMessage = copyMessage;
         window.copyCode = copyCode;
+        window.executeCode = executeCode;
+        window.viewDocument = viewDocument;
+        window.deleteDocument = deleteDocument;
+        window.removeAttachment = removeAttachment;
+        window.quickAction = quickAction;
     </script>
 </body>
 </html>
