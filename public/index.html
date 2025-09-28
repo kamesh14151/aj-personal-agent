@@ -510,6 +510,10 @@
             display: flex;
             flex-direction: column;
             gap: 1.5rem;
+            /* Ensure proper scrolling behavior */
+            scroll-behavior: smooth;
+            /* Add padding at bottom to prevent last message from being hidden */
+            padding-bottom: 2rem;
         }
 
         .message {
@@ -570,6 +574,10 @@
             padding: 1rem 1.25rem;
             position: relative;
             transition: transform 0.2s ease, box-shadow 0.2s ease;
+            /* Ensure message content doesn't overflow */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .message:hover .message-content {
@@ -589,6 +597,10 @@
 
         .message-text {
             line-height: 1.6;
+            /* Ensure text wraps properly */
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
         }
 
         .message-text pre {
@@ -682,6 +694,8 @@
             font-size: 0.75rem;
             color: var(--text-tertiary);
             margin-top: 0.25rem;
+            /* Ensure time is always visible */
+            display: block;
         }
 
         /* Typing Indicator */
@@ -1345,7 +1359,7 @@
             /* Mobile-specific adjustments */
             .chat-messages {
                 padding: 1rem;
-                padding-bottom: 0.5rem; /* Reduced bottom padding */
+                padding-bottom: 3rem; /* Increased bottom padding for mobile */
             }
             
             .chat-input-container {
