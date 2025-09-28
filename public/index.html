@@ -51,30 +51,16 @@
             --code-bg: #f6f8fa;
             --code-border: #e1e4e8;
             --code-text: #24292e;
-            
-            /* Box styles */
-            --box-note-bg: #1e3a8a;
-            --box-note-border: #3b82f6;
-            --box-note-text: #bfdbfe;
-            --box-note-icon: #93c5fd;
-            
-            --box-warning-bg: #78350f;
-            --box-warning-border: #f59e0b;
-            --box-warning-text: #fde68a;
-            --box-warning-icon: #fcd34d;
-            
-            --box-tip-bg: #064e3b;
-            --box-tip-border: #10b981;
-            --box-tip-text: #a7f3d0;
-            --box-tip-icon: #6ee7b7;
-            
-            --box-important-bg: #7e22ce;
-            --box-important-border: #a855f7;
-            --box-important-text: #e9d5ff;
-            --box-important-icon: #c084fc;
-            
-            /* User name gradient */
-            --user-name-gradient: linear-gradient(135deg, #f0abfc 0%, #a78bfa 50%, #60a5fa 100%);
+            --table-header-bg: rgba(99, 102, 241, 0.2);
+            --table-row-alt: rgba(255, 255, 255, 0.03);
+            --box-bg: rgba(99, 102, 241, 0.1);
+            --box-border: var(--primary);
+            --user-name-gradient: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            --action-btn-bg: rgba(255, 255, 255, 0.1);
+            --action-btn-hover: rgba(255, 255, 255, 0.2);
+            --action-btn-active: rgba(99, 102, 241, 0.3);
+            --action-btn-like: #10b981;
+            --action-btn-dislike: #ef4444;
         }
 
         /* Light theme variables */
@@ -90,30 +76,13 @@
             --code-bg: #f1f5f9;
             --code-border: #cbd5e1;
             --code-text: #1e293b;
-            
-            /* Box styles for light theme */
-            --box-note-bg: #dbeafe;
-            --box-note-border: #3b82f6;
-            --box-note-text: #1e40af;
-            --box-note-icon: #2563eb;
-            
-            --box-warning-bg: #fef3c7;
-            --box-warning-border: #f59e0b;
-            --box-warning-text: #92400e;
-            --box-warning-icon: #d97706;
-            
-            --box-tip-bg: #d1fae5;
-            --box-tip-border: #10b981;
-            --box-tip-text: #065f46;
-            --box-tip-icon: #059669;
-            
-            --box-important-bg: #f3e8ff;
-            --box-important-border: #a855f7;
-            --box-important-text: #6b21a8;
-            --box-important-icon: #9333ea;
-            
-            /* User name gradient for light theme */
-            --user-name-gradient: linear-gradient(135deg, #c084fc 0%, #8b5cf6 50%, #3b82f6 100%);
+            --table-header-bg: rgba(99, 102, 241, 0.1);
+            --table-row-alt: rgba(0, 0, 0, 0.03);
+            --box-bg: rgba(99, 102, 241, 0.05);
+            --user-name-gradient: linear-gradient(135deg, #1e293b 0%, #475569 100%);
+            --action-btn-bg: rgba(0, 0, 0, 0.05);
+            --action-btn-hover: rgba(0, 0, 0, 0.1);
+            --action-btn-active: rgba(99, 102, 241, 0.1);
         }
 
         * {
@@ -484,6 +453,10 @@
             color: var(--warning);
         }
 
+        .chat-item-action-btn.rename:hover {
+            color: var(--primary);
+        }
+
         .sidebar-footer {
             padding: 1rem;
             border-top: 1px solid var(--border);
@@ -521,10 +494,14 @@
         }
 
         .user-name {
-            font-weight: 500;
+            font-weight: 600;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            background: var(--user-name-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .user-email {
@@ -727,6 +704,52 @@
             word-break: break-word;
         }
 
+        /* Table styles */
+        .message-text table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .message-text th, .message-text td {
+            border: 1px solid var(--border);
+            padding: 0.5rem;
+            text-align: left;
+        }
+
+        .message-text th {
+            background-color: var(--table-header-bg);
+            font-weight: 600;
+        }
+
+        .message-text tr:nth-child(even) {
+            background-color: var(--table-row-alt);
+        }
+
+        /* Box styles */
+        .message-text blockquote {
+            border-left: 4px solid var(--box-border);
+            margin: 1rem 0;
+            padding: 0.75rem 1rem;
+            background-color: var(--box-bg);
+            border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+        }
+
+        .message-text .info-box {
+            background-color: var(--box-bg);
+            border: 1px solid var(--box-border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+
+        .message-text .info-box-title {
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--primary);
+        }
+
         .message-text pre {
             background-color: var(--code-bg);
             border-radius: var(--radius);
@@ -783,123 +806,6 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Table styles */
-        .message-text table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 1rem 0;
-            font-size: 0.9rem;
-        }
-
-        .message-text table th {
-            background-color: var(--surface-highlight);
-            font-weight: 600;
-            text-align: left;
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-        }
-
-        .message-text table td {
-            padding: 0.75rem;
-            border: 1px solid var(--border);
-        }
-
-        .message-text table tr:nth-child(even) {
-            background-color: var(--surface-elevated);
-        }
-
-        /* Box styles */
-        .message-box {
-            margin: 1rem 0;
-            border-radius: var(--radius);
-            border-left: 4px solid;
-            padding: 1rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-        }
-
-        .message-box.note {
-            background-color: var(--box-note-bg);
-            border-left-color: var(--box-note-border);
-        }
-
-        .message-box.warning {
-            background-color: var(--box-warning-bg);
-            border-left-color: var(--box-warning-border);
-        }
-
-        .message-box.tip {
-            background-color: var(--box-tip-bg);
-            border-left-color: var(--box-tip-border);
-        }
-
-        .message-box.important {
-            background-color: var(--box-important-bg);
-            border-left-color: var(--box-important-border);
-        }
-
-        .message-box-icon {
-            font-size: 1.25rem;
-            flex-shrink: 0;
-            margin-top: 0.125rem;
-        }
-
-        .message-box.note .message-box-icon {
-            color: var(--box-note-icon);
-        }
-
-        .message-box.warning .message-box-icon {
-            color: var(--box-warning-icon);
-        }
-
-        .message-box.tip .message-box-icon {
-            color: var(--box-tip-icon);
-        }
-
-        .message-box.important .message-box-icon {
-            color: var(--box-important-icon);
-        }
-
-        .message-box-content {
-            flex: 1;
-        }
-
-        .message-box-title {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .message-box.note .message-box-title {
-            color: var(--box-note-text);
-        }
-
-        .message-box.warning .message-box-title {
-            color: var(--box-warning-text);
-        }
-
-        .message-box.tip .message-box-title {
-            color: var(--box-tip-text);
-        }
-
-        .message-box.important .message-box-title {
-            color: var(--box-important-text);
-        }
-
-        .message-box-body {
-            color: var(--text-primary);
-        }
-
-        /* User name styling */
-        .user-name-highlight {
-            font-weight: 600;
-            background: var(--user-name-gradient);
-            -webkit-background-clip: text;
-            background-clip: text;
-            -webkit-text-fill-color: transparent;
-            display: inline;
-        }
-
         .message-actions {
             display: flex;
             gap: 0.5rem;
@@ -916,7 +822,7 @@
             width: 28px;
             height: 28px;
             border-radius: var(--radius-sm);
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: var(--action-btn-bg);
             border: none;
             color: var(--text-secondary);
             display: flex;
@@ -924,11 +830,52 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
+            position: relative;
+            overflow: hidden;
         }
 
         .message-action-btn:hover {
-            background-color: rgba(255, 255, 255, 0.2);
+            background-color: var(--action-btn-hover);
             color: var(--text-primary);
+        }
+
+        .message-action-btn:active {
+            background-color: var(--action-btn-active);
+        }
+
+        .message-action-btn.liked {
+            color: var(--action-btn-like);
+        }
+
+        .message-action-btn.disliked {
+            color: var(--action-btn-dislike);
+        }
+
+        .message-action-btn.copied {
+            color: var(--success);
+        }
+
+        .message-action-btn .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--surface-elevated);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            z-index: 10;
+        }
+
+        .message-action-btn:hover .tooltip {
+            opacity: 1;
         }
 
         .message-time {
@@ -1446,6 +1393,10 @@
             font-size: 1.25rem;
             font-weight: 600;
             margin-bottom: 0.25rem;
+            background: var(--user-name-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .user-profile-email {
@@ -1719,6 +1670,65 @@
             display: flex;
         }
 
+        /* Chat History Features */
+        .chat-history-features {
+            padding: 0.75rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .chat-history-filter {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .filter-btn {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .filter-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .chat-history-sort {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .sort-btn {
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: 1px solid var(--border);
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .sort-btn:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .sidebar {
@@ -1951,108 +1961,6 @@
                 height: calc(100% - 180px); /* Adjust for keyboard */
             }
         }
-
-        /* User Preferences Section */
-        .preferences-section {
-            margin-bottom: 1.5rem;
-        }
-
-        .preference-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-
-        .preference-item:last-child {
-            border-bottom: none;
-        }
-
-        .preference-label {
-            font-weight: 500;
-        }
-
-        .preference-description {
-            font-size: 0.75rem;
-            color: var(--text-tertiary);
-            margin-top: 0.25rem;
-        }
-
-        .preference-value {
-            font-size: 0.875rem;
-            color: var(--text-secondary);
-            max-width: 120px;
-            text-align: right;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .preference-input {
-            background-color: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 0.5rem;
-            color: var(--text-primary);
-            font-size: 0.875rem;
-            width: 120px;
-            text-align: center;
-        }
-
-        .preference-input:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .preference-select {
-            background-color: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            width: 120px;
-            font-size: 0.875rem;
-        }
-
-        .preference-select:focus {
-            outline: none;
-            border-color: var(--primary);
-        }
-
-        .preference-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 1rem;
-        }
-
-        .preference-btn {
-            padding: 0.5rem 1rem;
-            border-radius: var(--radius);
-            font-size: 0.875rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: var(--transition);
-            border: none;
-        }
-
-        .preference-btn-primary {
-            background-color: var(--primary);
-            color: white;
-        }
-
-        .preference-btn-primary:hover {
-            background-color: var(--primary-dark);
-        }
-
-        .preference-btn-secondary {
-            background-color: transparent;
-            color: var(--text-primary);
-            border: 1px solid var(--border);
-        }
-
-        .preference-btn-secondary:hover {
-            background-color: var(--surface-highlight);
-        }
     </style>
 </head>
 <body>
@@ -2094,6 +2002,18 @@
                 </button>
             </div>
             <div class="chat-history">
+                <div class="chat-history-features">
+                    <div class="chat-history-filter">
+                        <button class="filter-btn active" data-filter="all">All</button>
+                        <button class="filter-btn" data-filter="pinned">Pinned</button>
+                        <button class="filter-btn" data-filter="recent">Recent</button>
+                    </div>
+                    <div class="chat-history-sort">
+                        <button class="sort-btn" id="sortChatsBtn" title="Sort chats">
+                            <i class="fas fa-sort"></i>
+                        </button>
+                    </div>
+                </div>
                 <div class="chat-history-header">
                     <div class="chat-history-title">Recent Chats</div>
                     <div class="chat-history-actions">
@@ -2176,25 +2096,37 @@
                             <div class="message-text">
                                 <h2>Hello! I'm <span class="brand-lynxa">Lynxa Pro</span></h2>
                                 <p>I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks:</p>
-                                <ul>
-                                    <li>Answering questions and providing information</li>
-                                    <li>Generating and executing code in multiple languages</li>
-                                    <li>Creating and analyzing documents</li>
-                                    <li>Web scraping and data extraction</li>
-                                    <li>Image generation and analysis</li>
-                                    <li>Complex multi-step tasks and workflows</li>
-                                </ul>
-                                <p>I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?</p>
+                                
+                                <div class="info-box">
+                                    <div class="info-box-title">My Capabilities</div>
+                                    <ul>
+                                        <li>Answering questions and providing information</li>
+                                        <li>Generating and executing code in multiple languages</li>
+                                        <li>Creating and analyzing documents</li>
+                                        <li>Web scraping and data extraction</li>
+                                        <li>Image generation and analysis</li>
+                                        <li>Complex multi-step tasks and workflows</li>
+                                    </ul>
+                                </div>
+                                
+                                <p>I have access to various tools and can execute code in a secure sandbox environment. I'll remember your preferences and personalize our conversations.</p>
+                                
+                                <blockquote>
+                                    <strong>Personalization:</strong> I'll remember your name and preferences throughout our conversations. Just tell me your name once, and I'll use it in all our future interactions!
+                                </blockquote>
                             </div>
                             <div class="message-actions">
                                 <button class="message-action-btn" title="Copy" onclick="copyMessage('welcome-message')">
                                     <i class="fas fa-copy"></i>
+                                    <span class="tooltip">Copy</span>
                                 </button>
-                                <button class="message-action-btn" title="Good response">
+                                <button class="message-action-btn" title="Good response" onclick="likeMessage('welcome-message')">
                                     <i class="fas fa-thumbs-up"></i>
+                                    <span class="tooltip">Good response</span>
                                 </button>
-                                <button class="message-action-btn" title="Bad response">
+                                <button class="message-action-btn" title="Bad response" onclick="dislikeMessage('welcome-message')">
                                     <i class="fas fa-thumbs-down"></i>
+                                    <span class="tooltip">Bad response</span>
                                 </button>
                             </div>
                             <div class="message-time">Just now</div>
@@ -2309,6 +2241,28 @@
             </div>
             
             <div class="settings-section">
+                <div class="settings-section-title">Personalization</div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">Memory & Preferences</div>
+                        <div class="settings-description">Remember your name and preferences</div>
+                    </div>
+                    <div class="settings-toggle active" id="memoryToggle">
+                        <div class="settings-toggle-slider"></div>
+                    </div>
+                </div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">Structured Responses</div>
+                        <div class="settings-description">Generate tables and boxes for better readability</div>
+                    </div>
+                    <div class="settings-toggle active" id="structuredToggle">
+                        <div class="settings-toggle-slider"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="settings-section">
                 <div class="settings-section-title">Notifications</div>
                 <div class="settings-item">
                     <div>
@@ -2380,52 +2334,6 @@
                     <label for="profileDisplayName" class="form-label">Display Name</label>
                     <input type="text" id="profileDisplayName" class="form-input" placeholder="Enter your name">
                 </div>
-                <div class="form-group">
-                    <label for="profilePreferredName" class="form-label">Preferred Name</label>
-                    <input type="text" id="profilePreferredName" class="form-input" placeholder="How you'd like to be addressed">
-                    <p class="form-text">This is how I will address you in our conversations</p>
-                </div>
-            </div>
-            
-            <div class="user-profile-section">
-                <div class="user-profile-section-title">Preferences</div>
-                <div class="preference-item">
-                    <div>
-                        <div class="preference-label">Response Style</div>
-                        <div class="preference-description">How you'd like me to respond</div>
-                    </div>
-                    <select class="preference-select" id="preferenceResponseStyle">
-                        <option value="friendly">Friendly</option>
-                        <option value="professional">Professional</option>
-                        <option value="concise">Concise</option>
-                        <option value="detailed">Detailed</option>
-                    </select>
-                </div>
-                <div class="preference-item">
-                    <div>
-                        <div class="preference-label">Language</div>
-                        <div class="preference-description">Preferred language for responses</div>
-                    </div>
-                    <select class="preference-select" id="preferenceLanguage">
-                        <option value="en">English</option>
-                        <option value="es">Spanish</option>
-                        <option value="fr">French</option>
-                        <option value="de">German</option>
-                        <option value="zh">Chinese</option>
-                        <option value="ja">Japanese</option>
-                    </select>
-                </div>
-                <div class="preference-item">
-                    <div>
-                        <div class="preference-label">Code Formatting</div>
-                        <div class="preference-description">How code should be displayed</div>
-                    </div>
-                    <select class="preference-select" id="preferenceCodeFormat">
-                        <option value="highlighted">Syntax Highlighted</option>
-                        <option value="plain">Plain Text</option>
-                        <option value="minimal">Minimal</option>
-                    </select>
-                </div>
             </div>
             
             <div class="user-profile-section">
@@ -2457,6 +2365,14 @@
                 <div class="user-profile-item">
                     <div class="user-profile-label">Total Messages</div>
                     <div class="user-profile-value" id="userProfileTotalMessages">0</div>
+                </div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">Liked Messages</div>
+                    <div class="user-profile-value" id="userProfileLikedMessages">0</div>
+                </div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">Disliked Messages</div>
+                    <div class="user-profile-value" id="userProfileDislikedMessages">0</div>
                 </div>
             </div>
             
@@ -2567,7 +2483,9 @@
                 sandboxPreview: true,
                 agentic: true,
                 taskNotifications: true,
-                errorNotifications: true
+                errorNotifications: true,
+                memory: true,
+                structured: true
             },
             uploadedFiles: [],
             activeTasks: [],
@@ -2583,21 +2501,19 @@
             authInitialized: false,
             streamingResponse: false,
             abortController: null,
-            userMemory: {
-                name: '',
-                preferredName: '',
-                preferences: {
-                    responseStyle: 'friendly',
-                    language: 'en',
-                    codeFormat: 'highlighted'
-                }
-            }, // Store user information like name, preferences, etc.
+            userMemory: {}, // Store user information like name, preferences, etc.
             keyboardOpen: false, // Track keyboard state for mobile
             currentView: 'chat', // Track current view: 'chat', 'settings', 'profile'
             viewHistory: [], // Track navigation history
             autoScroll: true, // Track if we should auto-scroll to bottom
             confirmCallback: null, // Callback for confirmation modal
-            renameChatId: null // ID of chat being renamed
+            renameChatId: null, // ID of chat being renamed
+            userPreferences: {}, // Store user preferences for personalization
+            likedMessages: new Set(), // Track liked messages
+            dislikedMessages: new Set(), // Track disliked messages
+            chatFilter: 'all', // Current chat filter: 'all', 'pinned', 'recent'
+            sortDirection: 'desc', // Sort direction: 'asc', 'desc'
+            sortBy: 'date' // Sort by: 'date', 'title'
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -2633,11 +2549,9 @@
             userProfileLastSignIn: document.getElementById('userProfileLastSignIn'),
             userProfileTotalChats: document.getElementById('userProfileTotalChats'),
             userProfileTotalMessages: document.getElementById('userProfileTotalMessages'),
+            userProfileLikedMessages: document.getElementById('userProfileLikedMessages'),
+            userProfileDislikedMessages: document.getElementById('userProfileDislikedMessages'),
             profileDisplayName: document.getElementById('profileDisplayName'),
-            profilePreferredName: document.getElementById('profilePreferredName'),
-            preferenceResponseStyle: document.getElementById('preferenceResponseStyle'),
-            preferenceLanguage: document.getElementById('preferenceLanguage'),
-            preferenceCodeFormat: document.getElementById('preferenceCodeFormat'),
             saveProfileBtn: document.getElementById('saveProfileBtn'),
             cancelProfileBtn: document.getElementById('cancelProfileBtn'),
             sidebar: document.getElementById('sidebar'),
@@ -2669,12 +2583,15 @@
             agenticToggle: document.getElementById('agenticToggle'),
             taskNotificationToggle: document.getElementById('taskNotificationToggle'),
             errorNotificationToggle: document.getElementById('errorNotificationToggle'),
+            memoryToggle: document.getElementById('memoryToggle'),
+            structuredToggle: document.getElementById('structuredToggle'),
             // New elements for chat history management
             searchChatBtn: document.getElementById('searchChatBtn'),
             exportChatBtn: document.getElementById('exportChatBtn'),
             clearChatBtn: document.getElementById('clearChatBtn'),
             exportDataBtn: document.getElementById('exportDataBtn'),
             clearDataBtn: document.getElementById('clearDataBtn'),
+            sortChatsBtn: document.getElementById('sortChatsBtn'),
             // Confirmation modal elements
             confirmModal: document.getElementById('confirmModal'),
             confirmTitle: document.getElementById('confirmTitle'),
@@ -2837,44 +2754,38 @@
             userRef.get().then(doc => {
                 if (doc.exists && doc.data().memory) {
                     state.userMemory = doc.data().memory;
-                    
-                    // Update profile fields with loaded memory
-                    if (state.userMemory.name) {
-                        elements.profileDisplayName.value = state.userMemory.name;
-                    }
-                    
-                    if (state.userMemory.preferredName) {
-                        elements.profilePreferredName.value = state.userMemory.preferredName;
-                    }
-                    
-                    if (state.userMemory.preferences) {
-                        if (state.userMemory.preferences.responseStyle) {
-                            elements.preferenceResponseStyle.value = state.userMemory.preferences.responseStyle;
-                        }
-                        
-                        if (state.userMemory.preferences.language) {
-                            elements.preferenceLanguage.value = state.userMemory.preferences.language;
-                        }
-                        
-                        if (state.userMemory.preferences.codeFormat) {
-                            elements.preferenceCodeFormat.value = state.userMemory.preferences.codeFormat;
-                        }
-                    }
-                    
-                    // Update welcome message with user's name
-                    updateWelcomeMessage();
                 } else {
                     // Initialize empty memory structure
                     state.userMemory = {
                         name: state.user.displayName || '',
-                        preferredName: '',
-                        preferences: {
-                            responseStyle: 'friendly',
-                            language: 'en',
-                            codeFormat: 'highlighted'
-                        }
+                        preferences: {},
+                        context: {}
                     };
                 }
+                
+                // Load user preferences if available
+                if (doc.exists && doc.data().preferences) {
+                    state.userPreferences = doc.data().preferences;
+                } else {
+                    // Initialize empty preferences structure
+                    state.userPreferences = {
+                        responseStyle: 'balanced',
+                        detailLevel: 'medium',
+                        formatting: true
+                    };
+                }
+                
+                // Load liked and disliked messages
+                if (doc.exists && doc.data().likedMessages) {
+                    state.likedMessages = new Set(doc.data().likedMessages);
+                }
+                
+                if (doc.exists && doc.data().dislikedMessages) {
+                    state.dislikedMessages = new Set(doc.data().dislikedMessages);
+                }
+                
+                // Update UI with liked/disliked messages
+                updateMessageFeedbackUI();
             }).catch(error => {
                 console.error('Error loading user memory:', error);
             });
@@ -2888,20 +2799,51 @@
             
             userRef.update({
                 memory: state.userMemory,
+                preferences: state.userPreferences,
+                likedMessages: Array.from(state.likedMessages),
+                dislikedMessages: Array.from(state.dislikedMessages),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).catch(error => {
                 console.error('Error saving user memory:', error);
             });
         }
 
+        // Update message feedback UI
+        function updateMessageFeedbackUI() {
+            document.querySelectorAll('.message-action-btn').forEach(btn => {
+                const messageId = btn.getAttribute('onclick').match(/'([^']+)'/)[1];
+                
+                if (btn.getAttribute('onclick').includes('likeMessage')) {
+                    if (state.likedMessages.has(messageId)) {
+                        btn.classList.add('liked');
+                    } else {
+                        btn.classList.remove('liked');
+                    }
+                } else if (btn.getAttribute('onclick').includes('dislikeMessage')) {
+                    if (state.dislikedMessages.has(messageId)) {
+                        btn.classList.add('disliked');
+                    } else {
+                        btn.classList.remove('disliked');
+                    }
+                }
+            });
+            
+            // Update profile statistics
+            elements.userProfileLikedMessages.textContent = state.likedMessages.size;
+            elements.userProfileDislikedMessages.textContent = state.dislikedMessages.size;
+        }
+
         // Extract user information from messages
         function extractUserInfoFromMessage(message) {
-            // Extract name patterns
+            // Enhanced pattern matching to extract name
             const namePatterns = [
                 /my name is (\w+)/i,
                 /i am (\w+)/i,
                 /call me (\w+)/i,
-                /i'm (\w+)/i
+                /i'm (\w+)/i,
+                /you can call me (\w+)/i,
+                /the name's (\w+)/i,
+                /name: (\w+)/i
             ];
             
             for (const pattern of namePatterns) {
@@ -2911,123 +2853,72 @@
                 }
             }
             
-            // Extract preferred name patterns
-            const preferredNamePatterns = [
-                /you can call me (\w+)/i,
-                /address me as (\w+)/i,
-                /call me (\w+) instead/i,
-                /prefer to be called (\w+)/i
-            ];
-            
-            for (const pattern of preferredNamePatterns) {
-                const match = message.match(pattern);
-                if (match && match[1]) {
-                    return { preferredName: match[1] };
-                }
-            }
-            
-            // Extract response style preferences
-            const stylePatterns = [
-                /be (friendly|professional|concise|detailed)/i,
-                /i prefer (friendly|professional|concise|detailed) responses/i,
-                /talk to me in a (friendly|professional|concise|detailed) way/i
-            ];
-            
-            for (const pattern of stylePatterns) {
-                const match = message.match(pattern);
-                if (match && match[1]) {
-                    return { responseStyle: match[1].toLowerCase() };
-                }
-            }
-            
-            // Extract language preferences
-            const languagePatterns = [
-                /speak to me in (\w+)/i,
-                /i prefer (\w+)/i,
-                /can you speak (\w+)/i
-            ];
-            
-            for (const pattern of languagePatterns) {
-                const match = message.match(pattern);
-                if (match && match[1]) {
-                    const language = match[1].toLowerCase();
-                    const supportedLanguages = ['english', 'spanish', 'french', 'german', 'chinese', 'japanese'];
-                    
-                    if (supportedLanguages.includes(language)) {
-                        return { language: language.substring(0, 2) };
-                    }
-                }
-            }
-            
             return null;
+        }
+
+        // Extract user preferences from messages
+        function extractUserPreferences(message) {
+            const preferences = {};
+            
+            // Check for response style preferences
+            if (message.includes('detailed') || message.includes('more detail')) {
+                preferences.detailLevel = 'high';
+            } else if (message.includes('brief') || message.includes('concise') || message.includes('short')) {
+                preferences.detailLevel = 'low';
+            }
+            
+            // Check for formatting preferences
+            if (message.includes('no formatting') || message.includes('plain text')) {
+                preferences.formatting = false;
+            } else if (message.includes('formatting') || message.includes('tables') || message.includes('boxes')) {
+                preferences.formatting = true;
+            }
+            
+            // Check for response style preferences
+            if (message.includes('formal') || message.includes('professional')) {
+                preferences.responseStyle = 'formal';
+            } else if (message.includes('casual') || message.includes('friendly')) {
+                preferences.responseStyle = 'casual';
+            }
+            
+            return preferences;
         }
 
         // Update user memory with new information
         function updateUserMemory(message) {
-            const userInfo = extractUserInfoFromMessage(message);
-            
-            if (userInfo) {
-                let updated = false;
+            // Extract name if mentioned
+            const name = extractUserInfoFromMessage(message);
+            if (name && name !== state.userMemory.name) {
+                state.userMemory.name = name;
+                saveUserMemory();
                 
-                if (typeof userInfo === 'string') {
-                    // It's a name
-                    if (userInfo !== state.userMemory.name) {
-                        state.userMemory.name = userInfo;
-                        updated = true;
-                    }
-                } else if (userInfo.preferredName) {
-                    // It's a preferred name
-                    if (userInfo.preferredName !== state.userMemory.preferredName) {
-                        state.userMemory.preferredName = userInfo.preferredName;
-                        updated = true;
-                    }
-                } else if (userInfo.responseStyle) {
-                    // It's a response style preference
-                    if (userInfo.responseStyle !== state.userMemory.preferences.responseStyle) {
-                        state.userMemory.preferences.responseStyle = userInfo.responseStyle;
-                        updated = true;
-                    }
-                } else if (userInfo.language) {
-                    // It's a language preference
-                    if (userInfo.language !== state.userMemory.preferences.language) {
-                        state.userMemory.preferences.language = userInfo.language;
-                        updated = true;
-                    }
+                // Update UI with new name
+                if (state.user) {
+                    state.user.displayName = name;
+                    elements.userAvatar.textContent = name.charAt(0).toUpperCase();
+                    elements.userName.textContent = name;
+                    elements.userProfileName.textContent = name;
+                    elements.userProfileAvatar.textContent = name.charAt(0).toUpperCase();
                 }
                 
-                if (updated) {
-                    saveUserMemory();
-                    
-                    // Update UI with new information
-                    if (state.userMemory.name || state.userMemory.preferredName) {
-                        const displayName = state.userMemory.preferredName || state.userMemory.name;
-                        elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
-                        elements.userName.textContent = displayName;
-                        elements.userProfileName.textContent = displayName;
-                        elements.userProfileAvatar.textContent = displayName.charAt(0).toUpperCase();
-                    }
-                    
-                    // Show confirmation toast
-                    let message = '';
-                    if (typeof userInfo === 'string') {
-                        message = `I'll remember your name, ${userInfo}!`;
-                    } else if (userInfo.preferredName) {
-                        message = `I'll remember to call you ${userInfo.preferredName}!`;
-                    } else if (userInfo.responseStyle) {
-                        message = `I'll remember to respond in a ${userInfo.responseStyle} style!`;
-                    } else if (userInfo.language) {
-                        const languageNames = {
-                            'en': 'English',
-                            'es': 'Spanish',
-                            'fr': 'French',
-                            'de': 'German',
-                            'zh': 'Chinese',
-                            'ja': 'Japanese'
-                        };
-                        message = `I'll remember to respond in ${languageNames[userInfo.language]}!`;
-                    }
-                    
-                    showToast(message, 'success');
+                showToast(`I'll remember your name, ${name}!`, 'success');
+            }
+            
+            // Extract and update preferences
+            const preferences = extractUserPreferences(message);
+            if (Object.keys(preferences).length > 0) {
+                state.userPreferences = { ...state.userPreferences, ...preferences };
+                saveUserMemory();
+                
+                // Show toast for preference updates
+                if (preferences.detailLevel) {
+                    showToast(`I'll adjust my responses to be ${preferences.detailLevel === 'high' ? 'more detailed' : 'more concise'}`, 'success');
+                }
+                if (preferences.formatting !== undefined) {
+                    showToast(`I'll ${preferences.formatting ? 'use' : 'avoid'} formatting like tables and boxes`, 'success');
+                }
+                if (preferences.responseStyle) {
+                    showToast(`I'll use a ${preferences.responseStyle} tone in our conversations`, 'success');
                 }
             }
         }
@@ -3107,7 +2998,10 @@
                         settings: state.settings,
                         chatHistory: [],
                         currentChatId: null,
-                        memory: state.userMemory // Initialize with empty memory
+                        memory: state.userMemory, // Initialize with empty memory
+                        preferences: state.userPreferences, // Initialize with empty preferences
+                        likedMessages: [],
+                        dislikedMessages: []
                     });
                 }
             }).catch(error => {
@@ -3127,7 +3021,6 @@
             
             // Set display name input
             elements.profileDisplayName.value = state.userMemory.name || state.user.displayName || '';
-            elements.profilePreferredName.value = state.userMemory.preferredName || '';
             
             // Format user ID
             const formattedUserId = state.user.uid
@@ -3171,6 +3064,8 @@
             
             elements.userProfileTotalChats.textContent = totalChats;
             elements.userProfileTotalMessages.textContent = totalMessages;
+            elements.userProfileLikedMessages.textContent = state.likedMessages.size;
+            elements.userProfileDislikedMessages.textContent = state.dislikedMessages.size;
         }
 
         // Save user data to Firestore
@@ -3184,6 +3079,9 @@
                 chatHistory: state.chatHistory,
                 currentChatId: state.currentChatId,
                 memory: state.userMemory, // Save user memory
+                preferences: state.userPreferences, // Save user preferences
+                likedMessages: Array.from(state.likedMessages),
+                dislikedMessages: Array.from(state.dislikedMessages),
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).catch(error => {
                 console.error('Error saving user data:', error);
@@ -3243,6 +3141,8 @@
             elements.agenticToggle.addEventListener('click', toggleAgentic);
             elements.taskNotificationToggle.addEventListener('click', toggleTaskNotifications);
             elements.errorNotificationToggle.addEventListener('click', toggleErrorNotifications);
+            elements.memoryToggle.addEventListener('click', toggleMemory);
+            elements.structuredToggle.addEventListener('click', toggleStructured);
             
             // Chat history management
             elements.searchChatBtn.addEventListener('click', showSearchModal);
@@ -3250,6 +3150,19 @@
             elements.clearChatBtn.addEventListener('click', showClearChatsConfirm);
             elements.exportDataBtn.addEventListener('click', exportChatHistory);
             elements.clearDataBtn.addEventListener('click', showClearChatsConfirm);
+            elements.sortChatsBtn.addEventListener('click', toggleChatSort);
+            
+            // Chat filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const filter = btn.getAttribute('data-filter');
+                    filterChats(filter);
+                    
+                    // Update active filter button
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    btn.classList.add('active');
+                });
+            });
             
             // Confirmation modal
             elements.confirmCancelBtn.addEventListener('click', hideConfirmModal);
@@ -3308,69 +3221,30 @@
         // Save user profile
         function saveUserProfile() {
             const displayName = elements.profileDisplayName.value.trim();
-            const preferredName = elements.profilePreferredName.value.trim();
-            const responseStyle = elements.preferenceResponseStyle.value;
-            const language = elements.preferenceLanguage.value;
-            const codeFormat = elements.preferenceCodeFormat.value;
             
-            // Update in Firebase
-            const userRef = db.collection('users').doc(state.user.uid);
-            
-            // Update user memory
-            state.userMemory.name = displayName;
-            state.userMemory.preferredName = preferredName;
-            state.userMemory.preferences.responseStyle = responseStyle;
-            state.userMemory.preferences.language = language;
-            state.userMemory.preferences.codeFormat = codeFormat;
-            
-            userRef.update({
-                'memory.name': displayName,
-                'memory.preferredName': preferredName,
-                'memory.preferences.responseStyle': responseStyle,
-                'memory.preferences.language': language,
-                'memory.preferences.codeFormat': codeFormat
-            }).then(() => {
-                // Update UI
-                const nameToUse = preferredName || displayName;
-                if (nameToUse) {
-                    elements.userAvatar.textContent = nameToUse.charAt(0).toUpperCase();
-                    elements.userName.textContent = nameToUse;
-                    elements.userProfileName.textContent = nameToUse;
-                    elements.userProfileAvatar.textContent = nameToUse.charAt(0).toUpperCase();
-                }
-                
-                // Update welcome message
-                updateWelcomeMessage();
-                
-                showToast('Profile updated successfully', 'success');
-            }).catch(error => {
-                console.error('Error updating profile:', error);
-                showToast('Error updating profile', 'error');
-            });
+            if (displayName) {
+                // Update in Firebase
+                const userRef = db.collection('users').doc(state.user.uid);
+                userRef.update({
+                    'memory.name': displayName
+                }).then(() => {
+                    // Update state
+                    state.userMemory.name = displayName;
+                    
+                    // Update UI
+                    elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    elements.userName.textContent = displayName;
+                    elements.userProfileName.textContent = displayName;
+                    elements.userProfileAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    
+                    showToast('Profile updated successfully', 'success');
+                }).catch(error => {
+                    console.error('Error updating profile:', error);
+                    showToast('Error updating profile', 'error');
+                });
+            }
             
             closeUserProfilePanel();
-        }
-
-        // Update welcome message with user's name
-        function updateWelcomeMessage() {
-            const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
-            
-            if (nameToUse && state.messages.length > 0 && state.messages[0].role === 'assistant') {
-                state.messages[0].content = `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
-
-I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks:
-
-* Answering questions and providing information
-* Generating and executing code in multiple languages
-* Creating and analyzing documents
-* Web scraping and data extraction
-* Image generation and analysis
-* Complex multi-step tasks and workflows
-
-I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?`;
-                
-                renderMessages();
-            }
         }
 
         // Theme functions
@@ -3415,15 +3289,10 @@ I have access to various tools and can execute code in a secure sandbox environm
                     state.messages = [];
                     state.chatHistory = [];
                     state.currentChatId = null;
-                    state.userMemory = {
-                        name: '',
-                        preferredName: '',
-                        preferences: {
-                            responseStyle: 'friendly',
-                            language: 'en',
-                            codeFormat: 'highlighted'
-                        }
-                    };
+                    state.userMemory = {};
+                    state.userPreferences = {};
+                    state.likedMessages.clear();
+                    state.dislikedMessages.clear();
                     
                     // Clear localStorage
                     localStorage.removeItem('nexariqState');
@@ -3604,15 +3473,43 @@ I have access to various tools and can execute code in a secure sandbox environm
             state.messages = [];
             state.currentChatId = null;
             
-            // Add welcome message with user's name if available
-            const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
-            const welcomeMessage = nameToUse 
-                ? `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
+            // Add personalized welcome message
+            const userName = state.userMemory.name || '';
+            const welcomeMessage = userName 
+                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I remember your preferences and will personalize our conversations.
+
+<div class="info-box">
+    <div class="info-box-title">My Capabilities</div>
+    <ul>
+        <li>Answering questions and providing information</li>
+        <li>Generating and executing code in multiple languages</li>
+        <li>Creating and analyzing documents</li>
+        <li>Web scraping and data extraction</li>
+        <li>Image generation and analysis</li>
+        <li>Complex multi-step tasks and workflows</li>
+    </ul>
+</div>
+
+I can format my responses with tables and boxes for better readability. How can I assist you today?`
                 : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`;
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks and will remember your preferences.
+
+<div class="info-box">
+    <div class="info-box-title">My Capabilities</div>
+    <ul>
+        <li>Answering questions and providing information</li>
+        <li>Generating and executing code in multiple languages</li>
+        <li>Creating and analyzing documents</li>
+        <li>Web scraping and data extraction</li>
+        <li>Image generation and analysis</li>
+        <li>Complex multi-step tasks and workflows</li>
+    </ul>
+</div>
+
+I can format my responses with tables and boxes for better readability. How can I assist you today?`;
             
             state.messages.push({
                 id: generateId(),
@@ -3691,14 +3588,18 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 state.messages = [];
                 
                 // Add welcome message
-                const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
-                const welcomeMessage = nameToUse 
-                    ? `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                const userName = state.userMemory.name || '';
+                const welcomeMessage = userName 
+                    ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I remember your preferences and will personalize our conversations.
+
+How can I assist you today?`
                     : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`;
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks and will remember your preferences.
+
+How can I assist you today?`;
                 
                 state.messages.push({
                     id: generateId(),
@@ -3798,9 +3699,65 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             hideRenameModal();
         }
 
+        // Filter chats
+        function filterChats(filter) {
+            state.chatFilter = filter;
+            renderChatHistory();
+        }
+
+        // Toggle chat sort
+        function toggleChatSort() {
+            if (state.sortBy === 'date') {
+                state.sortDirection = state.sortDirection === 'asc' ? 'desc' : 'asc';
+            } else {
+                state.sortBy = 'date';
+                state.sortDirection = 'desc';
+            }
+            
+            renderChatHistory();
+            
+            // Show toast with current sort
+            showToast(`Sorted by ${state.sortBy} (${state.sortDirection === 'asc' ? 'oldest first' : 'newest first'})`, 'success');
+        }
+
         // Render chat history
         function renderChatHistory() {
             elements.chatHistory.innerHTML = '';
+            
+            // Filter chats based on current filter
+            let filteredChats = [...state.chatHistory];
+            
+            if (state.chatFilter === 'pinned') {
+                filteredChats = filteredChats.filter(chat => chat.pinned);
+            } else if (state.chatFilter === 'recent') {
+                // Show only chats from the last 7 days
+                const oneWeekAgo = new Date();
+                oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+                
+                filteredChats = filteredChats.filter(chat => {
+                    const chatDate = new Date(chat.timestamp);
+                    return chatDate >= oneWeekAgo;
+                });
+            }
+            
+            // Sort chats
+            filteredChats.sort((a, b) => {
+                // Pinned chats always come first
+                if (a.pinned && !b.pinned) return -1;
+                if (!a.pinned && b.pinned) return 1;
+                
+                // Then sort by selected criteria
+                if (state.sortBy === 'title') {
+                    return state.sortDirection === 'asc' 
+                        ? a.title.localeCompare(b.title)
+                        : b.title.localeCompare(a.title);
+                } else {
+                    // Default sort by date
+                    const dateA = new Date(a.timestamp);
+                    const dateB = new Date(b.timestamp);
+                    return state.sortDirection === 'asc' ? dateA - dateB : dateB - dateA;
+                }
+            });
             
             // Add current chat if no active chat
             if (!state.currentChatId || state.currentChatId === 'current' || state.messages.length > 0) {
@@ -3820,8 +3777,8 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 elements.chatHistory.appendChild(activeChat);
             }
             
-            // Add chat history (already sorted with pinned chats first)
-            state.chatHistory.forEach(chat => {
+            // Add filtered and sorted chat history
+            filteredChats.forEach(chat => {
                 const chatItem = document.createElement('div');
                 chatItem.className = `chat-item ${chat.pinned ? 'pinned' : ''}`;
                 chatItem.setAttribute('data-chat-id', chat.id);
@@ -3864,9 +3821,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`;
                 
                 const avatar = message.role === 'user' 
-                    ? (state.userMemory.preferredName || state.userMemory.name || state.user.displayName 
-                        ? (state.userMemory.preferredName || state.userMemory.name || state.user.displayName).charAt(0).toUpperCase() 
-                        : 'U')
+                    ? (state.userMemory.name ? state.userMemory.name.charAt(0).toUpperCase() : 'U')
                     : `<img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">`;
                 
                 // Use full timestamp format for messages (Z.ai style)
@@ -3878,14 +3833,17 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                         <div class="message-text">${formatMessageContent(message.content)}</div>
                         ${message.role === 'assistant' ? `
                             <div class="message-actions">
-                                <button class="message-action-btn" title="Copy" onclick="copyMessage('${message.id}')">
+                                <button class="message-action-btn ${state.likedMessages.has(message.id) ? 'liked' : ''}" title="Copy" onclick="copyMessage('${message.id}')">
                                     <i class="fas fa-copy"></i>
+                                    <span class="tooltip">Copy</span>
                                 </button>
-                                <button class="message-action-btn" title="Good response">
+                                <button class="message-action-btn ${state.likedMessages.has(message.id) ? 'liked' : ''}" title="Good response" onclick="likeMessage('${message.id}')">
                                     <i class="fas fa-thumbs-up"></i>
+                                    <span class="tooltip">Good response</span>
                                 </button>
-                                <button class="message-action-btn" title="Bad response">
+                                <button class="message-action-btn ${state.dislikedMessages.has(message.id) ? 'disliked' : ''}" title="Bad response" onclick="dislikeMessage('${message.id}')">
                                     <i class="fas fa-thumbs-down"></i>
+                                    <span class="tooltip">Bad response</span>
                                 </button>
                             </div>
                         ` : ''}
@@ -3911,9 +3869,6 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
 
         // Format message content (markdown to HTML)
         function formatMessageContent(content) {
-            // Process boxes first
-            content = processBoxes(content);
-            
             // Use marked to parse markdown
             const html = marked.parse(content);
             
@@ -3926,35 +3881,22 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 const isMobile = window.innerWidth <= 768;
                 const mobileClass = isMobile ? 'mobile-code-block' : '';
                 
-                // Check if code formatting preference is set to plain or minimal
-                let showActions = true;
-                if (state.userMemory.preferences && state.userMemory.preferences.codeFormat) {
-                    if (state.userMemory.preferences.codeFormat === 'plain') {
-                        showActions = false;
-                    } else if (state.userMemory.preferences.codeFormat === 'minimal') {
-                        // For minimal, only show copy button
-                        showActions = language === 'html';
-                    }
-                }
-                
                 return `
                     <div class="code-block ${mobileClass}">
                         <div class="code-header">
                             <div class="code-language">${language}</div>
-                            ${showActions ? `
-                                <div class="code-actions">
-                                    <button class="copy-btn" onclick="copyCode('${codeId}')">
-                                        <i class="fas fa-copy"></i>
-                                        <span>Copy</span>
+                            <div class="code-actions">
+                                <button class="copy-btn" onclick="copyCode('${codeId}')">
+                                    <i class="fas fa-copy"></i>
+                                    <span>Copy</span>
+                                </button>
+                                ${language === 'html' ? `
+                                    <button class="preview-btn" onclick="previewHTML('${codeId}')">
+                                        <i class="fas fa-external-link-alt"></i>
+                                        <span>Preview</span>
                                     </button>
-                                    ${language === 'html' ? `
-                                        <button class="preview-btn" onclick="previewHTML('${codeId}')">
-                                            <i class="fas fa-external-link-alt"></i>
-                                            <span>Preview</span>
-                                        </button>
-                                    ` : ''}
-                                </div>
-                            ` : ''}
+                                ` : ''}
+                            </div>
                         </div>
                         <pre><code id="${codeId}" class="language-${language}">${escapedCode}</code></pre>
                     </div>
@@ -3963,55 +3905,6 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             
             // Sanitize HTML
             return DOMPurify.sanitize(processedHtml);
-        }
-
-        // Process boxes in content
-        function processBoxes(content) {
-            // Process note boxes
-            content = content.replace(/^> \[!NOTE\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
-                return `<div class="message-box note">
-                    <div class="message-box-icon"><i class="fas fa-info-circle"></i></div>
-                    <div class="message-box-content">
-                        <div class="message-box-title">Note</div>
-                        <div class="message-box-body">${content.trim()}</div>
-                    </div>
-                </div>`;
-            });
-            
-            // Process warning boxes
-            content = content.replace(/^> \[!WARNING\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
-                return `<div class="message-box warning">
-                    <div class="message-box-icon"><i class="fas fa-exclamation-triangle"></i></div>
-                    <div class="message-box-content">
-                        <div class="message-box-title">Warning</div>
-                        <div class="message-box-body">${content.trim()}</div>
-                    </div>
-                </div>`;
-            });
-            
-            // Process tip boxes
-            content = content.replace(/^> \[!TIP\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
-                return `<div class="message-box tip">
-                    <div class="message-box-icon"><i class="fas fa-lightbulb"></i></div>
-                    <div class="message-box-content">
-                        <div class="message-box-title">Tip</div>
-                        <div class="message-box-body">${content.trim()}</div>
-                    </div>
-                </div>`;
-            });
-            
-            // Process important boxes
-            content = content.replace(/^> \[!IMPORTANT\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
-                return `<div class="message-box important">
-                    <div class="message-box-icon"><i class="fas fa-exclamation-circle"></i></div>
-                    <div class="message-box-content">
-                        <div class="message-box-title">Important</div>
-                        <div class="message-box-body">${content.trim()}</div>
-                    </div>
-                </div>`;
-            });
-            
-            return content;
         }
 
         // Handle chat input keydown
@@ -4033,7 +3926,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             const message = elements.chatInput.value.trim();
             if (!message || state.isTyping) return;
             
-            // Extract user information from the message
+            // Extract user information and preferences from the message
             updateUserMemory(message);
             
             // Create a new AbortController for this request
@@ -4061,19 +3954,17 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             
             try {
                 // Prepare messages for API
-                const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
-                const responseStyle = state.userMemory.preferences ? state.userMemory.preferences.responseStyle : 'friendly';
-                const language = state.userMemory.preferences ? state.userMemory.preferences.language : 'en';
-                
                 const systemMessage = {
                     role: 'system',
                     content: `You are Lynxa Pro, an advanced AI assistant developed by Nexariq (AJ STUDIOZ). 
-                    
- ${nameToUse ? `The user's name is ${nameToUse}. Always address them by their name.` : ''}
- ${responseStyle ? `Use a ${responseStyle} tone in your responses.` : ''}
- ${language ? `Respond in ${language}.` : ''}
-                    
-Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples. You can also use tables and boxes to organize information.`
+
+ ${state.userMemory.name ? `The user's name is ${state.userMemory.name}. Always address them by their name.` : ''}
+
+ ${state.userPreferences.responseStyle ? `Use a ${state.userPreferences.responseStyle} tone in your responses.` : ''}
+ ${state.userPreferences.detailLevel === 'high' ? 'Provide detailed and comprehensive responses.' : state.userPreferences.detailLevel === 'low' ? 'Provide concise and brief responses.' : 'Provide balanced responses with appropriate detail.'}
+ ${state.settings.structured ? 'When appropriate, use tables to organize information and boxes to highlight important points. Use markdown formatting for tables and blockquotes for boxes.' : ''}
+
+Remember the user's preferences and previous interactions to provide personalized responses.`
                 };
                 
                 // Convert messages to API format
@@ -4112,12 +4003,15 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                         <div class="message-actions">
                             <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')">
                                 <i class="fas fa-copy"></i>
+                                <span class="tooltip">Copy</span>
                             </button>
-                            <button class="message-action-btn" title="Good response">
+                            <button class="message-action-btn" title="Good response" onclick="likeMessage('${messageId}')">
                                 <i class="fas fa-thumbs-up"></i>
+                                <span class="tooltip">Good response</span>
                             </button>
-                            <button class="message-action-btn" title="Bad response">
+                            <button class="message-action-btn" title="Bad response" onclick="dislikeMessage('${messageId}')">
                                 <i class="fas fa-thumbs-down"></i>
+                                <span class="tooltip">Bad response</span>
                             </button>
                         </div>
                         <div class="message-time">${time}</div>
@@ -4289,12 +4183,15 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                     <div class="message-actions">
                         <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')">
                             <i class="fas fa-copy"></i>
+                            <span class="tooltip">Copy</span>
                         </button>
-                        <button class="message-action-btn" title="Good response">
+                        <button class="message-action-btn" title="Good response" onclick="likeMessage('${messageId}')">
                             <i class="fas fa-thumbs-up"></i>
+                            <span class="tooltip">Good response</span>
                         </button>
-                        <button class="message-action-btn" title="Bad response">
+                        <button class="message-action-btn" title="Bad response" onclick="dislikeMessage('${messageId}')">
                             <i class="fas fa-thumbs-down"></i>
+                            <span class="tooltip">Bad response</span>
                         </button>
                     </div>
                     <div class="message-time">${time}</div>
@@ -4565,6 +4462,22 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             showToast(`Agentic features ${state.settings.agentic ? 'enabled' : 'disabled'}`, 'success');
         }
 
+        // Toggle memory
+        function toggleMemory() {
+            state.settings.memory = !state.settings.memory;
+            elements.memoryToggle.classList.toggle('active');
+            saveUserData();
+            showToast(`Memory features ${state.settings.memory ? 'enabled' : 'disabled'}`, 'success');
+        }
+
+        // Toggle structured responses
+        function toggleStructured() {
+            state.settings.structured = !state.settings.structured;
+            elements.structuredToggle.classList.toggle('active');
+            saveUserData();
+            showToast(`Structured responses ${state.settings.structured ? 'enabled' : 'disabled'}`, 'success');
+        }
+
         // Toggle task notifications
         function toggleTaskNotifications() {
             state.settings.taskNotifications = !state.settings.taskNotifications;
@@ -4605,6 +4518,14 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             
             if (state.settings.agentic) {
                 elements.agenticToggle.classList.add('active');
+            }
+            
+            if (state.settings.memory) {
+                elements.memoryToggle.classList.add('active');
+            }
+            
+            if (state.settings.structured) {
+                elements.structuredToggle.classList.add('active');
             }
             
             if (state.settings.taskNotifications) {
@@ -4667,12 +4588,67 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             
             navigator.clipboard.writeText(message.content)
                 .then(() => {
+                    // Update button state
+                    const copyBtn = document.querySelector(`button[onclick="copyMessage('${messageId}')"]`);
+                    if (copyBtn) {
+                        copyBtn.classList.add('copied');
+                        setTimeout(() => {
+                            copyBtn.classList.remove('copied');
+                        }, 2000);
+                    }
+                    
                     showToast('Message copied to clipboard', 'success');
                 })
                 .catch(err => {
                     showToast('Failed to copy message', 'error');
                     console.error('Failed to copy:', err);
                 });
+        }
+
+        // Like message
+        function likeMessage(messageId) {
+            // If message was disliked, remove from disliked
+            if (state.dislikedMessages.has(messageId)) {
+                state.dislikedMessages.delete(messageId);
+            }
+            
+            // Toggle like
+            if (state.likedMessages.has(messageId)) {
+                state.likedMessages.delete(messageId);
+                showToast('Removed like', 'success');
+            } else {
+                state.likedMessages.add(messageId);
+                showToast('Liked this response', 'success');
+            }
+            
+            // Update UI
+            updateMessageFeedbackUI();
+            
+            // Save to database
+            saveUserMemory();
+        }
+
+        // Dislike message
+        function dislikeMessage(messageId) {
+            // If message was liked, remove from liked
+            if (state.likedMessages.has(messageId)) {
+                state.likedMessages.delete(messageId);
+            }
+            
+            // Toggle dislike
+            if (state.dislikedMessages.has(messageId)) {
+                state.dislikedMessages.delete(messageId);
+                showToast('Removed dislike', 'success');
+            } else {
+                state.dislikedMessages.add(messageId);
+                showToast('Disliked this response', 'success');
+            }
+            
+            // Update UI
+            updateMessageFeedbackUI();
+            
+            // Save to database
+            saveUserMemory();
         }
 
         // Copy code
@@ -4817,14 +4793,18 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             state.currentChatId = null;
             
             // Add welcome message
-            const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
-            const welcomeMessage = nameToUse 
-                ? `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
+            const userName = state.userMemory.name || '';
+            const welcomeMessage = userName 
+                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I remember your preferences and will personalize our conversations.
+
+How can I assist you today?`
                 : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
-I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`;
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks and will remember your preferences.
+
+How can I assist you today?`;
             
             state.messages.push({
                 id: generateId(),
@@ -4855,10 +4835,12 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             const exportData = {
                 exportDate: new Date().toISOString(),
                 user: {
-                    name: state.userMemory.preferredName || state.userMemory.name || state.user.displayName || 'User',
+                    name: state.userMemory.name || state.user.displayName || 'User',
                     email: state.user.email || ''
                 },
-                preferences: state.userMemory.preferences,
+                preferences: state.userPreferences,
+                likedMessages: Array.from(state.likedMessages),
+                dislikedMessages: Array.from(state.dislikedMessages),
                 chats: []
             };
             
@@ -5061,6 +5043,8 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
 
         // Global functions for onclick handlers
         window.copyMessage = copyMessage;
+        window.likeMessage = likeMessage;
+        window.dislikeMessage = dislikeMessage;
         window.copyCode = copyCode;
         window.previewHTML = previewHTML;
         window.deleteChat = deleteChat;
