@@ -245,6 +245,12 @@
             position: relative;
         }
 
+        .logo-img {
+            width: var(--logo-size);
+            height: var(--logo-size);
+            object-fit: contain;
+        }
+
         .logo-icon {
             width: var(--logo-size);
             height: var(--logo-size);
@@ -523,6 +529,12 @@
             font-weight: 600;
         }
 
+        .message-avatar-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
         .message.user .message-avatar {
             background: var(--gradient-primary);
             color: white;
@@ -539,6 +551,12 @@
             border-radius: var(--radius-lg);
             padding: 1rem 1.25rem;
             position: relative;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .message:hover .message-content {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .message.user .message-content {
@@ -658,6 +676,13 @@
             border-radius: var(--radius-lg);
             border-bottom-left-radius: var(--radius-sm);
             width: fit-content;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 0.7; }
+            50% { opacity: 1; }
+            100% { opacity: 0.7; }
         }
 
         .typing-dot {
@@ -1335,10 +1360,13 @@
             /* Adjust chat container to account for fixed input */
             .chat-container {
                 height: calc(100vh - 64px); /* Header height */
+                display: flex;
+                flex-direction: column;
             }
             
             .chat-messages {
-                height: calc(100% - 80px); /* Account for input height */
+                height: calc(100% - 100px); /* Account for input height */
+                overflow-y: auto;
             }
             
             /* Ensure send button is visible on mobile */
@@ -1405,7 +1433,7 @@
     <div class="login-screen" id="loginScreen">
         <div class="login-container">
             <div class="login-logo">
-                <div class="logo-icon">⚡</div>
+                <img src="https://z-cdn-media.chatglm.cn/files/42dffb91-77ea-4a41-97ae-f2ec69e904d0_ChatGPT%20Image%20Sep%2028%2C%202025%2C%2011_09_59%20AM.png?auth_key=1790574200-4bf406f2c4a24e2e95988a2d3dc7bdaa-0-7c48c7c56e94801e3ce2b5b4e9f34757" alt="Nexariq" class="logo-img">
                 <span class="logo-text">Nexariq AI</span>
             </div>
             <h1>Welcome to Nexariq AI</h1>
@@ -1428,7 +1456,7 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="logo">
-                    <div class="logo-icon">⚡</div>
+                    <img src="https://z-cdn-media.chatglm.cn/files/42dffb91-77ea-4a41-97ae-f2ec69e904d0_ChatGPT%20Image%20Sep%2028%2C%202025%2C%2011_09_59%20AM.png?auth_key=1790574200-4bf406f2c4a24e2e95988a2d3dc7bdaa-0-7c48c7c56e94801e3ce2b5b4e9f34757" alt="Nexariq" class="logo-img">
                     <span class="logo-text">Nexariq AI</span>
                 </a>
                 <button class="new-chat-btn" id="newChatBtn">
@@ -1495,10 +1523,12 @@
             <div class="chat-container">
                 <div class="chat-messages" id="chatMessages">
                     <div class="message ai">
-                        <div class="message-avatar">⚡</div>
+                        <div class="message-avatar">
+                            <img src="https://z-cdn-media.chatglm.cn/files/5ad2dbf7-68cc-46e5-88ed-6d6603302b5d_ChatGPT%20Image%20Sep%2028%2C%202025%2C%2011_11_26%20AM.png?auth_key=1790574200-59496caf303d424999558b88daf5971b-0-bf5354267ebac6c491dbf3ecf0cdc336" alt="Lynxa Pro" class="message-avatar-img">
+                        </div>
                         <div class="message-content">
                             <div class="message-text">
-                                <h2>Hello! I'm <strong>Lynxa</strong></h2>
+                                <h2>Hello! I'm <strong>Lynxa Pro</strong></h2>
                                 <p>I'm an advanced AI assistant developed by <strong>Nexariq (AJ STUDIOZ)</strong>. I can help you with a wide range of tasks:</p>
                                 <ul>
                                     <li>Answering questions and providing information</li>
@@ -1528,7 +1558,7 @@
 
                 <div class="chat-input-container">
                     <div class="chat-input-wrapper">
-                        <textarea class="chat-input" id="chatInput" placeholder="Message Lynxa..." rows="1"></textarea>
+                        <textarea class="chat-input" id="chatInput" placeholder="Message Lynxa Pro..." rows="1"></textarea>
                         <div class="chat-actions">
                             <button class="chat-action-btn" id="attachBtn" title="Attach file">
                                 <i class="fas fa-paperclip"></i>
@@ -1677,6 +1707,14 @@
             </div>
             
             <div class="user-profile-section">
+                <div class="user-profile-section-title">Profile</div>
+                <div class="form-group">
+                    <label for="profileDisplayName" class="form-label">Display Name</label>
+                    <input type="text" id="profileDisplayName" class="form-input" placeholder="Enter your name">
+                </div>
+            </div>
+            
+            <div class="user-profile-section">
                 <div class="user-profile-section-title">Account Information</div>
                 <div class="user-profile-item">
                     <div class="user-profile-label">User ID</div>
@@ -1709,6 +1747,8 @@
             </div>
             
             <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelProfileBtn">Cancel</button>
+                <button class="btn btn-primary" id="saveProfileBtn">Save</button>
                 <button class="btn btn-primary" id="signOutFromProfileBtn">Sign Out</button>
             </div>
         </div>
@@ -1777,7 +1817,8 @@
             user: null,
             authInitialized: false,
             streamingResponse: false,
-            abortController: null
+            abortController: null,
+            userMemory: {} // Store user information like name, preferences, etc.
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -1810,6 +1851,9 @@
             userProfileLastSignIn: document.getElementById('userProfileLastSignIn'),
             userProfileTotalChats: document.getElementById('userProfileTotalChats'),
             userProfileTotalMessages: document.getElementById('userProfileTotalMessages'),
+            profileDisplayName: document.getElementById('profileDisplayName'),
+            saveProfileBtn: document.getElementById('saveProfileBtn'),
+            cancelProfileBtn: document.getElementById('cancelProfileBtn'),
             sidebar: document.getElementById('sidebar'),
             mobileMenuBtn: document.getElementById('mobileMenuBtn'),
             newChatBtn: document.getElementById('newChatBtn'),
@@ -1857,6 +1901,7 @@
                     showApp();
                     loadUserData();
                     loadUserProfile();
+                    loadUserMemory(); // Load user memory
                 } else {
                     // User is signed out
                     state.user = null;
@@ -1871,6 +1916,83 @@
             adjustMobileViewportHeight();
             window.addEventListener('resize', adjustMobileViewportHeight);
         });
+
+        // Load user memory from Firestore
+        function loadUserMemory() {
+            if (!state.user) return;
+            
+            const userRef = db.collection('users').doc(state.user.uid);
+            
+            userRef.get().then(doc => {
+                if (doc.exists && doc.data().memory) {
+                    state.userMemory = doc.data().memory;
+                } else {
+                    // Initialize empty memory structure
+                    state.userMemory = {
+                        name: state.user.displayName || '',
+                        preferences: {},
+                        context: {}
+                    };
+                }
+            }).catch(error => {
+                console.error('Error loading user memory:', error);
+            });
+        }
+
+        // Save user memory to Firestore
+        function saveUserMemory() {
+            if (!state.user) return;
+            
+            const userRef = db.collection('users').doc(state.user.uid);
+            
+            userRef.update({
+                memory: state.userMemory,
+                updatedAt: firebase.firestore.FieldValue.serverTimestamp()
+            }).catch(error => {
+                console.error('Error saving user memory:', error);
+            });
+        }
+
+        // Extract user information from messages
+        function extractUserInfoFromMessage(message) {
+            // Simple pattern matching to extract name
+            const namePatterns = [
+                /my name is (\w+)/i,
+                /i am (\w+)/i,
+                /call me (\w+)/i,
+                /i'm (\w+)/i
+            ];
+            
+            for (const pattern of namePatterns) {
+                const match = message.match(pattern);
+                if (match && match[1]) {
+                    return match[1];
+                }
+            }
+            
+            return null;
+        }
+
+        // Update user memory with new information
+        function updateUserMemory(message) {
+            // Extract name if mentioned
+            const name = extractUserInfoFromMessage(message);
+            if (name && name !== state.userMemory.name) {
+                state.userMemory.name = name;
+                saveUserMemory();
+                
+                // Update UI with new name
+                if (state.user) {
+                    state.user.displayName = name;
+                    elements.userAvatar.textContent = name.charAt(0).toUpperCase();
+                    elements.userName.textContent = name;
+                    elements.userProfileName.textContent = name;
+                    elements.userProfileAvatar.textContent = name.charAt(0).toUpperCase();
+                }
+                
+                showToast(`I'll remember your name, ${name}!`, 'success');
+            }
+        }
 
         // Generate chat title from keywords
         function generateChatTitle(content) {
@@ -1946,7 +2068,8 @@
                         createdAt: firebase.firestore.FieldValue.serverTimestamp(),
                         settings: state.settings,
                         chatHistory: [],
-                        currentChatId: null
+                        currentChatId: null,
+                        memory: state.userMemory // Initialize with empty memory
                     });
                 }
             }).catch(error => {
@@ -1963,6 +2086,9 @@
             elements.userProfileAvatar.textContent = state.user.displayName ? state.user.displayName.charAt(0).toUpperCase() : 'U';
             elements.userProfileName.textContent = state.user.displayName || 'User';
             elements.userProfileEmail.textContent = state.user.email || '';
+            
+            // Set display name input
+            elements.profileDisplayName.value = state.userMemory.name || state.user.displayName || '';
             
             // Format user ID
             const formattedUserId = state.user.uid
@@ -2018,6 +2144,7 @@
                 settings: state.settings,
                 chatHistory: state.chatHistory,
                 currentChatId: state.currentChatId,
+                memory: state.userMemory, // Save user memory
                 updatedAt: firebase.firestore.FieldValue.serverTimestamp()
             }).catch(error => {
                 console.error('Error saving user data:', error);
@@ -2036,6 +2163,8 @@
             // User profile panel
             elements.userMenu.addEventListener('click', toggleUserProfilePanel);
             elements.userProfileClose.addEventListener('click', closeUserProfilePanel);
+            elements.saveProfileBtn.addEventListener('click', saveUserProfile);
+            elements.cancelProfileBtn.addEventListener('click', closeUserProfilePanel);
             
             // Mobile menu
             elements.mobileMenuBtn.addEventListener('click', toggleSidebar);
@@ -2070,6 +2199,35 @@
             
             // Window resize
             window.addEventListener('resize', handleWindowResize);
+        }
+
+        // Save user profile
+        function saveUserProfile() {
+            const displayName = elements.profileDisplayName.value.trim();
+            
+            if (displayName) {
+                // Update in Firebase
+                const userRef = db.collection('users').doc(state.user.uid);
+                userRef.update({
+                    'memory.name': displayName
+                }).then(() => {
+                    // Update state
+                    state.userMemory.name = displayName;
+                    
+                    // Update UI
+                    elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    elements.userName.textContent = displayName;
+                    elements.userProfileName.textContent = displayName;
+                    elements.userProfileAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    
+                    showToast('Profile updated successfully', 'success');
+                }).catch(error => {
+                    console.error('Error updating profile:', error);
+                    showToast('Error updating profile', 'error');
+                });
+            }
+            
+            closeUserProfilePanel();
         }
 
         // Theme functions
@@ -2114,6 +2272,7 @@
                     state.messages = [];
                     state.chatHistory = [];
                     state.currentChatId = null;
+                    state.userMemory = {};
                     
                     // Clear localStorage
                     localStorage.removeItem('nexariqState');
@@ -2268,13 +2427,20 @@
             state.messages = [];
             state.currentChatId = null;
             
-            // Add welcome message
+            // Add welcome message with user's name if available
+            const userName = state.userMemory.name || '';
+            const welcomeMessage = userName 
+                ? `## Hello, ${userName}! I'm **Lynxa Pro**
+
+I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I assist you today?`
+                : `## Hello! I'm **Lynxa Pro**
+
+I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I assist you today?`;
+            
             state.messages.push({
                 id: generateId(),
                 role: 'assistant',
-                content: `## Hello! I'm **Lynxa**
-
-I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I assist you today?`,
+                content: welcomeMessage,
                 timestamp: new Date().toISOString()
             });
             
@@ -2387,7 +2553,10 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 const messageEl = document.createElement('div');
                 messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`;
                 
-                const avatar = message.role === 'user' ? 'U' : '⚡';
+                const avatar = message.role === 'user' 
+                    ? (state.userMemory.name ? state.userMemory.name.charAt(0).toUpperCase() : 'U')
+                    : '<img src="https://z-cdn-media.chatglm.cn/files/5ad2dbf7-68cc-46e5-88ed-6d6603302b5d_ChatGPT%20Image%20Sep%2028%2C%202025%2C%2011_11_26%20AM.png?auth_key=1790574200-59496caf303d424999558b88daf5971b-0-bf5354267ebac6c491dbf3ecf0cdc336" alt="Lynxa Pro" class="message-avatar-img">';
+                
                 const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
                 messageEl.innerHTML = `
@@ -2472,6 +2641,9 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             const message = elements.chatInput.value.trim();
             if (!message || state.isTyping) return;
             
+            // Extract user information from the message
+            updateUserMemory(message);
+            
             // Create a new AbortController for this request
             state.abortController = new AbortController();
             
@@ -2499,7 +2671,11 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 // Prepare messages for API
                 const systemMessage = {
                     role: 'system',
-                    content: 'You are Lynxa, an advanced AI assistant developed by Nexariq (AJ STUDIOZ). Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples.'
+                    content: `You are Lynxa Pro, an advanced AI assistant developed by Nexariq (AJ STUDIOZ). 
+                    
+ ${state.userMemory.name ? `The user's name is ${state.userMemory.name}. Always address them by their name.` : ''}
+                    
+Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples.`
                 };
                 
                 // Convert messages to API format
@@ -2529,7 +2705,9 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
                 messageEl.innerHTML = `
-                    <div class="message-avatar">⚡</div>
+                    <div class="message-avatar">
+                        <img src="https://z-cdn-media.chatglm.cn/files/5ad2dbf7-68cc-46e5-88ed-6d6603302b5d_ChatGPT%20Image%20Sep%2028%2C%202025%2C%2011_11_26%20AM.png?auth_key=1790574200-59496caf303d424999558b88daf5971b-0-bf5354267ebac6c491dbf3ecf0cdc336" alt="Lynxa Pro" class="message-avatar-img">
+                    </div>
                     <div class="message-content">
                         <div class="message-text typing-text" id="text-${messageId}"></div>
                         <div class="message-actions">
@@ -2701,7 +2879,9 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             messageEl.innerHTML = `
-                <div class="message-avatar">⚡</div>
+                <div class="message-avatar">
+                    <img src="https://z-cdn-media.chatglm.cn/files/5ad2dbf7-68cc-46e5-88ed-6d6603302b5d_ChatGPT%20Image%20Sep%2028%2C%202025%2C%2011_11_26%20AM.png?auth_key=1790574200-59496caf303d424999558b88daf5971b-0-bf5354267ebac6c491dbf3ecf0cdc336" alt="Lynxa Pro" class="message-avatar-img">
+                </div>
                 <div class="message-content">
                     <div class="message-text typing-text" id="text-${messageId}"></div>
                     <div class="message-actions">
@@ -2805,7 +2985,9 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             typingIndicator.id = 'typingIndicator';
             
             typingIndicator.innerHTML = `
-                <div class="message-avatar">⚡</div>
+                <div class="message-avatar">
+                    <img src="https://z-cdn-media.chatglm.cn/files/5ad2dbf7-68cc-46e5-88ed-6d6603302b5d_ChatGPT%20Image%20Sep%2028%2C%202025%2C%2011_11_26%20AM.png?auth_key=1790574200-59496caf303d424999558b88daf5971b-0-bf5354267ebac6c491dbf3ecf0cdc336" alt="Lynxa Pro" class="message-avatar-img">
+                </div>
                 <div class="message-content">
                     <div class="typing-indicator">
                         <div class="typing-dot"></div>
