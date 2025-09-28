@@ -304,12 +304,43 @@
             padding: 1rem;
         }
 
+        .chat-history-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
         .chat-history-title {
             font-size: 0.75rem;
             font-weight: 600;
             color: var(--text-tertiary);
             text-transform: uppercase;
-            margin-bottom: 0.75rem;
+        }
+
+        .chat-history-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-history-action-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.875rem;
+        }
+
+        .chat-history-action-btn:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
         }
 
         .chat-item {
@@ -321,6 +352,7 @@
             display: flex;
             align-items: center;
             gap: 0.75rem;
+            position: relative;
         }
 
         .chat-item:hover {
@@ -329,6 +361,10 @@
 
         .chat-item.active {
             background-color: var(--primary);
+        }
+
+        .chat-item.pinned {
+            border-left: 3px solid var(--warning);
         }
 
         .chat-item-icon {
@@ -340,6 +376,7 @@
             align-items: center;
             justify-content: center;
             color: var(--text-secondary);
+            flex-shrink: 0;
         }
 
         .chat-item-content {
@@ -358,6 +395,45 @@
         .chat-item-date {
             font-size: 0.75rem;
             color: var(--text-tertiary);
+        }
+
+        .chat-item-actions {
+            display: flex;
+            gap: 0.25rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .chat-item:hover .chat-item-actions {
+            opacity: 1;
+        }
+
+        .chat-item-action-btn {
+            width: 24px;
+            height: 24px;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.75rem;
+        }
+
+        .chat-item-action-btn:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .chat-item-action-btn.delete:hover {
+            color: var(--error);
+        }
+
+        .chat-item-action-btn.pin:hover {
+            color: var(--warning);
         }
 
         .sidebar-footer {
@@ -1107,6 +1183,15 @@
             background-color: var(--surface-highlight);
         }
 
+        .btn-danger {
+            background-color: var(--error);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+
         /* User Profile Panel */
         .user-profile-panel {
             position: fixed;
@@ -1315,6 +1400,160 @@
             color: var(--text-tertiary);
         }
 
+        /* Confirmation Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            padding: 1.5rem;
+            width: 90%;
+            max-width: 400px;
+            border: 1px solid var(--border);
+        }
+
+        .modal-header {
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .modal-description {
+            color: var(--text-secondary);
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        /* Search Modal */
+        .search-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: flex-start;
+            justify-content: center;
+            padding-top: 10vh;
+        }
+
+        .search-modal.active {
+            display: flex;
+        }
+
+        .search-container {
+            background-color: var(--surface);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 90%;
+            max-width: 600px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+        }
+
+        .search-header {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .search-input {
+            flex: 1;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem 0.75rem;
+            color: var(--text-primary);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .search-results {
+            max-height: 50vh;
+            overflow-y: auto;
+        }
+
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .search-result-item:hover {
+            background-color: var(--surface-highlight);
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-title {
+            font-weight: 500;
+            margin-bottom: 0.25rem;
+        }
+
+        .search-result-preview {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .search-result-date {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        /* Rename Modal */
+        .rename-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: none;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .rename-modal.active {
+            display: flex;
+        }
+
         /* Mobile Responsiveness */
         @media (max-width: 768px) {
             .sidebar {
@@ -1456,6 +1695,17 @@
                 margin: 0;
                 max-height: 250px; /* Reduced height for mobile */
             }
+            
+            /* Modal adjustments for mobile */
+            .modal {
+                width: 95%;
+                max-width: none;
+            }
+            
+            .search-container {
+                width: 95%;
+                max-width: none;
+            }
         }
 
         /* Loading Spinner */
@@ -1577,7 +1827,20 @@
                 </button>
             </div>
             <div class="chat-history">
-                <div class="chat-history-title">Recent Chats</div>
+                <div class="chat-history-header">
+                    <div class="chat-history-title">Recent Chats</div>
+                    <div class="chat-history-actions">
+                        <button class="chat-history-action-btn" id="searchChatBtn" title="Search chats">
+                            <i class="fas fa-search"></i>
+                        </button>
+                        <button class="chat-history-action-btn" id="exportChatBtn" title="Export chats">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button class="chat-history-action-btn" id="clearChatBtn" title="Clear all chats">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>
                 <div id="chatHistory">
                     <div class="chat-item active" data-chat-id="current">
                         <div class="chat-item-icon">
@@ -1800,6 +2063,28 @@
                 </div>
             </div>
             
+            <div class="settings-section">
+                <div class="settings-section-title">Data Management</div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">Export Chat History</div>
+                        <div class="settings-description">Download all your conversations</div>
+                    </div>
+                    <button class="btn btn-secondary" id="exportDataBtn">
+                        <i class="fas fa-download"></i> Export
+                    </button>
+                </div>
+                <div class="settings-item">
+                    <div>
+                        <div class="settings-label">Clear Chat History</div>
+                        <div class="settings-description">Delete all your conversations</div>
+                    </div>
+                    <button class="btn btn-danger" id="clearDataBtn">
+                        <i class="fas fa-trash-alt"></i> Clear
+                    </button>
+                </div>
+            </div>
+            
             <div class="modal-footer">
                 <button class="btn btn-secondary" id="cancelSettingsBtn">Cancel</button>
                 <button class="btn btn-primary" id="saveSettingsBtn">Save</button>
@@ -1866,6 +2151,57 @@
                 <button class="btn btn-secondary" id="cancelProfileBtn">Cancel</button>
                 <button class="btn btn-primary" id="saveProfileBtn">Save</button>
                 <button class="btn btn-primary" id="signOutFromProfileBtn">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal-overlay" id="confirmModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="confirmTitle">Confirm Action</div>
+            </div>
+            <div class="modal-description" id="confirmDescription">
+                Are you sure you want to proceed with this action?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="confirmCancelBtn">Cancel</button>
+                <button class="btn btn-danger" id="confirmOkBtn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Search Modal -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-container">
+            <div class="search-header">
+                <i class="fas fa-search"></i>
+                <input type="text" class="search-input" id="searchInput" placeholder="Search conversations...">
+                <button class="settings-close" id="searchCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="search-results" id="searchResults">
+                <div class="search-result-item">
+                    <div class="search-result-title">No results found</div>
+                    <div class="search-result-preview">Try a different search term</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Rename Modal -->
+    <div class="rename-modal" id="renameModal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Rename Chat</div>
+            </div>
+            <div class="form-group">
+                <input type="text" class="form-input" id="renameInput" placeholder="Enter new name">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="renameCancelBtn">Cancel</button>
+                <button class="btn btn-primary" id="renameSaveBtn">Save</button>
             </div>
         </div>
     </div>
@@ -1938,7 +2274,9 @@
             keyboardOpen: false, // Track keyboard state for mobile
             currentView: 'chat', // Track current view: 'chat', 'settings', 'profile'
             viewHistory: [], // Track navigation history
-            autoScroll: true // Track if we should auto-scroll to bottom
+            autoScroll: true, // Track if we should auto-scroll to bottom
+            confirmCallback: null, // Callback for confirmation modal
+            renameChatId: null // ID of chat being renamed
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -2005,7 +2343,29 @@
             sandboxPreviewToggle: document.getElementById('sandboxPreviewToggle'),
             agenticToggle: document.getElementById('agenticToggle'),
             taskNotificationToggle: document.getElementById('taskNotificationToggle'),
-            errorNotificationToggle: document.getElementById('errorNotificationToggle')
+            errorNotificationToggle: document.getElementById('errorNotificationToggle'),
+            // New elements for chat history management
+            searchChatBtn: document.getElementById('searchChatBtn'),
+            exportChatBtn: document.getElementById('exportChatBtn'),
+            clearChatBtn: document.getElementById('clearChatBtn'),
+            exportDataBtn: document.getElementById('exportDataBtn'),
+            clearDataBtn: document.getElementById('clearDataBtn'),
+            // Confirmation modal elements
+            confirmModal: document.getElementById('confirmModal'),
+            confirmTitle: document.getElementById('confirmTitle'),
+            confirmDescription: document.getElementById('confirmDescription'),
+            confirmCancelBtn: document.getElementById('confirmCancelBtn'),
+            confirmOkBtn: document.getElementById('confirmOkBtn'),
+            // Search modal elements
+            searchModal: document.getElementById('searchModal'),
+            searchInput: document.getElementById('searchInput'),
+            searchResults: document.getElementById('searchResults'),
+            searchCloseBtn: document.getElementById('searchCloseBtn'),
+            // Rename modal elements
+            renameModal: document.getElementById('renameModal'),
+            renameInput: document.getElementById('renameInput'),
+            renameCancelBtn: document.getElementById('renameCancelBtn'),
+            renameSaveBtn: document.getElementById('renameSaveBtn')
         };
 
         // Initialize app
@@ -2431,6 +2791,25 @@
             elements.taskNotificationToggle.addEventListener('click', toggleTaskNotifications);
             elements.errorNotificationToggle.addEventListener('click', toggleErrorNotifications);
             
+            // Chat history management
+            elements.searchChatBtn.addEventListener('click', showSearchModal);
+            elements.exportChatBtn.addEventListener('click', exportChatHistory);
+            elements.clearChatBtn.addEventListener('click', showClearChatsConfirm);
+            elements.exportDataBtn.addEventListener('click', exportChatHistory);
+            elements.clearDataBtn.addEventListener('click', showClearChatsConfirm);
+            
+            // Confirmation modal
+            elements.confirmCancelBtn.addEventListener('click', hideConfirmModal);
+            elements.confirmOkBtn.addEventListener('click', confirmAction);
+            
+            // Search modal
+            elements.searchCloseBtn.addEventListener('click', hideSearchModal);
+            elements.searchInput.addEventListener('input', handleSearch);
+            
+            // Rename modal
+            elements.renameCancelBtn.addEventListener('click', hideRenameModal);
+            elements.renameSaveBtn.addEventListener('click', saveRenameChat);
+            
             // Window resize
             window.addEventListener('resize', handleWindowResize);
             
@@ -2711,7 +3090,8 @@
                     id: chatId,
                     title,
                     messages: [...state.messages],
-                    timestamp: new Date().toISOString()
+                    timestamp: new Date().toISOString(),
+                    pinned: false
                 });
                 
                 state.currentChatId = chatId;
@@ -2796,6 +3176,128 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             }
         }
 
+        // Delete chat
+        function deleteChat(chatId) {
+            // Find the chat index
+            const chatIndex = state.chatHistory.findIndex(c => c.id === chatId);
+            if (chatIndex === -1) return;
+            
+            // Remove from chat history
+            state.chatHistory.splice(chatIndex, 1);
+            
+            // If we're deleting the current chat, switch to a new one
+            if (state.currentChatId === chatId) {
+                state.currentChatId = null;
+                state.messages = [];
+                
+                // Add welcome message
+                const userName = state.userMemory.name || '';
+                const welcomeMessage = userName 
+                    ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
+                    : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
+
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`;
+                
+                state.messages.push({
+                    id: generateId(),
+                    role: 'assistant',
+                    content: welcomeMessage,
+                    timestamp: new Date().toISOString()
+                });
+                
+                renderMessages();
+            }
+            
+            // Re-render chat history
+            renderChatHistory();
+            
+            // Save state
+            saveState();
+            saveUserData();
+            
+            showToast('Chat deleted successfully', 'success');
+        }
+
+        // Pin/unpin chat
+        function togglePinChat(chatId) {
+            const chat = state.chatHistory.find(c => c.id === chatId);
+            if (!chat) return;
+            
+            // Toggle pinned status
+            chat.pinned = !chat.pinned;
+            
+            // Re-sort chat history (pinned chats first)
+            state.chatHistory.sort((a, b) => {
+                if (a.pinned && !b.pinned) return -1;
+                if (!a.pinned && b.pinned) return 1;
+                return 0;
+            });
+            
+            // Re-render chat history
+            renderChatHistory();
+            
+            // Save state
+            saveState();
+            saveUserData();
+            
+            showToast(chat.pinned ? 'Chat pinned' : 'Chat unpinned', 'success');
+        }
+
+        // Rename chat
+        function renameChat(chatId, newTitle) {
+            const chat = state.chatHistory.find(c => c.id === chatId);
+            if (!chat) return;
+            
+            // Update title
+            chat.title = newTitle;
+            
+            // Re-render chat history
+            renderChatHistory();
+            
+            // Save state
+            saveState();
+            saveUserData();
+            
+            showToast('Chat renamed successfully', 'success');
+        }
+
+        // Show rename modal
+        function showRenameModal(chatId) {
+            state.renameChatId = chatId;
+            
+            const chat = state.chatHistory.find(c => c.id === chatId);
+            if (chat) {
+                elements.renameInput.value = chat.title;
+            }
+            
+            elements.renameModal.classList.add('active');
+            elements.renameInput.focus();
+        }
+
+        // Hide rename modal
+        function hideRenameModal() {
+            elements.renameModal.classList.remove('active');
+            state.renameChatId = null;
+            elements.renameInput.value = '';
+        }
+
+        // Save renamed chat
+        function saveRenameChat() {
+            const newTitle = elements.renameInput.value.trim();
+            if (!newTitle) {
+                showToast('Chat title cannot be empty', 'error');
+                return;
+            }
+            
+            if (state.renameChatId) {
+                renameChat(state.renameChatId, newTitle);
+            }
+            
+            hideRenameModal();
+        }
+
         // Render chat history
         function renderChatHistory() {
             elements.chatHistory.innerHTML = '';
@@ -2818,10 +3320,10 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 elements.chatHistory.appendChild(activeChat);
             }
             
-            // Add chat history
+            // Add chat history (already sorted with pinned chats first)
             state.chatHistory.forEach(chat => {
                 const chatItem = document.createElement('div');
-                chatItem.className = 'chat-item';
+                chatItem.className = `chat-item ${chat.pinned ? 'pinned' : ''}`;
                 chatItem.setAttribute('data-chat-id', chat.id);
                 chatItem.onclick = () => loadChat(chat.id);
                 
@@ -2835,6 +3337,17 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                     <div class="chat-item-content">
                         <div class="chat-item-title">${chat.title}</div>
                         <div class="chat-item-date">${formattedDate}</div>
+                    </div>
+                    <div class="chat-item-actions">
+                        <button class="chat-item-action-btn pin" onclick="event.stopPropagation(); togglePinChat('${chat.id}')" title="${chat.pinned ? 'Unpin chat' : 'Pin chat'}">
+                            <i class="fas fa-thumbtack"></i>
+                        </button>
+                        <button class="chat-item-action-btn rename" onclick="event.stopPropagation(); showRenameModal('${chat.id}')" title="Rename chat">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="chat-item-action-btn delete" onclick="event.stopPropagation(); showDeleteChatConfirm('${chat.id}')" title="Delete chat">
+                            <i class="fas fa-trash"></i>
+                        </button>
                     </div>
                 `;
                 
@@ -3681,10 +4194,304 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             return Date.now().toString(36) + Math.random().toString(36).substr(2);
         }
 
+        // Show confirmation modal
+        function showConfirmModal(title, description, callback) {
+            elements.confirmTitle.textContent = title;
+            elements.confirmDescription.textContent = description;
+            elements.confirmModal.classList.add('active');
+            state.confirmCallback = callback;
+        }
+
+        // Hide confirmation modal
+        function hideConfirmModal() {
+            elements.confirmModal.classList.remove('active');
+            state.confirmCallback = null;
+        }
+
+        // Confirm action
+        function confirmAction() {
+            if (state.confirmCallback) {
+                state.confirmCallback();
+            }
+            hideConfirmModal();
+        }
+
+        // Show delete chat confirmation
+        function showDeleteChatConfirm(chatId) {
+            showConfirmModal(
+                'Delete Chat',
+                'Are you sure you want to delete this chat? This action cannot be undone.',
+                () => deleteChat(chatId)
+            );
+        }
+
+        // Show clear all chats confirmation
+        function showClearChatsConfirm() {
+            showConfirmModal(
+                'Clear All Chats',
+                'Are you sure you want to delete all your chat history? This action cannot be undone.',
+                clearAllChats
+            );
+        }
+
+        // Clear all chats
+        function clearAllChats() {
+            // Clear chat history
+            state.chatHistory = [];
+            
+            // Clear current messages
+            state.messages = [];
+            state.currentChatId = null;
+            
+            // Add welcome message
+            const userName = state.userMemory.name || '';
+            const welcomeMessage = userName 
+                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
+                : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
+
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`;
+            
+            state.messages.push({
+                id: generateId(),
+                role: 'assistant',
+                content: welcomeMessage,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Re-render chat history and messages
+            renderChatHistory();
+            renderMessages();
+            
+            // Save state
+            saveState();
+            saveUserData();
+            
+            showToast('All chats cleared successfully', 'success');
+        }
+
+        // Export chat history
+        function exportChatHistory() {
+            if (state.chatHistory.length === 0 && state.messages.length <= 1) {
+                showToast('No chat history to export', 'warning');
+                return;
+            }
+            
+            // Create export data
+            const exportData = {
+                exportDate: new Date().toISOString(),
+                user: {
+                    name: state.userMemory.name || state.user.displayName || 'User',
+                    email: state.user.email || ''
+                },
+                chats: []
+            };
+            
+            // Add current chat if it has messages
+            if (state.messages.length > 1) {
+                exportData.chats.push({
+                    id: 'current',
+                    title: 'Current Conversation',
+                    timestamp: new Date().toISOString(),
+                    messages: state.messages
+                });
+            }
+            
+            // Add chat history
+            exportData.chats.push(...state.chatHistory);
+            
+            // Convert to JSON
+            const dataStr = JSON.stringify(exportData, null, 2);
+            
+            // Create blob and download
+            const blob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `nexariq-chat-history-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            
+            // Clean up
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 100);
+            
+            showToast('Chat history exported successfully', 'success');
+        }
+
+        // Show search modal
+        function showSearchModal() {
+            elements.searchModal.classList.add('active');
+            elements.searchInput.value = '';
+            elements.searchInput.focus();
+            handleSearch(); // Show all results initially
+        }
+
+        // Hide search modal
+        function hideSearchModal() {
+            elements.searchModal.classList.remove('active');
+            elements.searchResults.innerHTML = '';
+        }
+
+        // Handle search
+        function handleSearch() {
+            const query = elements.searchInput.value.toLowerCase().trim();
+            
+            // Clear previous results
+            elements.searchResults.innerHTML = '';
+            
+            if (!query) {
+                // Show all chats if query is empty
+                const allChats = [...state.chatHistory];
+                
+                if (state.messages.length > 1) {
+                    allChats.unshift({
+                        id: 'current',
+                        title: 'Current Conversation',
+                        messages: state.messages,
+                        timestamp: new Date().toISOString()
+                    });
+                }
+                
+                if (allChats.length === 0) {
+                    elements.searchResults.innerHTML = `
+                        <div class="search-result-item">
+                            <div class="search-result-title">No chats found</div>
+                            <div class="search-result-preview">Start a new conversation to see it here</div>
+                        </div>
+                    `;
+                    return;
+                }
+                
+                allChats.forEach(chat => {
+                    addSearchResult(chat);
+                });
+                
+                return;
+            }
+            
+            // Search in current chat
+            const results = [];
+            
+            if (state.messages.length > 1) {
+                const currentChatResults = searchInChat({
+                    id: 'current',
+                    title: 'Current Conversation',
+                    messages: state.messages,
+                    timestamp: new Date().toISOString()
+                }, query);
+                
+                if (currentChatResults.length > 0) {
+                    results.push(...currentChatResults);
+                }
+            }
+            
+            // Search in chat history
+            state.chatHistory.forEach(chat => {
+                const chatResults = searchInChat(chat, query);
+                if (chatResults.length > 0) {
+                    results.push(...chatResults);
+                }
+            });
+            
+            if (results.length === 0) {
+                elements.searchResults.innerHTML = `
+                    <div class="search-result-item">
+                        <div class="search-result-title">No results found</div>
+                        <div class="search-result-preview">Try a different search term</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            // Add search results
+            results.forEach(result => {
+                addSearchResult(result.chat, result.message, result.matchIndex);
+            });
+        }
+
+        // Search in a specific chat
+        function searchInChat(chat, query) {
+            const results = [];
+            
+            chat.messages.forEach((message, index) => {
+                if (message.role === 'user' || message.role === 'assistant') {
+                    const content = message.content.toLowerCase();
+                    const matchIndex = content.indexOf(query);
+                    
+                    if (matchIndex !== -1) {
+                        results.push({
+                            chat,
+                            message,
+                            matchIndex
+                        });
+                    }
+                }
+            });
+            
+            return results;
+        }
+
+        // Add search result to UI
+        function addSearchResult(chat, message, matchIndex) {
+            const resultItem = document.createElement('div');
+            resultItem.className = 'search-result-item';
+            resultItem.onclick = () => {
+                // Load the chat
+                if (chat.id === 'current') {
+                    loadChat('current');
+                } else {
+                    loadChat(chat.id);
+                }
+                
+                // Close search modal
+                hideSearchModal();
+                
+                // Close sidebar on mobile
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
+            };
+            
+            // Get preview text (highlight match)
+            const content = message.content;
+            const start = Math.max(0, matchIndex - 50);
+            const end = Math.min(content.length, matchIndex + query.length + 50);
+            let preview = content.substring(start, end);
+            
+            // Add ellipsis if needed
+            if (start > 0) preview = '...' + preview;
+            if (end < content.length) preview = preview + '...';
+            
+            // Highlight match
+            const highlightedPreview = preview.replace(
+                new RegExp(query, 'gi'),
+                match => `<strong>${match}</strong>`
+            );
+            
+            const date = new Date(chat.timestamp);
+            const formattedDate = formatDateTime(date);
+            
+            resultItem.innerHTML = `
+                <div class="search-result-title">${chat.title}</div>
+                <div class="search-result-preview">${highlightedPreview}</div>
+                <div class="search-result-date">${formattedDate}</div>
+            `;
+            
+            elements.searchResults.appendChild(resultItem);
+        }
+
         // Global functions for onclick handlers
         window.copyMessage = copyMessage;
         window.copyCode = copyCode;
         window.previewHTML = previewHTML;
+        window.deleteChat = deleteChat;
+        window.togglePinChat = togglePinChat;
+        window.showRenameModal = showRenameModal;
     </script>
 </body>
 </html>
