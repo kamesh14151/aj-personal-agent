@@ -51,6 +51,30 @@
             --code-bg: #f6f8fa;
             --code-border: #e1e4e8;
             --code-text: #24292e;
+            
+            /* Box styles */
+            --box-note-bg: #1e3a8a;
+            --box-note-border: #3b82f6;
+            --box-note-text: #bfdbfe;
+            --box-note-icon: #93c5fd;
+            
+            --box-warning-bg: #78350f;
+            --box-warning-border: #f59e0b;
+            --box-warning-text: #fde68a;
+            --box-warning-icon: #fcd34d;
+            
+            --box-tip-bg: #064e3b;
+            --box-tip-border: #10b981;
+            --box-tip-text: #a7f3d0;
+            --box-tip-icon: #6ee7b7;
+            
+            --box-important-bg: #7e22ce;
+            --box-important-border: #a855f7;
+            --box-important-text: #e9d5ff;
+            --box-important-icon: #c084fc;
+            
+            /* User name gradient */
+            --user-name-gradient: linear-gradient(135deg, #f0abfc 0%, #a78bfa 50%, #60a5fa 100%);
         }
 
         /* Light theme variables */
@@ -66,6 +90,30 @@
             --code-bg: #f1f5f9;
             --code-border: #cbd5e1;
             --code-text: #1e293b;
+            
+            /* Box styles for light theme */
+            --box-note-bg: #dbeafe;
+            --box-note-border: #3b82f6;
+            --box-note-text: #1e40af;
+            --box-note-icon: #2563eb;
+            
+            --box-warning-bg: #fef3c7;
+            --box-warning-border: #f59e0b;
+            --box-warning-text: #92400e;
+            --box-warning-icon: #d97706;
+            
+            --box-tip-bg: #d1fae5;
+            --box-tip-border: #10b981;
+            --box-tip-text: #065f46;
+            --box-tip-icon: #059669;
+            
+            --box-important-bg: #f3e8ff;
+            --box-important-border: #a855f7;
+            --box-important-text: #6b21a8;
+            --box-important-icon: #9333ea;
+            
+            /* User name gradient for light theme */
+            --user-name-gradient: linear-gradient(135deg, #c084fc 0%, #8b5cf6 50%, #3b82f6 100%);
         }
 
         * {
@@ -733,6 +781,123 @@
         .message-text h1, .message-text h2, .message-text h3 {
             margin-top: 1rem;
             margin-bottom: 0.5rem;
+        }
+
+        /* Table styles */
+        .message-text table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .message-text table th {
+            background-color: var(--surface-highlight);
+            font-weight: 600;
+            text-align: left;
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .message-text table td {
+            padding: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .message-text table tr:nth-child(even) {
+            background-color: var(--surface-elevated);
+        }
+
+        /* Box styles */
+        .message-box {
+            margin: 1rem 0;
+            border-radius: var(--radius);
+            border-left: 4px solid;
+            padding: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .message-box.note {
+            background-color: var(--box-note-bg);
+            border-left-color: var(--box-note-border);
+        }
+
+        .message-box.warning {
+            background-color: var(--box-warning-bg);
+            border-left-color: var(--box-warning-border);
+        }
+
+        .message-box.tip {
+            background-color: var(--box-tip-bg);
+            border-left-color: var(--box-tip-border);
+        }
+
+        .message-box.important {
+            background-color: var(--box-important-bg);
+            border-left-color: var(--box-important-border);
+        }
+
+        .message-box-icon {
+            font-size: 1.25rem;
+            flex-shrink: 0;
+            margin-top: 0.125rem;
+        }
+
+        .message-box.note .message-box-icon {
+            color: var(--box-note-icon);
+        }
+
+        .message-box.warning .message-box-icon {
+            color: var(--box-warning-icon);
+        }
+
+        .message-box.tip .message-box-icon {
+            color: var(--box-tip-icon);
+        }
+
+        .message-box.important .message-box-icon {
+            color: var(--box-important-icon);
+        }
+
+        .message-box-content {
+            flex: 1;
+        }
+
+        .message-box-title {
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .message-box.note .message-box-title {
+            color: var(--box-note-text);
+        }
+
+        .message-box.warning .message-box-title {
+            color: var(--box-warning-text);
+        }
+
+        .message-box.tip .message-box-title {
+            color: var(--box-tip-text);
+        }
+
+        .message-box.important .message-box-title {
+            color: var(--box-important-text);
+        }
+
+        .message-box-body {
+            color: var(--text-primary);
+        }
+
+        /* User name styling */
+        .user-name-highlight {
+            font-weight: 600;
+            background: var(--user-name-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline;
         }
 
         .message-actions {
@@ -3191,7 +3356,7 @@
             const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
             
             if (nameToUse && state.messages.length > 0 && state.messages[0].role === 'assistant') {
-                state.messages[0].content = `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                state.messages[0].content = `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks:
 
@@ -3442,7 +3607,7 @@ I have access to various tools and can execute code in a secure sandbox environm
             // Add welcome message with user's name if available
             const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
             const welcomeMessage = nameToUse 
-                ? `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                ? `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
                 : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
@@ -3528,7 +3693,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 // Add welcome message
                 const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
                 const welcomeMessage = nameToUse 
-                    ? `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                    ? `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
                     : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
@@ -3746,6 +3911,9 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
 
         // Format message content (markdown to HTML)
         function formatMessageContent(content) {
+            // Process boxes first
+            content = processBoxes(content);
+            
             // Use marked to parse markdown
             const html = marked.parse(content);
             
@@ -3795,6 +3963,55 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             
             // Sanitize HTML
             return DOMPurify.sanitize(processedHtml);
+        }
+
+        // Process boxes in content
+        function processBoxes(content) {
+            // Process note boxes
+            content = content.replace(/^> \[!NOTE\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
+                return `<div class="message-box note">
+                    <div class="message-box-icon"><i class="fas fa-info-circle"></i></div>
+                    <div class="message-box-content">
+                        <div class="message-box-title">Note</div>
+                        <div class="message-box-body">${content.trim()}</div>
+                    </div>
+                </div>`;
+            });
+            
+            // Process warning boxes
+            content = content.replace(/^> \[!WARNING\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
+                return `<div class="message-box warning">
+                    <div class="message-box-icon"><i class="fas fa-exclamation-triangle"></i></div>
+                    <div class="message-box-content">
+                        <div class="message-box-title">Warning</div>
+                        <div class="message-box-body">${content.trim()}</div>
+                    </div>
+                </div>`;
+            });
+            
+            // Process tip boxes
+            content = content.replace(/^> \[!TIP\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
+                return `<div class="message-box tip">
+                    <div class="message-box-icon"><i class="fas fa-lightbulb"></i></div>
+                    <div class="message-box-content">
+                        <div class="message-box-title">Tip</div>
+                        <div class="message-box-body">${content.trim()}</div>
+                    </div>
+                </div>`;
+            });
+            
+            // Process important boxes
+            content = content.replace(/^> \[!IMPORTANT\]([\s\S]*?)(?=\n\n|\n> \[!|\n\n|$)/gm, (match, content) => {
+                return `<div class="message-box important">
+                    <div class="message-box-icon"><i class="fas fa-exclamation-circle"></i></div>
+                    <div class="message-box-content">
+                        <div class="message-box-title">Important</div>
+                        <div class="message-box-body">${content.trim()}</div>
+                    </div>
+                </div>`;
+            });
+            
+            return content;
         }
 
         // Handle chat input keydown
@@ -3856,7 +4073,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
  ${responseStyle ? `Use a ${responseStyle} tone in your responses.` : ''}
  ${language ? `Respond in ${language}.` : ''}
                     
-Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples.`
+Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples. You can also use tables and boxes to organize information.`
                 };
                 
                 // Convert messages to API format
@@ -4602,7 +4819,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             // Add welcome message
             const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
             const welcomeMessage = nameToUse 
-                ? `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                ? `## Hello, <span class="user-name-highlight">${nameToUse}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
                 : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
