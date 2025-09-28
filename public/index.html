@@ -2854,7 +2854,8 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                     ? (state.userMemory.name ? state.userMemory.name.charAt(0).toUpperCase() : 'U')
                     : `<img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">`;
                 
-                const time = formatTime(message.timestamp);
+                // Use full timestamp format for messages (Z.ai style)
+                const time = formatDateTime(message.timestamp);
                 
                 messageEl.innerHTML = `
                     <div class="message-avatar">${avatar}</div>
@@ -3013,7 +3014,8 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                 messageEl.className = 'message ai';
                 messageEl.id = `message-${messageId}`;
                 
-                const time = formatTime(timestamp);
+                // Use full timestamp format for messages (Z.ai style)
+                const time = formatDateTime(timestamp);
                 
                 messageEl.innerHTML = `
                     <div class="message-avatar">
@@ -3189,7 +3191,8 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             messageEl.className = 'message ai';
             messageEl.id = `message-${messageId}`;
             
-            const time = formatTime(timestamp);
+            // Use full timestamp format for messages (Z.ai style)
+            const time = formatDateTime(timestamp);
             
             messageEl.innerHTML = `
                 <div class="message-avatar">
