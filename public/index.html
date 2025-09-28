@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nexariq AI - Enterprise Agentic Platform</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css">
@@ -123,10 +124,12 @@
             width: 50px;
             height: 50px;
             border-radius: 50%;
-            background-image: url('https://z-cdn-media.chatglm.cn/files/a3b6cc91-8760-4855-9412-fc384c34a732_circle_logo.png?auth_key=1790172879-f02d7001ca6d41e49a24fca3f9749bc3-0-c2777841a7a52c66653d70aedfc6efdb');
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
         }
 
         .login-logo .logo-text {
@@ -246,16 +249,19 @@
             width: var(--logo-size);
             height: var(--logo-size);
             border-radius: 50%;
-            background-image: url('https://z-cdn-media.chatglm.cn/files/a3b6cc91-8760-4855-9412-fc384c34a732_circle_logo.png?auth_key=1790172879-f02d7001ca6d41e49a24fca3f9749bc3-0-c2777841a7a52c66653d70aedfc6efdb');
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 0 20px rgba(139, 92, 246, 0.3);
-            animation: logoGlow 3s ease-in-out infinite alternate;
+            background-color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+            animation: pulse 2s infinite;
         }
 
-        @keyframes logoGlow {
-            0% { box-shadow: 0 0 5px rgba(139, 92, 246, 0.3); }
-            100% { box-shadow: 0 0 20px rgba(139, 92, 246, 0.6); }
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
         }
 
         .logo-text {
@@ -340,6 +346,7 @@
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            color: var(--text-primary);
         }
 
         .chat-item-date {
@@ -522,10 +529,9 @@
         }
 
         .message.ai .message-avatar {
-            background-image: url('https://z-cdn-media.chatglm.cn/files/a3b6cc91-8760-4855-9412-fc384c34a732_circle_logo.png?auth_key=1790172879-f02d7001ca6d41e49a24fca3f9749bc3-0-c2777841a7a52c66653d70aedfc6efdb');
-            background-size: cover;
-            background-position: center;
-            box-shadow: 0 0 10px rgba(139, 92, 246, 0.5);
+            background-color: var(--primary);
+            color: white;
+            font-size: 1.2rem;
         }
 
         .message-content {
@@ -1399,7 +1405,7 @@
     <div class="login-screen" id="loginScreen">
         <div class="login-container">
             <div class="login-logo">
-                <div class="logo-icon"></div>
+                <div class="logo-icon">⚡</div>
                 <span class="logo-text">Nexariq AI</span>
             </div>
             <h1>Welcome to Nexariq AI</h1>
@@ -1422,7 +1428,7 @@
         <div class="sidebar" id="sidebar">
             <div class="sidebar-header">
                 <a href="#" class="logo">
-                    <div class="logo-icon"></div>
+                    <div class="logo-icon">⚡</div>
                     <span class="logo-text">Nexariq AI</span>
                 </a>
                 <button class="new-chat-btn" id="newChatBtn">
@@ -1433,7 +1439,7 @@
             <div class="chat-history">
                 <div class="chat-history-title">Recent Chats</div>
                 <div id="chatHistory">
-                    <div class="chat-item active">
+                    <div class="chat-item active" data-chat-id="current">
                         <div class="chat-item-icon">
                             <i class="fas fa-comment"></i>
                         </div>
@@ -1489,7 +1495,7 @@
             <div class="chat-container">
                 <div class="chat-messages" id="chatMessages">
                     <div class="message ai">
-                        <div class="message-avatar"></div>
+                        <div class="message-avatar">⚡</div>
                         <div class="message-content">
                             <div class="message-text">
                                 <h2>Hello! I'm <strong>Lynxa</strong></h2>
@@ -1774,11 +1780,11 @@
             abortController: null
         };
 
-        // Typing speeds (characters per millisecond)
+        // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
         const typingSpeeds = {
-            slow: 50,
-            medium: 30,
-            fast: 15,
+            slow: 100,
+            medium: 60,
+            fast: 30,
             instant: 0
         };
 
@@ -1865,6 +1871,26 @@
             adjustMobileViewportHeight();
             window.addEventListener('resize', adjustMobileViewportHeight);
         });
+
+        // Generate chat title from keywords
+        function generateChatTitle(content) {
+            // Remove markdown and special characters
+            const cleanContent = content.replace(/[#*`_~\[\]()]/g, '').trim();
+            
+            // Extract first few meaningful words
+            const words = cleanContent.split(/\s+/).filter(word => word.length > 2);
+            
+            // Take first 3-5 words, but limit to 30 characters
+            const titleWords = words.slice(0, Math.min(5, words.length));
+            let title = titleWords.join(' ');
+            
+            // Truncate if too long
+            if (title.length > 30) {
+                title = title.substring(0, 27) + '...';
+            }
+            
+            return title || 'New Chat';
+        }
 
         // Show login screen
         function showLogin() {
@@ -2219,7 +2245,10 @@
         function startNewChat() {
             // Save current chat if it has messages
             if (state.messages.length > 1) {
-                const title = state.messages[1].content.substring(0, 30) + '...';
+                // Find the first user message to generate a title
+                const firstUserMessage = state.messages.find(msg => msg.role === 'user');
+                const title = firstUserMessage ? generateChatTitle(firstUserMessage.content) : 'New Chat';
+                
                 const chatId = generateId();
                 
                 state.chatHistory.unshift({
@@ -2260,6 +2289,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             
             const activeChat = document.createElement('div');
             activeChat.className = 'chat-item active';
+            activeChat.setAttribute('data-chat-id', 'current');
             activeChat.innerHTML = `
                 <div class="chat-item-icon">
                     <i class="fas fa-comment"></i>
@@ -2277,6 +2307,12 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
 
         // Load chat
         function loadChat(chatId) {
+            // If switching to current chat, just render messages
+            if (chatId === 'current') {
+                renderMessages();
+                return;
+            }
+            
             const chat = state.chatHistory.find(c => c.id === chatId);
             if (!chat) return;
             
@@ -2291,7 +2327,10 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 item.classList.remove('active');
             });
             
-            event.currentTarget.classList.add('active');
+            const activeChatItem = document.querySelector(`.chat-item[data-chat-id="${chatId}"]`);
+            if (activeChatItem) {
+                activeChatItem.classList.add('active');
+            }
         }
 
         // Render chat history
@@ -2299,9 +2338,11 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             elements.chatHistory.innerHTML = '';
             
             // Add current chat if no active chat
-            if (!state.currentChatId || state.messages.length > 0) {
+            if (!state.currentChatId || state.currentChatId === 'current' || state.messages.length > 0) {
                 const activeChat = document.createElement('div');
                 activeChat.className = 'chat-item active';
+                activeChat.setAttribute('data-chat-id', 'current');
+                activeChat.onclick = () => loadChat('current');
                 activeChat.innerHTML = `
                     <div class="chat-item-icon">
                         <i class="fas fa-comment"></i>
@@ -2318,6 +2359,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             state.chatHistory.forEach(chat => {
                 const chatItem = document.createElement('div');
                 chatItem.className = 'chat-item';
+                chatItem.setAttribute('data-chat-id', chat.id);
                 chatItem.onclick = () => loadChat(chat.id);
                 
                 const date = new Date(chat.timestamp);
@@ -2345,7 +2387,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 const messageEl = document.createElement('div');
                 messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`;
                 
-                const avatar = message.role === 'user' ? 'U' : '';
+                const avatar = message.role === 'user' ? 'U' : '⚡';
                 const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
                 messageEl.innerHTML = `
@@ -2487,7 +2529,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                 const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
                 messageEl.innerHTML = `
-                    <div class="message-avatar"></div>
+                    <div class="message-avatar">⚡</div>
                     <div class="message-content">
                         <div class="message-text typing-text" id="text-${messageId}"></div>
                         <div class="message-actions">
@@ -2659,7 +2701,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             messageEl.innerHTML = `
-                <div class="message-avatar"></div>
+                <div class="message-avatar">⚡</div>
                 <div class="message-content">
                     <div class="message-text typing-text" id="text-${messageId}"></div>
                     <div class="message-actions">
@@ -2706,7 +2748,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
         }
 
-        // Type text with typing effect
+        // Type text with typing effect (Copilot-like slow typing)
         function typeText(text, elementId, speed, callback) {
             const element = document.getElementById(elementId);
             if (!element) return;
@@ -2743,7 +2785,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                     element.innerHTML = formatMessageContent(text.substring(0, i + 1));
                     i++;
                     
-                    // Continue typing
+                    // Continue typing with Copilot-like slower speed
                     setTimeout(type, speed);
                 } else if (callback) {
                     callback();
@@ -2763,7 +2805,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             typingIndicator.id = 'typingIndicator';
             
             typingIndicator.innerHTML = `
-                <div class="message-avatar"></div>
+                <div class="message-avatar">⚡</div>
                 <div class="message-content">
                     <div class="typing-indicator">
                         <div class="typing-dot"></div>
