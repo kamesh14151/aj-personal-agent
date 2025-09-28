@@ -1923,7 +1923,8 @@
             userMemory: {}, // Store user information like name, preferences, etc.
             keyboardOpen: false, // Track keyboard state for mobile
             currentView: 'chat', // Track current view: 'chat', 'settings', 'profile'
-            viewHistory: [] // Track navigation history
+            viewHistory: [], // Track navigation history
+            autoScroll: true // Track if we should auto-scroll to bottom
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -2029,7 +2030,80 @@
             if (window.innerWidth <= 768) {
                 detectKeyboard();
             }
+            
+            // Setup scroll event listener for auto-scroll
+            elements.chatMessages.addEventListener('scroll', handleScroll);
         });
+
+        // Handle scroll events to determine if we should auto-scroll
+        function handleScroll() {
+            const { scrollTop, scrollHeight, clientHeight } = elements.chatMessages;
+            const isAtBottom = scrollTop + clientHeight >= scrollHeight - 50; // 50px threshold
+            state.autoScroll = isAtBottom;
+        }
+
+        // Format date and time as "Sunday, September 28, 2025 1:25 PM"
+        function formatDateTime(date) {
+            if (!date) return '';
+            
+            // Convert to Date object if it's a string
+            if (typeof date === 'string') {
+                date = new Date(date);
+            }
+            
+            // Days of the week
+            const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+            
+            // Months of the year
+            const months = ['January', 'February', 'March', 'April', 'May', 'June', 
+                          'July', 'August', 'September', 'October', 'November', 'December'];
+            
+            // Get date components
+            const dayName = days[date.getDay()];
+            const monthName = months[date.getMonth()];
+            const day = date.getDate();
+            const year = date.getFullYear();
+            
+            // Format time
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            
+            // Add leading zero to minutes if needed
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            // Combine all parts
+            return `${dayName}, ${monthName} ${day}, ${year} ${hours}:${formattedMinutes} ${ampm}`;
+        }
+
+        // Format time only as "1:25 PM"
+        function formatTime(date) {
+            if (!date) return '';
+            
+            // Convert to Date object if it's a string
+            if (typeof date === 'string') {
+                date = new Date(date);
+            }
+            
+            // Format time
+            let hours = date.getHours();
+            const minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            
+            // Convert to 12-hour format
+            hours = hours % 12;
+            hours = hours ? hours : 12; // 0 should be 12
+            
+            // Add leading zero to minutes if needed
+            const formattedMinutes = minutes < 10 ? '0' + minutes : minutes;
+            
+            // Combine all parts
+            return `${hours}:${formattedMinutes} ${ampm}`;
+        }
 
         // Detect keyboard open/close on mobile
         function detectKeyboard() {
@@ -2046,7 +2120,7 @@
                     
                     // Scroll to bottom when keyboard opens
                     setTimeout(() => {
-                        elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                        scrollToBottom();
                     }, 100);
                 } else if (state.keyboardOpen) {
                     state.keyboardOpen = false;
@@ -2246,8 +2320,8 @@
                 const creationTime = new Date(state.user.metadata.creationTime);
                 const lastSignInTime = new Date(state.user.metadata.lastSignInTime);
                 
-                elements.userProfileCreated.textContent = creationTime.toLocaleDateString();
-                elements.userProfileLastSignIn.textContent = lastSignInTime.toLocaleDateString();
+                elements.userProfileCreated.textContent = formatDateTime(creationTime);
+                elements.userProfileLastSignIn.textContent = formatDateTime(lastSignInTime);
             }
             
             // Calculate usage statistics
@@ -2318,7 +2392,7 @@
             elements.chatInput.addEventListener('focus', () => {
                 if (window.innerWidth <= 768) {
                     setTimeout(() => {
-                        elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                        scrollToBottom();
                     }, 300);
                 }
             });
@@ -2738,7 +2812,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 chatItem.onclick = () => loadChat(chat.id);
                 
                 const date = new Date(chat.timestamp);
-                const formattedDate = date.toLocaleDateString();
+                const formattedDate = formatDateTime(date);
                 
                 chatItem.innerHTML = `
                     <div class="chat-item-icon">
@@ -2766,7 +2840,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                     ? (state.userMemory.name ? state.userMemory.name.charAt(0).toUpperCase() : 'U')
                     : `<img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">`;
                 
-                const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const time = formatTime(message.timestamp);
                 
                 messageEl.innerHTML = `
                     <div class="message-avatar">${avatar}</div>
@@ -2792,8 +2866,10 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 elements.chatMessages.appendChild(messageEl);
             });
             
-            // Scroll to bottom
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            // Scroll to bottom if auto-scroll is enabled
+            if (state.autoScroll) {
+                scrollToBottom();
+            }
             
             // Highlight code blocks
             setTimeout(() => {
@@ -2923,7 +2999,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                 messageEl.className = 'message ai';
                 messageEl.id = `message-${messageId}`;
                 
-                const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const time = formatTime(timestamp);
                 
                 messageEl.innerHTML = `
                     <div class="message-avatar">
@@ -3019,8 +3095,10 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                                         if (textElement) {
                                             textElement.innerHTML = formatMessageContent(aiResponse);
                                             
-                                            // Scroll to bottom
-                                            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                                            // Auto-scroll if enabled
+                                            if (state.autoScroll) {
+                                                scrollToBottom();
+                                            }
                                         }
                                     }
                                 } catch (e) {
@@ -3097,7 +3175,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             messageEl.className = 'message ai';
             messageEl.id = `message-${messageId}`;
             
-            const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            const time = formatTime(timestamp);
             
             messageEl.innerHTML = `
                 <div class="message-avatar">
@@ -3146,7 +3224,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             });
             
             // Scroll to bottom
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            scrollToBottom();
         }
 
         // Type text with typing effect (Copilot-like slow typing)
@@ -3196,6 +3274,13 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             type();
         }
 
+        // Scroll to bottom function
+        function scrollToBottom() {
+            requestAnimationFrame(() => {
+                elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            });
+        }
+
         // Show typing indicator
         function showTypingIndicator() {
             state.isTyping = true;
@@ -3219,7 +3304,11 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             `;
             
             elements.chatMessages.appendChild(typingIndicator);
-            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+            
+            // Use requestAnimationFrame to ensure the element is rendered before scrolling
+            requestAnimationFrame(() => {
+                scrollToBottom();
+            });
         }
 
         // Hide typing indicator
