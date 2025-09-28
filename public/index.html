@@ -61,9 +61,6 @@
             --action-btn-active: rgba(99, 102, 241, 0.3);
             --action-btn-like: #10b981;
             --action-btn-dislike: #ef4444;
-            --user-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-            --user-text: #ffffff;
-            --user-border: #334155;
         }
 
         /* Light theme variables */
@@ -86,9 +83,6 @@
             --action-btn-bg: rgba(0, 0, 0, 0.05);
             --action-btn-hover: rgba(0, 0, 0, 0.1);
             --action-btn-active: rgba(99, 102, 241, 0.1);
-            --user-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
-            --user-text: #1e293b;
-            --user-border: #cbd5e1;
         }
 
         * {
@@ -386,11 +380,6 @@
             background-color: var(--primary);
         }
 
-        .chat-item.active .chat-item-title {
-            color: white;
-            font-weight: 600;
-        }
-
         .chat-item.pinned {
             border-left: 3px solid var(--warning);
         }
@@ -491,12 +480,11 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: var(--user-gradient);
-            border: 1px solid var(--user-border);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--user-text);
+            color: white;
             font-weight: 600;
         }
 
@@ -671,10 +659,8 @@
         }
 
         .message.user .message-avatar {
-            background: var(--user-gradient);
-            border: 1px solid var(--user-border);
-            color: var(--user-text);
-            font-weight: 700;
+            background: var(--gradient-primary);
+            color: white;
         }
 
         .message.ai .message-avatar {
@@ -1393,13 +1379,12 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--user-gradient);
-            border: 2px solid var(--user-border);
+            background: var(--gradient-primary);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: var(--user-text);
-            font-weight: 700;
+            color: white;
+            font-weight: 600;
             font-size: 2rem;
             margin-bottom: 1rem;
         }
@@ -1800,6 +1785,7 @@
                 background-color: var(--surface);
                 border-top: 1px solid var(--border);
                 z-index: 10;
+                width: 100%; /* Full width */
             }
             
             .header {
@@ -1852,6 +1838,7 @@
             /* Adjust padding for better touch */
             .chat-input-wrapper {
                 padding: 0.75rem;
+                width: 100%; /* Full width */
             }
             
             /* Better mobile scrolling */
@@ -1896,24 +1883,31 @@
                 width: 95%;
                 max-width: none;
             }
-
-            /* Increased box width for mobile */
+            
+            /* Chat input improvements for mobile */
+            .chat-input {
+                font-size: 16px; /* Prevent zoom on iOS */
+            }
+            
             .chat-input-wrapper {
-                width: 100%;
-                border-radius: 0;
+                border-radius: 0; /* Remove border radius for cleaner look */
                 border-left: none;
                 border-right: none;
             }
-
-            .message-content {
-                max-width: 100%;
+            
+            /* Increase chat item touch area */
+            .chat-item {
+                padding: 1rem;
             }
-
-            .info-box {
-                margin: 1rem -1rem;
-                border-radius: 0;
-                border-left: none;
-                border-right: none;
+            
+            .chat-item-icon {
+                width: 36px;
+                height: 36px;
+            }
+            
+            /* Make current conversation title stand out more */
+            .chat-item.active .chat-item-title {
+                font-weight: 600;
             }
         }
 
@@ -2978,20 +2972,12 @@
             return title || 'New Chat';
         }
 
-        // Update current chat title
-        function updateCurrentChatTitle() {
-            // If there are no messages or only the welcome message, return
-            if (state.messages.length <= 1) return;
-            
-            // Find the first user message
-            const firstUserMessage = state.messages.find(msg => msg.role === 'user');
-            if (!firstUserMessage) return;
-            
-            // Generate title
-            const title = generateChatTitle(firstUserMessage.content);
+        // Update current chat title in the sidebar
+        function updateCurrentChatTitle(title) {
+            // Update state
             state.currentChatTitle = title;
             
-            // Update the current chat item in the sidebar
+            // Update UI
             const currentChatItem = document.querySelector('.chat-item[data-chat-id="current"]');
             if (currentChatItem) {
                 const titleElement = currentChatItem.querySelector('.chat-item-title');
@@ -3417,6 +3403,7 @@
                     state.currentChatId = parsedState.currentChatId;
                     state.workflows = parsedState.workflows || [];
                     state.selectedModel = parsedState.selectedModel || 'llama-3.3-70b-versatile';
+                    state.currentChatTitle = parsedState.currentChatTitle || 'Current Conversation';
                     
                     // Update model select
                     if (elements.modelSelect) {
@@ -3427,6 +3414,9 @@
                     if (state.currentChatId) {
                         loadChat(state.currentChatId);
                     }
+                    
+                    // Update current chat title
+                    updateCurrentChatTitle(state.currentChatTitle);
                 }
             } catch (error) {
                 console.error('Error loading state:', error);
@@ -3442,7 +3432,8 @@
                     settings: state.settings,
                     currentChatId: state.currentChatId,
                     workflows: state.workflows,
-                    selectedModel: state.selectedModel
+                    selectedModel: state.selectedModel,
+                    currentChatTitle: state.currentChatTitle
                 };
                 localStorage.setItem('nexariqState', JSON.stringify(stateToSave));
             } catch (error) {
@@ -3530,7 +3521,10 @@
             // Clear messages
             state.messages = [];
             state.currentChatId = null;
+            
+            // Reset current chat title
             state.currentChatTitle = 'Current Conversation';
+            updateCurrentChatTitle(state.currentChatTitle);
             
             // Add personalized welcome message
             const userName = state.userMemory.name || '';
@@ -3617,7 +3611,6 @@ I can format my responses with tables and boxes for better readability. How can 
             
             state.messages = [...chat.messages];
             state.currentChatId = chatId;
-            state.currentChatTitle = chat.title;
             renderMessages();
             saveState();
             saveUserData();
@@ -3646,7 +3639,6 @@ I can format my responses with tables and boxes for better readability. How can 
             if (state.currentChatId === chatId) {
                 state.currentChatId = null;
                 state.messages = [];
-                state.currentChatTitle = 'Current Conversation';
                 
                 // Add welcome message
                 const userName = state.userMemory.name || '';
@@ -4006,8 +3998,13 @@ How can I assist you today?`;
             saveState();
             saveUserData();
             
-            // Update current chat title
-            updateCurrentChatTitle();
+            // Update current chat title based on the first user message
+            if (state.messages.length === 2) { // Welcome message + first user message
+                const newTitle = generateChatTitle(message);
+                state.currentChatTitle = newTitle;
+                updateCurrentChatTitle(newTitle);
+                saveState();
+            }
             
             // Clear input
             elements.chatInput.value = '';
@@ -4171,11 +4168,12 @@ Remember the user's preferences and previous interactions to provide personalize
                     // Update the message in state
                     aiMessage.content = aiResponse;
                     
-                    // Update current chat title based on AI response if no user message exists
-                    if (state.messages.length === 2 && state.messages[0].role === 'assistant' && state.messages[1].role === 'assistant') {
-                        // This is an AI response to the welcome message, update title based on AI response
-                        state.currentChatTitle = generateChatTitle(aiResponse);
-                        updateCurrentChatTitle();
+                    // Update current chat title based on AI response if it's the first response
+                    if (state.messages.length === 2 && !state.currentChatTitle || state.currentChatTitle === 'Current Conversation') {
+                        const newTitle = generateChatTitle(aiResponse);
+                        state.currentChatTitle = newTitle;
+                        updateCurrentChatTitle(newTitle);
+                        saveState();
                     }
                     
                     // Highlight code blocks after streaming is complete
@@ -4862,7 +4860,10 @@ Remember the user's preferences and previous interactions to provide personalize
             // Clear current messages
             state.messages = [];
             state.currentChatId = null;
+            
+            // Reset current chat title
             state.currentChatTitle = 'Current Conversation';
+            updateCurrentChatTitle(state.currentChatTitle);
             
             // Add welcome message
             const userName = state.userMemory.name || '';
