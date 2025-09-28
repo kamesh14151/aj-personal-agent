@@ -1786,6 +1786,108 @@
                 height: calc(100% - 180px); /* Adjust for keyboard */
             }
         }
+
+        /* User Preferences Section */
+        .preferences-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .preference-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .preference-item:last-child {
+            border-bottom: none;
+        }
+
+        .preference-label {
+            font-weight: 500;
+        }
+
+        .preference-description {
+            font-size: 0.75rem;
+            color: var(--text-tertiary);
+            margin-top: 0.25rem;
+        }
+
+        .preference-value {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+            max-width: 120px;
+            text-align: right;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .preference-input {
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 0.5rem;
+            color: var(--text-primary);
+            font-size: 0.875rem;
+            width: 120px;
+            text-align: center;
+        }
+
+        .preference-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .preference-select {
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            width: 120px;
+            font-size: 0.875rem;
+        }
+
+        .preference-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .preference-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 1rem;
+        }
+
+        .preference-btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+        }
+
+        .preference-btn-primary {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .preference-btn-primary:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .preference-btn-secondary {
+            background-color: transparent;
+            color: var(--text-primary);
+            border: 1px solid var(--border);
+        }
+
+        .preference-btn-secondary:hover {
+            background-color: var(--surface-highlight);
+        }
     </style>
 </head>
 <body>
@@ -2113,6 +2215,52 @@
                     <label for="profileDisplayName" class="form-label">Display Name</label>
                     <input type="text" id="profileDisplayName" class="form-input" placeholder="Enter your name">
                 </div>
+                <div class="form-group">
+                    <label for="profilePreferredName" class="form-label">Preferred Name</label>
+                    <input type="text" id="profilePreferredName" class="form-input" placeholder="How you'd like to be addressed">
+                    <p class="form-text">This is how I will address you in our conversations</p>
+                </div>
+            </div>
+            
+            <div class="user-profile-section">
+                <div class="user-profile-section-title">Preferences</div>
+                <div class="preference-item">
+                    <div>
+                        <div class="preference-label">Response Style</div>
+                        <div class="preference-description">How you'd like me to respond</div>
+                    </div>
+                    <select class="preference-select" id="preferenceResponseStyle">
+                        <option value="friendly">Friendly</option>
+                        <option value="professional">Professional</option>
+                        <option value="concise">Concise</option>
+                        <option value="detailed">Detailed</option>
+                    </select>
+                </div>
+                <div class="preference-item">
+                    <div>
+                        <div class="preference-label">Language</div>
+                        <div class="preference-description">Preferred language for responses</div>
+                    </div>
+                    <select class="preference-select" id="preferenceLanguage">
+                        <option value="en">English</option>
+                        <option value="es">Spanish</option>
+                        <option value="fr">French</option>
+                        <option value="de">German</option>
+                        <option value="zh">Chinese</option>
+                        <option value="ja">Japanese</option>
+                    </select>
+                </div>
+                <div class="preference-item">
+                    <div>
+                        <div class="preference-label">Code Formatting</div>
+                        <div class="preference-description">How code should be displayed</div>
+                    </div>
+                    <select class="preference-select" id="preferenceCodeFormat">
+                        <option value="highlighted">Syntax Highlighted</option>
+                        <option value="plain">Plain Text</option>
+                        <option value="minimal">Minimal</option>
+                    </select>
+                </div>
             </div>
             
             <div class="user-profile-section">
@@ -2270,7 +2418,15 @@
             authInitialized: false,
             streamingResponse: false,
             abortController: null,
-            userMemory: {}, // Store user information like name, preferences, etc.
+            userMemory: {
+                name: '',
+                preferredName: '',
+                preferences: {
+                    responseStyle: 'friendly',
+                    language: 'en',
+                    codeFormat: 'highlighted'
+                }
+            }, // Store user information like name, preferences, etc.
             keyboardOpen: false, // Track keyboard state for mobile
             currentView: 'chat', // Track current view: 'chat', 'settings', 'profile'
             viewHistory: [], // Track navigation history
@@ -2313,6 +2469,10 @@
             userProfileTotalChats: document.getElementById('userProfileTotalChats'),
             userProfileTotalMessages: document.getElementById('userProfileTotalMessages'),
             profileDisplayName: document.getElementById('profileDisplayName'),
+            profilePreferredName: document.getElementById('profilePreferredName'),
+            preferenceResponseStyle: document.getElementById('preferenceResponseStyle'),
+            preferenceLanguage: document.getElementById('preferenceLanguage'),
+            preferenceCodeFormat: document.getElementById('preferenceCodeFormat'),
             saveProfileBtn: document.getElementById('saveProfileBtn'),
             cancelProfileBtn: document.getElementById('cancelProfileBtn'),
             sidebar: document.getElementById('sidebar'),
@@ -2512,12 +2672,42 @@
             userRef.get().then(doc => {
                 if (doc.exists && doc.data().memory) {
                     state.userMemory = doc.data().memory;
+                    
+                    // Update profile fields with loaded memory
+                    if (state.userMemory.name) {
+                        elements.profileDisplayName.value = state.userMemory.name;
+                    }
+                    
+                    if (state.userMemory.preferredName) {
+                        elements.profilePreferredName.value = state.userMemory.preferredName;
+                    }
+                    
+                    if (state.userMemory.preferences) {
+                        if (state.userMemory.preferences.responseStyle) {
+                            elements.preferenceResponseStyle.value = state.userMemory.preferences.responseStyle;
+                        }
+                        
+                        if (state.userMemory.preferences.language) {
+                            elements.preferenceLanguage.value = state.userMemory.preferences.language;
+                        }
+                        
+                        if (state.userMemory.preferences.codeFormat) {
+                            elements.preferenceCodeFormat.value = state.userMemory.preferences.codeFormat;
+                        }
+                    }
+                    
+                    // Update welcome message with user's name
+                    updateWelcomeMessage();
                 } else {
                     // Initialize empty memory structure
                     state.userMemory = {
                         name: state.user.displayName || '',
-                        preferences: {},
-                        context: {}
+                        preferredName: '',
+                        preferences: {
+                            responseStyle: 'friendly',
+                            language: 'en',
+                            codeFormat: 'highlighted'
+                        }
                     };
                 }
             }).catch(error => {
@@ -2541,7 +2731,7 @@
 
         // Extract user information from messages
         function extractUserInfoFromMessage(message) {
-            // Simple pattern matching to extract name
+            // Extract name patterns
             const namePatterns = [
                 /my name is (\w+)/i,
                 /i am (\w+)/i,
@@ -2556,27 +2746,124 @@
                 }
             }
             
+            // Extract preferred name patterns
+            const preferredNamePatterns = [
+                /you can call me (\w+)/i,
+                /address me as (\w+)/i,
+                /call me (\w+) instead/i,
+                /prefer to be called (\w+)/i
+            ];
+            
+            for (const pattern of preferredNamePatterns) {
+                const match = message.match(pattern);
+                if (match && match[1]) {
+                    return { preferredName: match[1] };
+                }
+            }
+            
+            // Extract response style preferences
+            const stylePatterns = [
+                /be (friendly|professional|concise|detailed)/i,
+                /i prefer (friendly|professional|concise|detailed) responses/i,
+                /talk to me in a (friendly|professional|concise|detailed) way/i
+            ];
+            
+            for (const pattern of stylePatterns) {
+                const match = message.match(pattern);
+                if (match && match[1]) {
+                    return { responseStyle: match[1].toLowerCase() };
+                }
+            }
+            
+            // Extract language preferences
+            const languagePatterns = [
+                /speak to me in (\w+)/i,
+                /i prefer (\w+)/i,
+                /can you speak (\w+)/i
+            ];
+            
+            for (const pattern of languagePatterns) {
+                const match = message.match(pattern);
+                if (match && match[1]) {
+                    const language = match[1].toLowerCase();
+                    const supportedLanguages = ['english', 'spanish', 'french', 'german', 'chinese', 'japanese'];
+                    
+                    if (supportedLanguages.includes(language)) {
+                        return { language: language.substring(0, 2) };
+                    }
+                }
+            }
+            
             return null;
         }
 
         // Update user memory with new information
         function updateUserMemory(message) {
-            // Extract name if mentioned
-            const name = extractUserInfoFromMessage(message);
-            if (name && name !== state.userMemory.name) {
-                state.userMemory.name = name;
-                saveUserMemory();
+            const userInfo = extractUserInfoFromMessage(message);
+            
+            if (userInfo) {
+                let updated = false;
                 
-                // Update UI with new name
-                if (state.user) {
-                    state.user.displayName = name;
-                    elements.userAvatar.textContent = name.charAt(0).toUpperCase();
-                    elements.userName.textContent = name;
-                    elements.userProfileName.textContent = name;
-                    elements.userProfileAvatar.textContent = name.charAt(0).toUpperCase();
+                if (typeof userInfo === 'string') {
+                    // It's a name
+                    if (userInfo !== state.userMemory.name) {
+                        state.userMemory.name = userInfo;
+                        updated = true;
+                    }
+                } else if (userInfo.preferredName) {
+                    // It's a preferred name
+                    if (userInfo.preferredName !== state.userMemory.preferredName) {
+                        state.userMemory.preferredName = userInfo.preferredName;
+                        updated = true;
+                    }
+                } else if (userInfo.responseStyle) {
+                    // It's a response style preference
+                    if (userInfo.responseStyle !== state.userMemory.preferences.responseStyle) {
+                        state.userMemory.preferences.responseStyle = userInfo.responseStyle;
+                        updated = true;
+                    }
+                } else if (userInfo.language) {
+                    // It's a language preference
+                    if (userInfo.language !== state.userMemory.preferences.language) {
+                        state.userMemory.preferences.language = userInfo.language;
+                        updated = true;
+                    }
                 }
                 
-                showToast(`I'll remember your name, ${name}!`, 'success');
+                if (updated) {
+                    saveUserMemory();
+                    
+                    // Update UI with new information
+                    if (state.userMemory.name || state.userMemory.preferredName) {
+                        const displayName = state.userMemory.preferredName || state.userMemory.name;
+                        elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
+                        elements.userName.textContent = displayName;
+                        elements.userProfileName.textContent = displayName;
+                        elements.userProfileAvatar.textContent = displayName.charAt(0).toUpperCase();
+                    }
+                    
+                    // Show confirmation toast
+                    let message = '';
+                    if (typeof userInfo === 'string') {
+                        message = `I'll remember your name, ${userInfo}!`;
+                    } else if (userInfo.preferredName) {
+                        message = `I'll remember to call you ${userInfo.preferredName}!`;
+                    } else if (userInfo.responseStyle) {
+                        message = `I'll remember to respond in a ${userInfo.responseStyle} style!`;
+                    } else if (userInfo.language) {
+                        const languageNames = {
+                            'en': 'English',
+                            'es': 'Spanish',
+                            'fr': 'French',
+                            'de': 'German',
+                            'zh': 'Chinese',
+                            'ja': 'Japanese'
+                        };
+                        message = `I'll remember to respond in ${languageNames[userInfo.language]}!`;
+                    }
+                    
+                    showToast(message, 'success');
+                }
             }
         }
 
@@ -2675,6 +2962,7 @@
             
             // Set display name input
             elements.profileDisplayName.value = state.userMemory.name || state.user.displayName || '';
+            elements.profilePreferredName.value = state.userMemory.preferredName || '';
             
             // Format user ID
             const formattedUserId = state.user.uid
@@ -2855,30 +3143,69 @@
         // Save user profile
         function saveUserProfile() {
             const displayName = elements.profileDisplayName.value.trim();
+            const preferredName = elements.profilePreferredName.value.trim();
+            const responseStyle = elements.preferenceResponseStyle.value;
+            const language = elements.preferenceLanguage.value;
+            const codeFormat = elements.preferenceCodeFormat.value;
             
-            if (displayName) {
-                // Update in Firebase
-                const userRef = db.collection('users').doc(state.user.uid);
-                userRef.update({
-                    'memory.name': displayName
-                }).then(() => {
-                    // Update state
-                    state.userMemory.name = displayName;
-                    
-                    // Update UI
-                    elements.userAvatar.textContent = displayName.charAt(0).toUpperCase();
-                    elements.userName.textContent = displayName;
-                    elements.userProfileName.textContent = displayName;
-                    elements.userProfileAvatar.textContent = displayName.charAt(0).toUpperCase();
-                    
-                    showToast('Profile updated successfully', 'success');
-                }).catch(error => {
-                    console.error('Error updating profile:', error);
-                    showToast('Error updating profile', 'error');
-                });
-            }
+            // Update in Firebase
+            const userRef = db.collection('users').doc(state.user.uid);
+            
+            // Update user memory
+            state.userMemory.name = displayName;
+            state.userMemory.preferredName = preferredName;
+            state.userMemory.preferences.responseStyle = responseStyle;
+            state.userMemory.preferences.language = language;
+            state.userMemory.preferences.codeFormat = codeFormat;
+            
+            userRef.update({
+                'memory.name': displayName,
+                'memory.preferredName': preferredName,
+                'memory.preferences.responseStyle': responseStyle,
+                'memory.preferences.language': language,
+                'memory.preferences.codeFormat': codeFormat
+            }).then(() => {
+                // Update UI
+                const nameToUse = preferredName || displayName;
+                if (nameToUse) {
+                    elements.userAvatar.textContent = nameToUse.charAt(0).toUpperCase();
+                    elements.userName.textContent = nameToUse;
+                    elements.userProfileName.textContent = nameToUse;
+                    elements.userProfileAvatar.textContent = nameToUse.charAt(0).toUpperCase();
+                }
+                
+                // Update welcome message
+                updateWelcomeMessage();
+                
+                showToast('Profile updated successfully', 'success');
+            }).catch(error => {
+                console.error('Error updating profile:', error);
+                showToast('Error updating profile', 'error');
+            });
             
             closeUserProfilePanel();
+        }
+
+        // Update welcome message with user's name
+        function updateWelcomeMessage() {
+            const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
+            
+            if (nameToUse && state.messages.length > 0 && state.messages[0].role === 'assistant') {
+                state.messages[0].content = `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+
+I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I can help you with a wide range of tasks:
+
+* Answering questions and providing information
+* Generating and executing code in multiple languages
+* Creating and analyzing documents
+* Web scraping and data extraction
+* Image generation and analysis
+* Complex multi-step tasks and workflows
+
+I have access to various tools and can execute code in a secure sandbox environment. How can I assist you today?`;
+                
+                renderMessages();
+            }
         }
 
         // Theme functions
@@ -2923,7 +3250,15 @@
                     state.messages = [];
                     state.chatHistory = [];
                     state.currentChatId = null;
-                    state.userMemory = {};
+                    state.userMemory = {
+                        name: '',
+                        preferredName: '',
+                        preferences: {
+                            responseStyle: 'friendly',
+                            language: 'en',
+                            codeFormat: 'highlighted'
+                        }
+                    };
                     
                     // Clear localStorage
                     localStorage.removeItem('nexariqState');
@@ -3105,9 +3440,9 @@
             state.currentChatId = null;
             
             // Add welcome message with user's name if available
-            const userName = state.userMemory.name || '';
-            const welcomeMessage = userName 
-                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+            const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
+            const welcomeMessage = nameToUse 
+                ? `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
                 : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
@@ -3191,9 +3526,9 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 state.messages = [];
                 
                 // Add welcome message
-                const userName = state.userMemory.name || '';
-                const welcomeMessage = userName 
-                    ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
+                const welcomeMessage = nameToUse 
+                    ? `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
                     : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
@@ -3364,7 +3699,9 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 messageEl.className = `message ${message.role === 'assistant' ? 'ai' : message.role}`;
                 
                 const avatar = message.role === 'user' 
-                    ? (state.userMemory.name ? state.userMemory.name.charAt(0).toUpperCase() : 'U')
+                    ? (state.userMemory.preferredName || state.userMemory.name || state.user.displayName 
+                        ? (state.userMemory.preferredName || state.userMemory.name || state.user.displayName).charAt(0).toUpperCase() 
+                        : 'U')
                     : `<img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">`;
                 
                 // Use full timestamp format for messages (Z.ai style)
@@ -3421,22 +3758,35 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 const isMobile = window.innerWidth <= 768;
                 const mobileClass = isMobile ? 'mobile-code-block' : '';
                 
+                // Check if code formatting preference is set to plain or minimal
+                let showActions = true;
+                if (state.userMemory.preferences && state.userMemory.preferences.codeFormat) {
+                    if (state.userMemory.preferences.codeFormat === 'plain') {
+                        showActions = false;
+                    } else if (state.userMemory.preferences.codeFormat === 'minimal') {
+                        // For minimal, only show copy button
+                        showActions = language === 'html';
+                    }
+                }
+                
                 return `
                     <div class="code-block ${mobileClass}">
                         <div class="code-header">
                             <div class="code-language">${language}</div>
-                            <div class="code-actions">
-                                <button class="copy-btn" onclick="copyCode('${codeId}')">
-                                    <i class="fas fa-copy"></i>
-                                    <span>Copy</span>
-                                </button>
-                                ${language === 'html' ? `
-                                    <button class="preview-btn" onclick="previewHTML('${codeId}')">
-                                        <i class="fas fa-external-link-alt"></i>
-                                        <span>Preview</span>
+                            ${showActions ? `
+                                <div class="code-actions">
+                                    <button class="copy-btn" onclick="copyCode('${codeId}')">
+                                        <i class="fas fa-copy"></i>
+                                        <span>Copy</span>
                                     </button>
-                                ` : ''}
-                            </div>
+                                    ${language === 'html' ? `
+                                        <button class="preview-btn" onclick="previewHTML('${codeId}')">
+                                            <i class="fas fa-external-link-alt"></i>
+                                            <span>Preview</span>
+                                        </button>
+                                    ` : ''}
+                                </div>
+                            ` : ''}
                         </div>
                         <pre><code id="${codeId}" class="language-${language}">${escapedCode}</code></pre>
                     </div>
@@ -3494,11 +3844,17 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             
             try {
                 // Prepare messages for API
+                const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
+                const responseStyle = state.userMemory.preferences ? state.userMemory.preferences.responseStyle : 'friendly';
+                const language = state.userMemory.preferences ? state.userMemory.preferences.language : 'en';
+                
                 const systemMessage = {
                     role: 'system',
                     content: `You are Lynxa Pro, an advanced AI assistant developed by Nexariq (AJ STUDIOZ). 
                     
- ${state.userMemory.name ? `The user's name is ${state.userMemory.name}. Always address them by their name.` : ''}
+ ${nameToUse ? `The user's name is ${nameToUse}. Always address them by their name.` : ''}
+ ${responseStyle ? `Use a ${responseStyle} tone in your responses.` : ''}
+ ${language ? `Respond in ${language}.` : ''}
                     
 Provide clear, concise answers with proper formatting. Use markdown for formatting, including code blocks with syntax highlighting for any code examples.`
                 };
@@ -4244,9 +4600,9 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             state.currentChatId = null;
             
             // Add welcome message
-            const userName = state.userMemory.name || '';
-            const welcomeMessage = userName 
-                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+            const nameToUse = state.userMemory.preferredName || state.userMemory.name || '';
+            const welcomeMessage = nameToUse 
+                ? `## Hello, ${nameToUse}! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. How can I assist you today?`
                 : `## Hello! I'm <span class="brand-lynxa">Lynxa Pro</span>
@@ -4282,9 +4638,10 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
             const exportData = {
                 exportDate: new Date().toISOString(),
                 user: {
-                    name: state.userMemory.name || state.user.displayName || 'User',
+                    name: state.userMemory.preferredName || state.userMemory.name || state.user.displayName || 'User',
                     email: state.user.email || ''
                 },
+                preferences: state.userMemory.preferences,
                 chats: []
             };
             
