@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Nexariq AI - Enterprise Agentic Platform</title>
     
     <!-- Updated favicon to use Nexariq logo -->
@@ -444,6 +444,20 @@
             color: var(--text-primary);
             font-size: 1.25rem;
             cursor: pointer;
+        }
+
+        .mobile-back-btn {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text-primary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            margin-right: 0.5rem;
+        }
+
+        .mobile-back-btn.visible {
+            display: block;
         }
 
         .header-title {
@@ -1406,6 +1420,28 @@
             .preview-btn {
                 padding: 0.3rem 0.6rem;
             }
+            
+            /* Mobile code block optimizations */
+            .mobile-code-block {
+                margin: 0.75rem -1rem; /* Full width on mobile */
+                border-radius: 0; /* Remove border radius on mobile */
+                border-left: none;
+                border-right: none;
+            }
+            
+            .mobile-code-block .code-header {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+            
+            .mobile-code-block pre {
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+                margin: 0;
+                max-height: 250px; /* Reduced height for mobile */
+            }
         }
 
         /* Loading Spinner */
@@ -1559,6 +1595,9 @@
                 <div class="header-left">
                     <button class="mobile-menu-btn" id="mobileMenuBtn">
                         <i class="fas fa-bars"></i>
+                    </button>
+                    <button class="mobile-back-btn" id="mobileBackBtn">
+                        <i class="fas fa-arrow-left"></i>
                     </button>
                     <div class="header-title">Nexariq AI</div>
                 </div>
@@ -1882,7 +1921,9 @@
             streamingResponse: false,
             abortController: null,
             userMemory: {}, // Store user information like name, preferences, etc.
-            keyboardOpen: false // Track keyboard state for mobile
+            keyboardOpen: false, // Track keyboard state for mobile
+            currentView: 'chat', // Track current view: 'chat', 'settings', 'profile'
+            viewHistory: [] // Track navigation history
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -1923,6 +1964,7 @@
             cancelProfileBtn: document.getElementById('cancelProfileBtn'),
             sidebar: document.getElementById('sidebar'),
             mobileMenuBtn: document.getElementById('mobileMenuBtn'),
+            mobileBackBtn: document.getElementById('mobileBackBtn'),
             newChatBtn: document.getElementById('newChatBtn'),
             chatHistory: document.getElementById('chatHistory'),
             chatMessages: document.getElementById('chatMessages'),
@@ -2264,6 +2306,7 @@
             
             // Mobile menu
             elements.mobileMenuBtn.addEventListener('click', toggleSidebar);
+            elements.mobileBackBtn.addEventListener('click', goBack);
             elements.overlay.addEventListener('click', closeAllPanels);
             
             // New chat
@@ -2426,6 +2469,9 @@
 
         // User profile panel functions
         function toggleUserProfilePanel() {
+            state.viewHistory.push(state.currentView);
+            state.currentView = 'profile';
+            updateMobileBackButton();
             elements.userProfilePanel.classList.toggle('active');
             elements.overlay.classList.toggle('active');
             
@@ -2438,6 +2484,14 @@
         function closeUserProfilePanel() {
             elements.userProfilePanel.classList.remove('active');
             elements.overlay.classList.remove('active');
+            
+            // Reset to previous view
+            if (state.viewHistory.length > 0) {
+                state.currentView = state.viewHistory.pop();
+            } else {
+                state.currentView = 'chat';
+            }
+            updateMobileBackButton();
         }
 
         // Adjust mobile viewport height to account for keyboard
@@ -2508,6 +2562,11 @@
             elements.settingsPanel.classList.remove('active');
             elements.userProfilePanel.classList.remove('active');
             elements.overlay.classList.remove('active');
+            
+            // Reset to chat view
+            state.currentView = 'chat';
+            state.viewHistory = [];
+            updateMobileBackButton();
         }
 
         // Toggle sidebar
@@ -2520,6 +2579,34 @@
         function closeSidebar() {
             elements.sidebar.classList.remove('active');
             elements.overlay.classList.remove('active');
+        }
+
+        // Update mobile back button
+        function updateMobileBackButton() {
+            if (window.innerWidth <= 768 && state.currentView !== 'chat') {
+                elements.mobileBackBtn.classList.add('visible');
+            } else {
+                elements.mobileBackBtn.classList.remove('visible');
+            }
+        }
+
+        // Go back to previous view
+        function goBack() {
+            if (state.viewHistory.length > 0) {
+                const previousView = state.viewHistory.pop();
+                state.currentView = previousView;
+                updateMobileBackButton();
+                
+                // Close current panel
+                if (previousView === 'chat') {
+                    closeAllPanels();
+                }
+            } else {
+                // Default to chat view
+                state.currentView = 'chat';
+                updateMobileBackButton();
+                closeAllPanels();
+            }
         }
 
         // Start new chat
@@ -2726,8 +2813,12 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 const codeId = 'code-' + Math.random().toString(36).substr(2, 9);
                 const escapedCode = code.replace(/</g, '&lt;').replace(/>/g, '&gt;');
                 
+                // Add mobile-specific classes
+                const isMobile = window.innerWidth <= 768;
+                const mobileClass = isMobile ? 'mobile-code-block' : '';
+                
                 return `
-                    <div class="code-block">
+                    <div class="code-block ${mobileClass}">
                         <div class="code-header">
                             <div class="code-language">${language}</div>
                             <div class="code-actions">
@@ -3202,6 +3293,9 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
 
         // Toggle settings panel
         function toggleSettingsPanel() {
+            state.viewHistory.push(state.currentView);
+            state.currentView = 'settings';
+            updateMobileBackButton();
             elements.settingsPanel.classList.toggle('active');
             elements.overlay.classList.toggle('active');
         }
@@ -3210,6 +3304,14 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
         function closeSettingsPanel() {
             elements.settingsPanel.classList.remove('active');
             elements.overlay.classList.remove('active');
+            
+            // Reset to previous view
+            if (state.viewHistory.length > 0) {
+                state.currentView = state.viewHistory.pop();
+            } else {
+                state.currentView = 'chat';
+            }
+            updateMobileBackButton();
         }
 
         // Save settings
@@ -3324,13 +3426,13 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
 
         // Handle window resize
         function handleWindowResize() {
+            updateMobileBackButton();
+            adjustMobileViewportHeight();
+            
             if (window.innerWidth > 768) {
                 elements.sidebar.classList.remove('active');
                 elements.overlay.classList.remove('active');
             }
-            
-            // Adjust mobile viewport height on resize
-            adjustMobileViewportHeight();
         }
 
         // Show toast notification
@@ -3430,6 +3532,12 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             padding: 20px;
             background-color: #f5f5f5;
         }
+        /* Mobile-specific styles */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -3441,26 +3549,19 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             const blob = new Blob([fullHtml], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             
-            // Open the HTML in a new tab
-            const newWindow = window.open(url, '_blank');
-            
-            // Check if popup was blocked
-            if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
-                // If popup was blocked, show a message and provide an alternative
-                showToast('Popup blocked. Please allow popups and try again.', 'warning');
-                
-                // Create a temporary link and click it
-                const link = document.createElement('a');
-                link.href = url;
-                link.download = 'preview.html';
-                link.style.display = 'none';
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                
-                showToast('HTML preview downloaded as file instead.', 'success');
+            // Check if we're on mobile
+            if (window.innerWidth <= 768) {
+                // On mobile, open in same tab to avoid popup issues
+                window.location.href = url;
             } else {
-                showToast('Preview opened in new tab', 'success');
+                // On desktop, open in new tab
+                const newWindow = window.open(url, '_blank');
+                
+                if (!newWindow || newWindow.closed || typeof newWindow.closed === 'undefined') {
+                    // Fallback if popup blocked
+                    showToast('Popup blocked. Opening in same tab.', 'warning');
+                    window.location.href = url;
+                }
             }
             
             // Clean up the blob URL after a delay
