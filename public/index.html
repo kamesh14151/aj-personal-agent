@@ -202,34 +202,6 @@
             font-size: 1.25rem;
         }
 
-        .theme-toggle {
-            position: fixed;
-            bottom: 1.5rem;
-            right: 1.5rem;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background-color: var(--surface-elevated);
-            border: 1px solid var(--border);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 100;
-            box-shadow: var(--shadow-md);
-            transition: var(--transition);
-        }
-
-        .theme-toggle:hover {
-            background-color: var(--surface-highlight);
-            transform: translateY(-2px);
-        }
-
-        .theme-toggle i {
-            font-size: 1.25rem;
-            color: var(--text-primary);
-        }
-
         /* App Container */
         .app-container {
             display: flex;
@@ -587,6 +559,31 @@
             font-size: 0.875rem;
             border: 1px solid var(--code-border);
             color: var(--code-text);
+            white-space: pre;
+            word-break: normal;
+            word-wrap: normal;
+            max-width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: thin;
+            scrollbar-color: var(--border) var(--surface-elevated);
+        }
+
+        .message-text pre::-webkit-scrollbar {
+            height: 8px;
+        }
+
+        .message-text pre::-webkit-scrollbar-track {
+            background: var(--surface-elevated);
+        }
+
+        .message-text pre::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        .message-text pre::-webkit-scrollbar-thumb:hover {
+            background: var(--text-tertiary);
         }
 
         .message-text code {
@@ -1041,6 +1038,134 @@
             background-color: var(--surface-highlight);
         }
 
+        /* User Profile Panel */
+        .user-profile-panel {
+            position: fixed;
+            left: -300px;
+            top: 0;
+            width: 300px;
+            height: 100vh;
+            background-color: var(--surface);
+            border-right: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            transition: left 0.3s ease;
+        }
+
+        .user-profile-panel.active {
+            left: 0;
+        }
+
+        .user-profile-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .user-profile-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1.125rem;
+            font-weight: 600;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .user-profile-close {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile-close:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .user-profile-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .user-profile-avatar-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+
+        .user-profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .user-profile-name {
+            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .user-profile-email {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .user-profile-section {
+            margin-bottom: 2rem;
+        }
+
+        .user-profile-section-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+
+        .user-profile-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .user-profile-item:last-child {
+            border-bottom: none;
+        }
+
+        .user-profile-label {
+            font-weight: 500;
+        }
+
+        .user-profile-value {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
         /* Toast Notifications */
         .toast-container {
             position: fixed;
@@ -1147,6 +1272,11 @@
                 right: -100%;
             }
 
+            .user-profile-panel {
+                width: 100%;
+                left: -100%;
+            }
+
             .toast-container {
                 left: 1.5rem;
                 right: 1.5rem;
@@ -1205,9 +1335,10 @@
                 height: calc(100% - 80px); /* Account for input height */
             }
             
-            .theme-toggle {
-                bottom: 5rem;
-                right: 1rem;
+            /* Ensure send button is visible on mobile */
+            .chat-send-btn {
+                width: 40px;
+                height: 40px;
             }
         }
 
@@ -1284,11 +1415,6 @@
                 </button>
             </div>
         </div>
-    </div>
-
-    <!-- Theme Toggle -->
-    <div class="theme-toggle" id="themeToggle">
-        <i class="fas fa-moon" id="themeIcon"></i>
     </div>
 
     <div class="app-container hidden" id="appContainer">
@@ -1529,6 +1655,59 @@
         </div>
     </div>
 
+    <!-- User Profile Panel -->
+    <div class="user-profile-panel" id="userProfilePanel">
+        <div class="user-profile-header">
+            <div class="user-profile-title">User Profile</div>
+            <button class="user-profile-close" id="userProfileClose">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="user-profile-content">
+            <div class="user-profile-avatar-container">
+                <div class="user-profile-avatar" id="userProfileAvatar">U</div>
+                <div class="user-profile-name" id="userProfileName">User Name</div>
+                <div class="user-profile-email" id="userProfileEmail">user@example.com</div>
+            </div>
+            
+            <div class="user-profile-section">
+                <div class="user-profile-section-title">Account Information</div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">User ID</div>
+                    <div class="user-profile-value" id="userProfileId">Loading...</div>
+                </div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">Provider</div>
+                    <div class="user-profile-value" id="userProfileProvider">Loading...</div>
+                </div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">Account Created</div>
+                    <div class="user-profile-value" id="userProfileCreated">Loading...</div>
+                </div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">Last Sign In</div>
+                    <div class="user-profile-value" id="userProfileLastSignIn">Loading...</div>
+                </div>
+            </div>
+            
+            <div class="user-profile-section">
+                <div class="user-profile-section-title">Usage Statistics</div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">Total Chats</div>
+                    <div class="user-profile-value" id="userProfileTotalChats">0</div>
+                </div>
+                <div class="user-profile-item">
+                    <div class="user-profile-label">Total Messages</div>
+                    <div class="user-profile-value" id="userProfileTotalMessages">0</div>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="signOutFromProfileBtn">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
@@ -1590,7 +1769,9 @@
             },
             selectedModel: 'llama-3.3-70b-versatile',
             user: null,
-            authInitialized: false
+            authInitialized: false,
+            streamingResponse: false,
+            abortController: null
         };
 
         // Typing speeds (characters per millisecond)
@@ -1605,14 +1786,24 @@
         const elements = {
             loginScreen: document.getElementById('loginScreen'),
             appContainer: document.getElementById('appContainer'),
-            themeToggle: document.getElementById('themeToggle'),
-            themeIcon: document.getElementById('themeIcon'),
             googleSignInBtn: document.getElementById('googleSignInBtn'),
             appleSignInBtn: document.getElementById('appleSignInBtn'),
             signOutBtn: document.getElementById('signOutBtn'),
+            signOutFromProfileBtn: document.getElementById('signOutFromProfileBtn'),
             userAvatar: document.getElementById('userAvatar'),
             userName: document.getElementById('userName'),
             userEmail: document.getElementById('userEmail'),
+            userProfilePanel: document.getElementById('userProfilePanel'),
+            userProfileClose: document.getElementById('userProfileClose'),
+            userProfileAvatar: document.getElementById('userProfileAvatar'),
+            userProfileName: document.getElementById('userProfileName'),
+            userProfileEmail: document.getElementById('userProfileEmail'),
+            userProfileId: document.getElementById('userProfileId'),
+            userProfileProvider: document.getElementById('userProfileProvider'),
+            userProfileCreated: document.getElementById('userProfileCreated'),
+            userProfileLastSignIn: document.getElementById('userProfileLastSignIn'),
+            userProfileTotalChats: document.getElementById('userProfileTotalChats'),
+            userProfileTotalMessages: document.getElementById('userProfileTotalMessages'),
             sidebar: document.getElementById('sidebar'),
             mobileMenuBtn: document.getElementById('mobileMenuBtn'),
             newChatBtn: document.getElementById('newChatBtn'),
@@ -1659,6 +1850,7 @@
                     state.user = user;
                     showApp();
                     loadUserData();
+                    loadUserProfile();
                 } else {
                     // User is signed out
                     state.user = null;
@@ -1737,6 +1929,54 @@
             });
         }
 
+        // Load user profile
+        function loadUserProfile() {
+            if (!state.user) return;
+            
+            // Update profile panel with user info
+            elements.userProfileAvatar.textContent = state.user.displayName ? state.user.displayName.charAt(0).toUpperCase() : 'U';
+            elements.userProfileName.textContent = state.user.displayName || 'User';
+            elements.userProfileEmail.textContent = state.user.email || '';
+            elements.userProfileId.textContent = state.user.uid;
+            
+            // Get provider info
+            if (state.user.providerData && state.user.providerData.length > 0) {
+                const provider = state.user.providerData[0].providerId;
+                elements.userProfileProvider.textContent = provider === 'google.com' ? 'Google' : 
+                                                        provider === 'apple.com' ? 'Apple' : provider;
+            }
+            
+            // Format dates
+            if (state.user.metadata) {
+                const creationTime = new Date(state.user.metadata.creationTime);
+                const lastSignInTime = new Date(state.user.metadata.lastSignInTime);
+                
+                elements.userProfileCreated.textContent = creationTime.toLocaleDateString();
+                elements.userProfileLastSignIn.textContent = lastSignInTime.toLocaleDateString();
+            }
+            
+            // Calculate usage statistics
+            let totalChats = state.chatHistory.length;
+            let totalMessages = 0;
+            
+            state.chatHistory.forEach(chat => {
+                if (chat.messages) {
+                    totalMessages += chat.messages.length;
+                }
+            });
+            
+            // Add current chat messages if not saved yet
+            if (state.messages.length > 0) {
+                totalMessages += state.messages.length;
+                if (state.messages.length > 1) {
+                    totalChats += 1;
+                }
+            }
+            
+            elements.userProfileTotalChats.textContent = totalChats;
+            elements.userProfileTotalMessages.textContent = totalMessages;
+        }
+
         // Save user data to Firestore
         function saveUserData() {
             if (!state.user) return;
@@ -1756,17 +1996,19 @@
 
         // Setup event listeners
         function setupEventListeners() {
-            // Theme toggle
-            elements.themeToggle.addEventListener('click', toggleTheme);
-            
             // Authentication
             elements.googleSignInBtn.addEventListener('click', signInWithGoogle);
             elements.appleSignInBtn.addEventListener('click', signInWithApple);
             elements.signOutBtn.addEventListener('click', signOut);
+            elements.signOutFromProfileBtn.addEventListener('click', signOut);
+            
+            // User profile panel
+            elements.userMenu.addEventListener('click', toggleUserProfilePanel);
+            elements.userProfileClose.addEventListener('click', closeUserProfilePanel);
             
             // Mobile menu
             elements.mobileMenuBtn.addEventListener('click', toggleSidebar);
-            elements.overlay.addEventListener('click', closeSidebar);
+            elements.overlay.addEventListener('click', closeAllPanels);
             
             // New chat
             elements.newChatBtn.addEventListener('click', startNewChat);
@@ -1785,9 +2027,6 @@
             elements.saveSettingsBtn.addEventListener('click', saveSettings);
             elements.cancelSettingsBtn.addEventListener('click', closeSettingsPanel);
             
-            // User menu
-            elements.userMenu.addEventListener('click', toggleUserMenu);
-            
             // Settings
             elements.themeSelect.addEventListener('change', updateTheme);
             elements.fontSizeSelect.addEventListener('change', updateFontSize);
@@ -1803,32 +2042,11 @@
         }
 
         // Theme functions
-        function toggleTheme() {
-            const currentTheme = state.settings.theme;
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            
-            state.settings.theme = newTheme;
-            applyTheme(newTheme);
-            localStorage.setItem('theme', newTheme);
-            
-            // Update theme select
-            elements.themeSelect.value = newTheme;
-            
-            // Save to Firestore if user is logged in
-            if (state.user) {
-                saveUserData();
-            }
-        }
-
         function applyTheme(theme) {
             document.documentElement.setAttribute('data-theme', theme);
             
-            // Update theme icon
-            if (theme === 'dark') {
-                elements.themeIcon.className = 'fas fa-moon';
-            } else {
-                elements.themeIcon.className = 'fas fa-sun';
-            }
+            // Update theme select
+            elements.themeSelect.value = theme;
         }
 
         // Authentication functions
@@ -1873,6 +2091,22 @@
                     console.error('Error signing out:', error);
                     showToast('Error signing out', 'error');
                 });
+        }
+
+        // User profile panel functions
+        function toggleUserProfilePanel() {
+            elements.userProfilePanel.classList.toggle('active');
+            elements.overlay.classList.toggle('active');
+            
+            // Load user profile data when opening
+            if (elements.userProfilePanel.classList.contains('active')) {
+                loadUserProfile();
+            }
+        }
+
+        function closeUserProfilePanel() {
+            elements.userProfilePanel.classList.remove('active');
+            elements.overlay.classList.remove('active');
         }
 
         // Adjust mobile viewport height to account for keyboard
@@ -1954,6 +2188,14 @@
             } catch (error) {
                 console.error('Error saving state:', error);
             }
+        }
+
+        // Close all panels
+        function closeAllPanels() {
+            elements.sidebar.classList.remove('active');
+            elements.settingsPanel.classList.remove('active');
+            elements.userProfilePanel.classList.remove('active');
+            elements.overlay.classList.remove('active');
         }
 
         // Toggle sidebar
@@ -2183,6 +2425,9 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             const message = elements.chatInput.value.trim();
             if (!message || state.isTyping) return;
             
+            // Create a new AbortController for this request
+            state.abortController = new AbortController();
+            
             // Add user message
             const userMessage = {
                 id: generateId(),
@@ -2225,31 +2470,155 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                     });
                 });
                 
-                // Send request to our backend API
-                const response = await fetch('/api/chat', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        messages: apiMessages,
-                        model: state.selectedModel || 'llama-3.3-70b-versatile'
-                    })
-                });
+                // Create AI message element for streaming
+                const messageId = generateId();
+                const timestamp = new Date().toISOString();
                 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.error || 'API request failed');
-                }
+                // Create message element
+                const messageEl = document.createElement('div');
+                messageEl.className = 'message ai';
+                messageEl.id = `message-${messageId}`;
                 
-                const data = await response.json();
-                const aiResponse = data.choices[0].message.content;
+                const time = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                messageEl.innerHTML = `
+                    <div class="message-avatar"></div>
+                    <div class="message-content">
+                        <div class="message-text typing-text" id="text-${messageId}"></div>
+                        <div class="message-actions">
+                            <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                            <button class="message-action-btn" title="Good response">
+                                <i class="fas fa-thumbs-up"></i>
+                            </button>
+                            <button class="message-action-btn" title="Bad response">
+                                <i class="fas fa-thumbs-down"></i>
+                            </button>
+                        </div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                `;
+                
+                elements.chatMessages.appendChild(messageEl);
+                
+                // Add to state
+                const aiMessage = {
+                    id: messageId,
+                    role: 'assistant',
+                    content: '',
+                    timestamp
+                };
+                
+                state.messages.push(aiMessage);
                 
                 // Remove typing indicator
                 hideTypingIndicator();
                 
-                // Add AI response with typing effect
-                addAIMessageWithTyping(aiResponse);
+                // Start streaming response
+                state.streamingResponse = true;
+                
+                try {
+                    // Send request to our backend API with streaming
+                    const response = await fetch('/api/chat', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            messages: apiMessages,
+                            model: state.selectedModel || 'llama-3.3-70b-versatile',
+                            stream: true
+                        }),
+                        signal: state.abortController.signal
+                    });
+                    
+                    if (!response.ok) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'API request failed');
+                    }
+                    
+                    // Handle streaming response
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder();
+                    let aiResponse = '';
+                    
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        
+                        if (done) break;
+                        
+                        // Decode the received chunk
+                        const chunk = decoder.decode(value, { stream: true });
+                        
+                        // Process the chunk (this depends on your API's streaming format)
+                        // For example, if your API sends JSON objects per line:
+                        const lines = chunk.split('\n');
+                        
+                        for (const line of lines) {
+                            if (line.trim() === '') continue;
+                            
+                            try {
+                                const data = JSON.parse(line);
+                                
+                                // Extract content from the streaming response
+                                if (data.choices && data.choices[0] && data.choices[0].delta && data.choices[0].delta.content) {
+                                    const content = data.choices[0].delta.content;
+                                    aiResponse += content;
+                                    
+                                    // Update the message content in the DOM
+                                    const textElement = document.getElementById(`text-${messageId}`);
+                                    if (textElement) {
+                                        textElement.innerHTML = formatMessageContent(aiResponse);
+                                        
+                                        // Scroll to bottom
+                                        elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                                    }
+                                }
+                            } catch (e) {
+                                console.error('Error parsing streaming response:', e);
+                            }
+                        }
+                    }
+                    
+                    // Update the message in state
+                    aiMessage.content = aiResponse;
+                    
+                    // Highlight code blocks after streaming is complete
+                    messageEl.querySelectorAll('pre code').forEach(block => {
+                        hljs.highlightElement(block);
+                    });
+                    
+                } catch (error) {
+                    // If the error is due to abort, don't show an error message
+                    if (error.name === 'AbortError') {
+                        console.log('Request was aborted');
+                        return;
+                    }
+                    
+                    console.error('Error:', error);
+                    
+                    // Add error message
+                    aiMessage.content = `I'm sorry, I encountered an error: ${error.message}`;
+                    
+                    // Update the message content in the DOM
+                    const textElement = document.getElementById(`text-${messageId}`);
+                    if (textElement) {
+                        textElement.innerHTML = formatMessageContent(aiMessage.content);
+                    }
+                    
+                    if (state.settings.errorNotifications) {
+                        showToast('Error processing your request', 'error');
+                    }
+                } finally {
+                    // Reset streaming state
+                    state.streamingResponse = false;
+                    state.abortController = null;
+                    
+                    // Save state after streaming is complete
+                    saveState();
+                    saveUserData();
+                }
                 
             } catch (error) {
                 console.error('Error:', error);
@@ -2472,11 +2841,13 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
         // Toggle settings panel
         function toggleSettingsPanel() {
             elements.settingsPanel.classList.toggle('active');
+            elements.overlay.classList.toggle('active');
         }
 
         // Close settings panel
         function closeSettingsPanel() {
             elements.settingsPanel.classList.remove('active');
+            elements.overlay.classList.remove('active');
         }
 
         // Save settings
@@ -2487,12 +2858,6 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
             saveUserData();
             showToast('Settings saved successfully', 'success');
             closeSettingsPanel();
-        }
-
-        // Toggle user menu
-        function toggleUserMenu() {
-            // In a real app, this would show a dropdown menu
-            showToast('User menu', 'success');
         }
 
         // Update theme
