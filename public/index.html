@@ -1937,7 +1937,12 @@
             elements.userProfileAvatar.textContent = state.user.displayName ? state.user.displayName.charAt(0).toUpperCase() : 'U';
             elements.userProfileName.textContent = state.user.displayName || 'User';
             elements.userProfileEmail.textContent = state.user.email || '';
-            elements.userProfileId.textContent = state.user.uid;
+            
+            // Format user ID
+            const formattedUserId = state.user.uid
+                .replace(/[^a-zA-Z0-9]/g, '') // Remove special characters
+                .substring(0, 8); // Limit to 8 characters
+            elements.userProfileId.textContent = formattedUserId;
             
             // Get provider info
             if (state.user.providerData && state.user.providerData.length > 0) {
@@ -2528,7 +2533,8 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                         body: JSON.stringify({
                             messages: apiMessages,
                             model: state.selectedModel || 'llama-3.3-70b-versatile',
-                            stream: true
+                            stream: true,
+                            userId: state.user ? state.user.uid : null
                         }),
                         signal: state.abortController.signal
                     });
@@ -2542,6 +2548,7 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                     const reader = response.body.getReader();
                     const decoder = new TextDecoder();
                     let aiResponse = '';
+                    let buffer = '';
                     
                     while (true) {
                         const { done, value } = await reader.read();
@@ -2550,33 +2557,34 @@ I'm an advanced AI assistant developed by **Nexariq (AJ STUDIOZ)**. How can I as
                         
                         // Decode the received chunk
                         const chunk = decoder.decode(value, { stream: true });
+                        buffer += chunk;
                         
-                        // Process the chunk (this depends on your API's streaming format)
-                        // For example, if your API sends JSON objects per line:
-                        const lines = chunk.split('\n');
+                        // Split by lines to handle multiple SSE events
+                        const lines = buffer.split('\n');
+                        buffer = lines.pop(); // Keep the incomplete line in buffer
                         
                         for (const line of lines) {
-                            if (line.trim() === '') continue;
-                            
-                            try {
-                                const data = JSON.parse(line);
-                                
-                                // Extract content from the streaming response
-                                if (data.choices && data.choices[0] && data.choices[0].delta && data.choices[0].delta.content) {
-                                    const content = data.choices[0].delta.content;
-                                    aiResponse += content;
+                            if (line.startsWith('data: ') && line !== 'data: [DONE]') {
+                                try {
+                                    const data = JSON.parse(line.substring(6));
                                     
-                                    // Update the message content in the DOM
-                                    const textElement = document.getElementById(`text-${messageId}`);
-                                    if (textElement) {
-                                        textElement.innerHTML = formatMessageContent(aiResponse);
+                                    // Extract content from the streaming response
+                                    if (data.choices && data.choices[0] && data.choices[0].delta && data.choices[0].delta.content) {
+                                        const content = data.choices[0].delta.content;
+                                        aiResponse += content;
                                         
-                                        // Scroll to bottom
-                                        elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                                        // Update the message content in the DOM
+                                        const textElement = document.getElementById(`text-${messageId}`);
+                                        if (textElement) {
+                                            textElement.innerHTML = formatMessageContent(aiResponse);
+                                            
+                                            // Scroll to bottom
+                                            elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                                        }
                                     }
+                                } catch (e) {
+                                    console.error('Error parsing streaming response:', e);
                                 }
-                            } catch (e) {
-                                console.error('Error parsing streaming response:', e);
                             }
                         }
                     }
