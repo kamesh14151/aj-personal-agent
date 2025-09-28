@@ -61,6 +61,8 @@
             --action-btn-active: rgba(99, 102, 241, 0.3);
             --action-btn-like: #10b981;
             --action-btn-dislike: #ef4444;
+            /* New gradient for user name */
+            --user-name-gradient-colorful: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 25%, #fad0c4 50%, #a1c4fd 75%, #c2e9fb 100%);
         }
 
         /* Light theme variables */
@@ -83,6 +85,8 @@
             --action-btn-bg: rgba(0, 0, 0, 0.05);
             --action-btn-hover: rgba(0, 0, 0, 0.1);
             --action-btn-active: rgba(99, 102, 241, 0.1);
+            /* Light theme colorful gradient */
+            --user-name-gradient-colorful: linear-gradient(90deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #ff9ff3 75%, #54a0ff 100%);
         }
 
         * {
@@ -932,9 +936,9 @@
             }
         }
 
-        /* Chat Input */
+        /* Chat Input - Updated to ChatGPT style */
         .chat-input-container {
-            padding: 1rem;
+            padding: 1.5rem;
             background-color: var(--surface);
             border-top: 1px solid var(--border);
             position: relative;
@@ -944,12 +948,13 @@
         .chat-input-wrapper {
             background-color: var(--surface-elevated);
             border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
-            padding: 1rem;
+            border-radius: 24px; /* More rounded like ChatGPT */
+            padding: 1rem 1.25rem;
             display: flex;
             align-items: flex-end;
             gap: 0.75rem;
             transition: var(--transition);
+            box-shadow: var(--shadow-sm);
         }
 
         .chat-input-wrapper:focus-within {
@@ -982,7 +987,7 @@
         .chat-action-btn {
             width: 36px;
             height: 36px;
-            border-radius: var(--radius);
+            border-radius: 50%; /* More rounded like ChatGPT */
             background-color: transparent;
             border: none;
             color: var(--text-secondary);
@@ -1001,7 +1006,7 @@
         .chat-send-btn {
             width: 36px;
             height: 36px;
-            border-radius: var(--radius);
+            border-radius: 50%; /* More rounded like ChatGPT */
             background: var(--gradient-primary);
             border: none;
             color: white;
@@ -1890,7 +1895,7 @@
             }
             
             .chat-input-wrapper {
-                border-radius: 0; /* Remove border radius for cleaner look */
+                border-radius: 24px; /* Keep rounded corners on mobile */
                 border-left: none;
                 border-right: none;
             }
@@ -1981,6 +1986,16 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        
+        /* User name styling with colorful gradient */
+        .user-name-colorful {
+            font-weight: 600;
+            background: var(--user-name-gradient-colorful);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            display: inline;
         }
         
         /* Mobile keyboard adjustments */
@@ -2952,7 +2967,7 @@
             }
         }
 
-        // Generate chat title from keywords
+        // Generate chat title from keywords - Updated to only 2-3 words
         function generateChatTitle(content) {
             // Remove markdown and special characters
             const cleanContent = content.replace(/[#*`_~\[\]()]/g, '').trim();
@@ -2960,13 +2975,13 @@
             // Extract first few meaningful words
             const words = cleanContent.split(/\s+/).filter(word => word.length > 2);
             
-            // Take first 3-5 words, but limit to 30 characters
-            const titleWords = words.slice(0, Math.min(5, words.length));
+            // Take first 2-3 words, but limit to 20 characters
+            const titleWords = words.slice(0, Math.min(3, words.length));
             let title = titleWords.join(' ');
             
             // Truncate if too long
-            if (title.length > 30) {
-                title = title.substring(0, 27) + '...';
+            if (title.length > 20) {
+                title = title.substring(0, 17) + '...';
             }
             
             return title || 'New Chat';
@@ -3529,7 +3544,7 @@
             // Add personalized welcome message
             const userName = state.userMemory.name || '';
             const welcomeMessage = userName 
-                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                ? `## Hello, <span class="user-name-colorful">${userName}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I remember your preferences and will personalize our conversations.
 
@@ -3643,7 +3658,7 @@ I can format my responses with tables and boxes for better readability. How can 
                 // Add welcome message
                 const userName = state.userMemory.name || '';
                 const welcomeMessage = userName 
-                    ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                    ? `## Hello, <span class="user-name-colorful">${userName}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I remember your preferences and will personalize our conversations.
 
@@ -3920,8 +3935,14 @@ How can I assist you today?`;
             }, 0);
         }
 
-        // Format message content (markdown to HTML)
+        // Format message content (markdown to HTML) - Updated to style user name
         function formatMessageContent(content) {
+            // Replace user's name with styled span if it exists
+            if (state.userMemory.name) {
+                const nameRegex = new RegExp(`\\b${state.userMemory.name}\\b`, 'gi');
+                content = content.replace(nameRegex, `<span class="user-name-colorful">${state.userMemory.name}</span>`);
+            }
+            
             // Use marked to parse markdown
             const html = marked.parse(content);
             
@@ -4868,7 +4889,7 @@ Remember the user's preferences and previous interactions to provide personalize
             // Add welcome message
             const userName = state.userMemory.name || '';
             const welcomeMessage = userName 
-                ? `## Hello, ${userName}! I'm <span class="brand-lynxa">Lynxa Pro</span>
+                ? `## Hello, <span class="user-name-colorful">${userName}</span>! I'm <span class="brand-lynxa">Lynxa Pro</span>
 
 I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (AJ STUDIOZ)</span>. I remember your preferences and will personalize our conversations.
 
