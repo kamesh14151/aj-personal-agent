@@ -61,6 +61,9 @@
             --action-btn-active: rgba(99, 102, 241, 0.3);
             --action-btn-like: #10b981;
             --action-btn-dislike: #ef4444;
+            --user-gradient: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            --user-text: #ffffff;
+            --user-border: #334155;
         }
 
         /* Light theme variables */
@@ -83,6 +86,9 @@
             --action-btn-bg: rgba(0, 0, 0, 0.05);
             --action-btn-hover: rgba(0, 0, 0, 0.1);
             --action-btn-active: rgba(99, 102, 241, 0.1);
+            --user-gradient: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            --user-text: #1e293b;
+            --user-border: #cbd5e1;
         }
 
         * {
@@ -380,6 +386,11 @@
             background-color: var(--primary);
         }
 
+        .chat-item.active .chat-item-title {
+            color: white;
+            font-weight: 600;
+        }
+
         .chat-item.pinned {
             border-left: 3px solid var(--warning);
         }
@@ -480,11 +491,12 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: var(--gradient-primary);
+            background: var(--user-gradient);
+            border: 1px solid var(--user-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
+            color: var(--user-text);
             font-weight: 600;
         }
 
@@ -659,8 +671,10 @@
         }
 
         .message.user .message-avatar {
-            background: var(--gradient-primary);
-            color: white;
+            background: var(--user-gradient);
+            border: 1px solid var(--user-border);
+            color: var(--user-text);
+            font-weight: 700;
         }
 
         .message.ai .message-avatar {
@@ -1379,12 +1393,13 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--gradient-primary);
+            background: var(--user-gradient);
+            border: 2px solid var(--user-border);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: white;
-            font-weight: 600;
+            color: var(--user-text);
+            font-weight: 700;
             font-size: 2rem;
             margin-bottom: 1rem;
         }
@@ -1880,6 +1895,25 @@
             .search-container {
                 width: 95%;
                 max-width: none;
+            }
+
+            /* Increased box width for mobile */
+            .chat-input-wrapper {
+                width: 100%;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
+            }
+
+            .message-content {
+                max-width: 100%;
+            }
+
+            .info-box {
+                margin: 1rem -1rem;
+                border-radius: 0;
+                border-left: none;
+                border-right: none;
             }
         }
 
@@ -2513,7 +2547,8 @@
             dislikedMessages: new Set(), // Track disliked messages
             chatFilter: 'all', // Current chat filter: 'all', 'pinned', 'recent'
             sortDirection: 'desc', // Sort direction: 'asc', 'desc'
-            sortBy: 'date' // Sort by: 'date', 'title'
+            sortBy: 'date', // Sort by: 'date', 'title'
+            currentChatTitle: 'Current Conversation' // Track the current chat title
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -2941,6 +2976,29 @@
             }
             
             return title || 'New Chat';
+        }
+
+        // Update current chat title
+        function updateCurrentChatTitle() {
+            // If there are no messages or only the welcome message, return
+            if (state.messages.length <= 1) return;
+            
+            // Find the first user message
+            const firstUserMessage = state.messages.find(msg => msg.role === 'user');
+            if (!firstUserMessage) return;
+            
+            // Generate title
+            const title = generateChatTitle(firstUserMessage.content);
+            state.currentChatTitle = title;
+            
+            // Update the current chat item in the sidebar
+            const currentChatItem = document.querySelector('.chat-item[data-chat-id="current"]');
+            if (currentChatItem) {
+                const titleElement = currentChatItem.querySelector('.chat-item-title');
+                if (titleElement) {
+                    titleElement.textContent = title;
+                }
+            }
         }
 
         // Show login screen
@@ -3472,6 +3530,7 @@
             // Clear messages
             state.messages = [];
             state.currentChatId = null;
+            state.currentChatTitle = 'Current Conversation';
             
             // Add personalized welcome message
             const userName = state.userMemory.name || '';
@@ -3535,7 +3594,7 @@ I can format my responses with tables and boxes for better readability. How can 
                     <i class="fas fa-comment"></i>
                 </div>
                 <div class="chat-item-content">
-                    <div class="chat-item-title">Current Conversation</div>
+                    <div class="chat-item-title">${state.currentChatTitle}</div>
                     <div class="chat-item-date">Just now</div>
                 </div>
             `;
@@ -3558,6 +3617,7 @@ I can format my responses with tables and boxes for better readability. How can 
             
             state.messages = [...chat.messages];
             state.currentChatId = chatId;
+            state.currentChatTitle = chat.title;
             renderMessages();
             saveState();
             saveUserData();
@@ -3586,6 +3646,7 @@ I can format my responses with tables and boxes for better readability. How can 
             if (state.currentChatId === chatId) {
                 state.currentChatId = null;
                 state.messages = [];
+                state.currentChatTitle = 'Current Conversation';
                 
                 // Add welcome message
                 const userName = state.userMemory.name || '';
@@ -3770,7 +3831,7 @@ How can I assist you today?`;
                         <i class="fas fa-comment"></i>
                     </div>
                     <div class="chat-item-content">
-                        <div class="chat-item-title">Current Conversation</div>
+                        <div class="chat-item-title">${state.currentChatTitle}</div>
                         <div class="chat-item-date">Just now</div>
                     </div>
                 `;
@@ -3945,6 +4006,9 @@ How can I assist you today?`;
             saveState();
             saveUserData();
             
+            // Update current chat title
+            updateCurrentChatTitle();
+            
             // Clear input
             elements.chatInput.value = '';
             elements.chatInput.style.height = 'auto';
@@ -4106,6 +4170,13 @@ Remember the user's preferences and previous interactions to provide personalize
                     
                     // Update the message in state
                     aiMessage.content = aiResponse;
+                    
+                    // Update current chat title based on AI response if no user message exists
+                    if (state.messages.length === 2 && state.messages[0].role === 'assistant' && state.messages[1].role === 'assistant') {
+                        // This is an AI response to the welcome message, update title based on AI response
+                        state.currentChatTitle = generateChatTitle(aiResponse);
+                        updateCurrentChatTitle();
+                    }
                     
                     // Highlight code blocks after streaming is complete
                     messageEl.querySelectorAll('pre code').forEach(block => {
@@ -4791,6 +4862,7 @@ Remember the user's preferences and previous interactions to provide personalize
             // Clear current messages
             state.messages = [];
             state.currentChatId = null;
+            state.currentChatTitle = 'Current Conversation';
             
             // Add welcome message
             const userName = state.userMemory.name || '';
@@ -4848,7 +4920,7 @@ How can I assist you today?`;
             if (state.messages.length > 1) {
                 exportData.chats.push({
                     id: 'current',
-                    title: 'Current Conversation',
+                    title: state.currentChatTitle,
                     timestamp: new Date().toISOString(),
                     messages: state.messages
                 });
@@ -4907,7 +4979,7 @@ How can I assist you today?`;
                 if (state.messages.length > 1) {
                     allChats.unshift({
                         id: 'current',
-                        title: 'Current Conversation',
+                        title: state.currentChatTitle,
                         messages: state.messages,
                         timestamp: new Date().toISOString()
                     });
@@ -4936,7 +5008,7 @@ How can I assist you today?`;
             if (state.messages.length > 1) {
                 const currentChatResults = searchInChat({
                     id: 'current',
-                    title: 'Current Conversation',
+                    title: state.currentChatTitle,
                     messages: state.messages,
                     timestamp: new Date().toISOString()
                 }, query);
