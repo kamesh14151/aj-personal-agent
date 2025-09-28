@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Nexariq AI - Enterprise Agentic Platform</title>
     
     <!-- Updated favicon to use Nexariq logo -->
@@ -861,91 +861,6 @@
             border-color: #2ea44f;
         }
 
-        /* HTML Preview Modal */
-        .preview-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 2rem;
-            opacity: 0;
-            visibility: hidden;
-            transition: opacity 0.3s ease, visibility 0.3s ease;
-        }
-
-        .preview-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .preview-container {
-            background-color: white;
-            border-radius: var(--radius-lg);
-            width: 100%;
-            max-width: 900px;
-            height: 80vh;
-            display: flex;
-            flex-direction: column;
-            box-shadow: var(--shadow-lg);
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-
-        .preview-modal.active .preview-container {
-            transform: scale(1);
-        }
-
-        .preview-header {
-            padding: 1rem;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .preview-title {
-            font-weight: 600;
-            color: var(--text-primary);
-        }
-
-        .preview-close {
-            width: 32px;
-            height: 32px;
-            border-radius: var(--radius);
-            background-color: transparent;
-            border: none;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .preview-close:hover {
-            background-color: var(--surface-highlight);
-            color: var(--text-primary);
-        }
-
-        .preview-content {
-            flex: 1;
-            overflow: auto;
-            padding: 1rem;
-        }
-
-        .preview-iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-            border-radius: var(--radius);
-        }
-
         /* Typing Effect */
         .typing-text {
             overflow: hidden;
@@ -1469,10 +1384,25 @@
                 height: 40px;
             }
             
-            /* Preview modal adjustments */
-            .preview-container {
-                height: 90vh;
-                width: 95%;
+            /* Better touch targets */
+            .header-btn, .chat-action-btn, .message-action-btn {
+                width: 40px;
+                height: 40px;
+            }
+            
+            /* Adjust padding for better touch */
+            .chat-input-wrapper {
+                padding: 0.75rem;
+            }
+            
+            /* Better mobile scrolling */
+            .chat-messages {
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            /* Mobile preview button adjustments */
+            .preview-btn {
+                padding: 0.3rem 0.6rem;
             }
         }
 
@@ -1546,6 +1476,13 @@
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
+        }
+        
+        /* Mobile keyboard adjustments */
+        @media (max-width: 768px) and (orientation: portrait) {
+            .keyboard-open .chat-messages {
+                height: calc(100% - 180px); /* Adjust for keyboard */
+            }
         }
     </style>
 </head>
@@ -1647,8 +1584,8 @@
                 <div class="chat-messages" id="chatMessages">
                     <div class="message ai">
                         <div class="message-avatar">
-                            <!-- Lynxa Pro Avatar Image -->
-                            <img src="https://z-cdn-media.chatglm.cn/files/535757f5-4c37-4cc5-8551-47a2ece4d87b_pasted_image_1759040854786.jpg?auth_key=1790577586-e42a28c630e2408bb5b5205f21014343-0-d394c07f78cb8ebe9f3018112e6b4f1f" alt="Lynxa Pro" class="message-avatar-img">
+                            <!-- Updated AI Avatar Image -->
+                            <img src="https://z-cdn-media.chatglm.cn/files/9e95cdab-fb04-4e3e-9707-3a1a42cf4af2_pasted_image_1759042616103.jpg?auth_key=1790578672-8ce8bef12666447cab9411207f3410af-0-15fac8a4b233794ce2b1a852cd1a5d56" alt="Lynxa Pro" class="message-avatar-img">
                         </div>
                         <div class="message-content">
                             <div class="message-text">
@@ -1878,21 +1815,6 @@
         </div>
     </div>
 
-    <!-- HTML Preview Modal -->
-    <div class="preview-modal" id="previewModal">
-        <div class="preview-container">
-            <div class="preview-header">
-                <div class="preview-title">HTML Preview</div>
-                <button class="preview-close" id="previewClose">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div class="preview-content">
-                <iframe id="previewIframe" class="preview-iframe"></iframe>
-            </div>
-        </div>
-    </div>
-
     <!-- Overlay -->
     <div class="overlay" id="overlay"></div>
 
@@ -1957,7 +1879,8 @@
             authInitialized: false,
             streamingResponse: false,
             abortController: null,
-            userMemory: {} // Store user information like name, preferences, etc.
+            userMemory: {}, // Store user information like name, preferences, etc.
+            keyboardOpen: false // Track keyboard state for mobile
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -1967,6 +1890,9 @@
             fast: 30,
             instant: 0
         };
+
+        // AI Avatar URL
+        const aiAvatarUrl = 'https://z-cdn-media.chatglm.cn/files/9e95cdab-fb04-4e3e-9707-3a1a42cf4af2_pasted_image_1759042616103.jpg?auth_key=1790578672-8ce8bef12666447cab9411207f3410af-0-15fac8a4b233794ce2b1a852cd1a5d56';
 
         // DOM Elements
         const elements = {
@@ -2020,10 +1946,7 @@
             sandboxPreviewToggle: document.getElementById('sandboxPreviewToggle'),
             agenticToggle: document.getElementById('agenticToggle'),
             taskNotificationToggle: document.getElementById('taskNotificationToggle'),
-            errorNotificationToggle: document.getElementById('errorNotificationToggle'),
-            previewModal: document.getElementById('previewModal'),
-            previewClose: document.getElementById('previewClose'),
-            previewIframe: document.getElementById('previewIframe')
+            errorNotificationToggle: document.getElementById('errorNotificationToggle')
         };
 
         // Initialize app
@@ -2057,7 +1980,36 @@
             // Adjust mobile viewport height
             adjustMobileViewportHeight();
             window.addEventListener('resize', adjustMobileViewportHeight);
+            
+            // Detect keyboard open/close on mobile
+            if (window.innerWidth <= 768) {
+                detectKeyboard();
+            }
         });
+
+        // Detect keyboard open/close on mobile
+        function detectKeyboard() {
+            const initialHeight = window.innerHeight;
+            
+            window.addEventListener('resize', () => {
+                const currentHeight = window.innerHeight;
+                const heightDifference = initialHeight - currentHeight;
+                
+                // If height decreased significantly, keyboard is open
+                if (heightDifference > 150) {
+                    state.keyboardOpen = true;
+                    document.body.classList.add('keyboard-open');
+                    
+                    // Scroll to bottom when keyboard opens
+                    setTimeout(() => {
+                        elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                    }, 100);
+                } else if (state.keyboardOpen) {
+                    state.keyboardOpen = false;
+                    document.body.classList.remove('keyboard-open');
+                }
+            });
+        }
 
         // Load user memory from Firestore
         function loadUserMemory() {
@@ -2318,6 +2270,13 @@
             // Chat input
             elements.chatInput.addEventListener('keydown', handleChatInputKeydown);
             elements.chatInput.addEventListener('input', autoResizeTextarea);
+            elements.chatInput.addEventListener('focus', () => {
+                if (window.innerWidth <= 768) {
+                    setTimeout(() => {
+                        elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
+                    }, 300);
+                }
+            });
             elements.sendBtn.addEventListener('click', sendMessage);
             
             // Attach file
@@ -2339,11 +2298,46 @@
             elements.taskNotificationToggle.addEventListener('click', toggleTaskNotifications);
             elements.errorNotificationToggle.addEventListener('click', toggleErrorNotifications);
             
-            // Preview modal
-            elements.previewClose.addEventListener('click', closePreviewModal);
-            
             // Window resize
             window.addEventListener('resize', handleWindowResize);
+            
+            // Touch events for mobile
+            if ('ontouchstart' in window) {
+                // Add touch event listeners for better mobile interaction
+                document.addEventListener('touchstart', handleTouchStart, { passive: true });
+                document.addEventListener('touchmove', handleTouchMove, { passive: true });
+                document.addEventListener('touchend', handleTouchEnd, { passive: true });
+            }
+        }
+
+        // Touch event handlers for mobile
+        let touchStartY = 0;
+        let touchEndY = 0;
+
+        function handleTouchStart(e) {
+            touchStartY = e.changedTouches[0].screenY;
+        }
+
+        function handleTouchMove(e) {
+            touchEndY = e.changedTouches[0].screenY;
+            handleSwipe();
+        }
+
+        function handleTouchEnd() {
+            handleSwipe();
+        }
+
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diff = touchStartY - touchEndY;
+            
+            if (Math.abs(diff) > swipeThreshold) {
+                if (diff > 0) {
+                    // Swipe up - could be used for additional actions
+                } else {
+                    // Swipe down - could be used for additional actions
+                }
+            }
         }
 
         // Save user profile
@@ -2460,25 +2454,6 @@
                 }
             }
         }
-
-        // Handle keyboard events for mobile
-        document.addEventListener('focusin', (e) => {
-            if (window.innerWidth <= 768 && e.target.classList.contains('chat-input')) {
-                // When input is focused, scroll to bottom
-                setTimeout(() => {
-                    elements.chatMessages.scrollTop = elements.chatMessages.scrollHeight;
-                }, 300);
-            }
-        });
-
-        document.addEventListener('focusout', (e) => {
-            if (window.innerWidth <= 768 && e.target.classList.contains('chat-input')) {
-                // When input loses focus, adjust viewport
-                setTimeout(() => {
-                    adjustMobileViewportHeight();
-                }, 300);
-            }
-        });
 
         // Load state from localStorage
         function loadState() {
@@ -2700,7 +2675,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                 
                 const avatar = message.role === 'user' 
                     ? (state.userMemory.name ? state.userMemory.name.charAt(0).toUpperCase() : 'U')
-                    : '<img src="https://z-cdn-media.chatglm.cn/files/535757f5-4c37-4cc5-8551-47a2ece4d87b_pasted_image_1759040854786.jpg?auth_key=1790577586-e42a28c630e2408bb5b5205f21014343-0-d394c07f78cb8ebe9f3018112e6b4f1f" alt="Lynxa Pro" class="message-avatar-img">';
+                    : `<img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">`;
                 
                 const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
@@ -2760,7 +2735,7 @@ I'm an advanced AI assistant developed by <span class="brand-nexariq">Nexariq (A
                                 </button>
                                 ${language === 'html' ? `
                                     <button class="preview-btn" onclick="previewHTML('${codeId}')">
-                                        <i class="fas fa-eye"></i>
+                                        <i class="fas fa-external-link-alt"></i>
                                         <span>Preview</span>
                                     </button>
                                 ` : ''}
@@ -2859,7 +2834,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                 
                 messageEl.innerHTML = `
                     <div class="message-avatar">
-                        <img src="https://z-cdn-media.chatglm.cn/files/535757f5-4c37-4cc5-8551-47a2ece4d87b_pasted_image_1759040854786.jpg?auth_key=1790577586-e42a28c630e2408bb5b5205f21014343-0-d394c07f78cb8ebe9f3018112e6b4f1f" alt="Lynxa Pro" class="message-avatar-img">
+                        <img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">
                     </div>
                     <div class="message-content">
                         <div class="message-text typing-text" id="text-${messageId}"></div>
@@ -3033,7 +3008,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             
             messageEl.innerHTML = `
                 <div class="message-avatar">
-                    <img src="https://z-cdn-media.chatglm.cn/files/535757f5-4c37-4cc5-8551-47a2ece4d87b_pasted_image_1759040854786.jpg?auth_key=1790577586-e42a28c630e2408bb5b5205f21014343-0-d394c07f78cb8ebe9f3018112e6b4f1f" alt="Lynxa Pro" class="message-avatar-img">
+                    <img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">
                 </div>
                 <div class="message-content">
                     <div class="message-text typing-text" id="text-${messageId}"></div>
@@ -3139,7 +3114,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             
             typingIndicator.innerHTML = `
                 <div class="message-avatar">
-                    <img src="https://z-cdn-media.chatglm.cn/files/535757f5-4c37-4cc5-8551-47a2ece4d87b_pasted_image_1759040854786.jpg?auth_key=1790577586-e42a28c630e2408bb5b5205f21014343-0-d394c07f78cb8ebe9f3018112e6b4f1f" alt="Lynxa Pro" class="message-avatar-img">
+                    <img src="${aiAvatarUrl}" alt="Lynxa Pro" class="message-avatar-img">
                 </div>
                 <div class="message-content">
                     <div class="typing-indicator">
@@ -3430,7 +3405,7 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
                 });
         }
 
-        // Preview HTML
+        // Preview HTML - Opens in new tab
         function previewHTML(codeId) {
             const codeBlock = document.getElementById(codeId);
             if (!codeBlock) return;
@@ -3441,25 +3416,15 @@ Provide clear, concise answers with proper formatting. Use markdown for formatti
             const blob = new Blob([htmlCode], { type: 'text/html' });
             const url = URL.createObjectURL(blob);
             
-            // Set the iframe src to the blob URL
-            elements.previewIframe.src = url;
+            // Open the HTML in a new tab
+            window.open(url, '_blank');
             
-            // Show the preview modal
-            elements.previewModal.classList.add('active');
+            // Clean up the blob URL after a delay
+            setTimeout(() => {
+                URL.revokeObjectURL(url);
+            }, 10000);
             
-            // Clean up the blob URL when the modal is closed
-            elements.previewModal.addEventListener('click', function closePreview(e) {
-                if (e.target === elements.previewModal || e.target === elements.previewClose) {
-                    elements.previewModal.classList.remove('active');
-                    URL.revokeObjectURL(url);
-                    elements.previewModal.removeEventListener('click', closePreview);
-                }
-            });
-        }
-
-        // Close preview modal
-        function closePreviewModal() {
-            elements.previewModal.classList.remove('active');
+            showToast('Preview opened in new tab', 'success');
         }
 
         // Generate ID
