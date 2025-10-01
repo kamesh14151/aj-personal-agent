@@ -22,47 +22,52 @@
     
     <style>
         :root {
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --secondary: #8b5cf6;
+            /* Grok-inspired color palette */
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #6366f1;
             --accent: #ec4899;
-            --background: #0f0f0f;
-            --surface: #1a1a1a;
-            --surface-elevated: #252525;
-            --surface-highlight: #2a2a2a;
-            --border: #333333;
-            --text-primary: #ffffff;
-            --text-secondary: #a0a0a0;
-            --text-tertiary: #808080;
+            --background: #0a0a0a;
+            --surface: #18181b;
+            --surface-elevated: #27272a;
+            --surface-highlight: #3f3f46;
+            --border: #3f3f46;
+            --text-primary: #fafafa;
+            --text-secondary: #a1a1aa;
+            --text-tertiary: #71717a;
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
-            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.1);
-            --radius-sm: 0.375rem;
-            --radius: 0.5rem;
-            --radius-lg: 0.75rem;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.3);
+            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.3);
+            --radius-sm: 0.5rem;
+            --radius: 0.75rem;
+            --radius-lg: 1rem;
             --transition: all 0.2s ease;
             --logo-size: 40px;
-            --gradient-primary: linear-gradient(135deg, #6366f1 0%, #8b5cf6 50%, #ec4899 100%);
+            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #ec4899 100%);
             --gradient-accent: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-            --code-bg: #f6f8fa;
-            --code-border: #e1e4e8;
-            --code-text: #24292e;
-            --table-header-bg: rgba(99, 102, 241, 0.2);
+            --code-bg: #1e1e1e;
+            --code-border: #3f3f46;
+            --code-text: #e5e5e5;
+            --table-header-bg: rgba(139, 92, 246, 0.2);
             --table-row-alt: rgba(255, 255, 255, 0.03);
-            --box-bg: rgba(99, 102, 241, 0.1);
+            --box-bg: rgba(139, 92, 246, 0.1);
             --box-border: var(--primary);
             --user-name-gradient: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
             --action-btn-bg: rgba(255, 255, 255, 0.1);
             --action-btn-hover: rgba(255, 255, 255, 0.2);
-            --action-btn-active: rgba(99, 102, 241, 0.3);
+            --action-btn-active: rgba(139, 92, 246, 0.3);
             --action-btn-like: #10b981;
             --action-btn-dislike: #ef4444;
             /* New gradient for user name */
             --user-name-gradient-colorful: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 25%, #fad0c4 50%, #a1c4fd 75%, #c2e9fb 100%);
+            /* Grok-inspired gradients */
+            --grok-gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
+            --grok-gradient-alt: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
+            --grok-glow: 0 0 20px rgba(139, 92, 246, 0.3);
         }
 
         /* Light theme variables */
@@ -78,13 +83,13 @@
             --code-bg: #f1f5f9;
             --code-border: #cbd5e1;
             --code-text: #1e293b;
-            --table-header-bg: rgba(99, 102, 241, 0.1);
+            --table-header-bg: rgba(139, 92, 246, 0.1);
             --table-row-alt: rgba(0, 0, 0, 0.03);
-            --box-bg: rgba(99, 102, 241, 0.05);
+            --box-bg: rgba(139, 92, 246, 0.05);
             --user-name-gradient: linear-gradient(135deg, #1e293b 0%, #475569 100%);
             --action-btn-bg: rgba(0, 0, 0, 0.05);
             --action-btn-hover: rgba(0, 0, 0, 0.1);
-            --action-btn-active: rgba(99, 102, 241, 0.1);
+            --action-btn-active: rgba(139, 92, 246, 0.1);
             /* Light theme colorful gradient */
             --user-name-gradient-colorful: linear-gradient(90deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #ff9ff3 75%, #54a0ff 100%);
         }
@@ -105,14 +110,14 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* Login Screen */
+        /* Login Screen - Grok inspired */
         .login-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: var(--background);
+            background: linear-gradient(135deg, #0a0a0a 0%, #18181b 100%);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -134,6 +139,18 @@
             max-width: 400px;
             text-align: center;
             border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .login-container::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: var(--grok-gradient);
         }
 
         .login-logo {
@@ -148,13 +165,14 @@
             width: 50px;
             height: 50px;
             object-fit: contain;
+            border-radius: var(--radius);
         }
 
         .login-logo .logo-text {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             font-size: 1.5rem;
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -236,7 +254,7 @@
             display: none;
         }
 
-        /* Sidebar */
+        /* Sidebar - Grok inspired */
         .sidebar {
             width: 260px;
             background-color: var(--surface);
@@ -269,13 +287,14 @@
             width: var(--logo-size);
             height: var(--logo-size);
             object-fit: contain;
+            border-radius: var(--radius);
         }
 
         .logo-icon {
             width: var(--logo-size);
             height: var(--logo-size);
-            border-radius: 50%;
-            background: var(--gradient-primary);
+            border-radius: var(--radius);
+            background: var(--grok-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -285,13 +304,13 @@
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(99, 102, 241, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(99, 102, 241, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
         }
 
         .logo-text {
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -484,7 +503,7 @@
             width: 32px;
             height: 32px;
             border-radius: 50%;
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -524,7 +543,7 @@
             overflow: hidden;
         }
 
-        /* Header */
+        /* Header - Grok inspired */
         .header {
             height: 64px;
             background-color: var(--surface);
@@ -569,7 +588,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.125rem;
             font-weight: 600;
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -663,7 +682,7 @@
         }
 
         .message.user .message-avatar {
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             color: white;
         }
 
@@ -691,7 +710,7 @@
         }
 
         .message.user .message-content {
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             color: white;
             border-bottom-right-radius: var(--radius-sm);
         }
@@ -936,7 +955,7 @@
             }
         }
 
-        /* Chat Input - Updated to ChatGPT style */
+        /* Chat Input - Grok inspired */
         .chat-input-container {
             padding: 1.5rem;
             background-color: var(--surface);
@@ -948,7 +967,7 @@
         .chat-input-wrapper {
             background-color: var(--surface-elevated);
             border: 1px solid var(--border);
-            border-radius: 24px; /* More rounded like ChatGPT */
+            border-radius: var(--radius-lg);
             padding: 1rem 1.25rem;
             display: flex;
             align-items: flex-end;
@@ -959,7 +978,7 @@
 
         .chat-input-wrapper:focus-within {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
         }
 
         .chat-input {
@@ -987,7 +1006,7 @@
         .chat-action-btn {
             width: 36px;
             height: 36px;
-            border-radius: 50%; /* More rounded like ChatGPT */
+            border-radius: var(--radius);
             background-color: transparent;
             border: none;
             color: var(--text-secondary);
@@ -1006,8 +1025,8 @@
         .chat-send-btn {
             width: 36px;
             height: 36px;
-            border-radius: 50%; /* More rounded like ChatGPT */
-            background: var(--gradient-primary);
+            border-radius: var(--radius);
+            background: var(--grok-gradient);
             border: none;
             color: white;
             display: flex;
@@ -1031,27 +1050,27 @@
         /* Code Block Styles */
         .code-block {
             margin-top: 1rem;
-            border-radius: 8px;
+            border-radius: var(--radius);
             overflow: hidden;
             background-color: var(--code-bg);
             border: 1px solid var(--code-border);
         }
 
         .code-header {
-            background-color: #f1f3f4;
+            background-color: var(--surface-highlight);
             padding: 0.5rem 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             font-size: 0.875rem;
-            color: #586069;
+            color: var(--text-secondary);
             border-bottom: 1px solid var(--code-border);
         }
 
         .code-language {
             font-weight: 600;
             text-transform: uppercase;
-            color: #24292e;
+            color: var(--text-primary);
         }
 
         .code-actions {
@@ -1060,11 +1079,11 @@
         }
 
         .copy-btn, .preview-btn {
-            background-color: #f1f3f4;
-            border: 1px solid #d1d5da;
-            color: #24292e;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
             padding: 0.25rem 0.5rem;
-            border-radius: 4px;
+            border-radius: var(--radius-sm);
             cursor: pointer;
             font-size: 0.75rem;
             display: flex;
@@ -1074,14 +1093,14 @@
         }
 
         .copy-btn:hover, .preview-btn:hover {
-            background-color: #e1e4e8;
-            color: #24292e;
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
         }
 
         .copy-btn.copied {
-            background-color: #2ea44f;
+            background-color: var(--success);
             color: white;
-            border-color: #2ea44f;
+            border-color: var(--success);
         }
 
         /* Typing Effect */
@@ -1090,7 +1109,7 @@
             white-space: pre-wrap;
         }
 
-        /* Settings Panel */
+        /* Settings Panel - Grok inspired */
         .settings-panel {
             position: fixed;
             right: -400px;
@@ -1122,7 +1141,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.125rem;
             font-weight: 600;
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -1181,7 +1200,7 @@
             width: 100%;
             background-color: var(--surface-elevated);
             border: 1px solid var(--border);
-            border-radius: 6px;
+            border-radius: var(--radius);
             padding: 0.75rem;
             color: var(--text-primary);
             font-size: 1rem;
@@ -1274,7 +1293,7 @@
 
         .btn {
             padding: 0.75rem 1.5rem;
-            border-radius: 6px;
+            border-radius: var(--radius);
             font-weight: 500;
             cursor: pointer;
             transition: all 0.2s;
@@ -1309,7 +1328,7 @@
             background-color: #dc2626;
         }
 
-        /* User Profile Panel */
+        /* User Profile Panel - Grok inspired */
         .user-profile-panel {
             position: fixed;
             left: -300px;
@@ -1341,7 +1360,7 @@
             font-family: 'Space Grotesk', sans-serif;
             font-size: 1.125rem;
             font-weight: 600;
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -1384,7 +1403,7 @@
             width: 80px;
             height: 80px;
             border-radius: 50%;
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1442,7 +1461,7 @@
             color: var(--text-secondary);
         }
 
-        /* Toast Notifications */
+        /* Toast Notifications - Grok inspired */
         .toast-container {
             position: fixed;
             bottom: 1.5rem;
@@ -1521,7 +1540,7 @@
             color: var(--text-tertiary);
         }
 
-        /* Confirmation Modal */
+        /* Confirmation Modal - Grok inspired */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -1570,7 +1589,7 @@
             gap: 1rem;
         }
 
-        /* Search Modal */
+        /* Search Modal - Grok inspired */
         .search-modal {
             position: fixed;
             top: 0;
@@ -1657,7 +1676,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Rename Modal */
+        /* Rename Modal - Grok inspired */
         .rename-modal {
             position: fixed;
             top: 0;
@@ -1675,7 +1694,7 @@
             display: flex;
         }
 
-        /* Chat History Features */
+        /* Chat History Features - Grok inspired */
         .chat-history-features {
             padding: 0.75rem;
             border-bottom: 1px solid var(--border);
@@ -1734,7 +1753,7 @@
             color: var(--text-primary);
         }
 
-        /* Mobile Responsiveness */
+        /* Mobile Responsiveness - Grok inspired */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -1895,7 +1914,7 @@
             }
             
             .chat-input-wrapper {
-                border-radius: 24px; /* Keep rounded corners on mobile */
+                border-radius: var(--radius-lg); /* Keep rounded corners on mobile */
                 border-left: none;
                 border-right: none;
             }
@@ -1916,7 +1935,7 @@
             }
         }
 
-        /* Loading Spinner */
+        /* Loading Spinner - Grok inspired */
         .spinner {
             width: 20px;
             height: 20px;
@@ -1932,7 +1951,7 @@
             }
         }
 
-        /* Custom Scrollbar */
+        /* Custom Scrollbar - Grok inspired */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -1951,7 +1970,7 @@
             background: var(--surface-highlight);
         }
 
-        /* Overlay */
+        /* Overlay - Grok inspired */
         .overlay {
             position: fixed;
             top: 0;
@@ -1967,12 +1986,12 @@
             display: block;
         }
         
-        /* Brand styling */
+        /* Brand styling - Grok inspired */
         .brand-nexariq {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             text-transform: uppercase;
-            background: var(--gradient-primary);
+            background: var(--grok-gradient);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
@@ -1982,13 +2001,13 @@
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
             text-transform: uppercase;
-            background: var(--gradient-accent);
+            background: var(--grok-gradient-alt);
             -webkit-background-clip: text;
             background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         
-        /* User name styling with colorful gradient */
+        /* User name styling with colorful gradient - Grok inspired */
         .user-name-colorful {
             font-weight: 600;
             background: var(--user-name-gradient-colorful);
@@ -1998,7 +2017,7 @@
             display: inline;
         }
         
-        /* Mobile keyboard adjustments */
+        /* Mobile keyboard adjustments - Grok inspired */
         @media (max-width: 768px) and (orientation: portrait) {
             .keyboard-open .chat-messages {
                 height: calc(100% - 180px); /* Adjust for keyboard */
