@@ -76,6 +76,18 @@
             --nexariq-accent: #ff6b35;
             /* Mobile-specific variables */
             --vh: 1vh; /* Fix for mobile viewport height */
+            /* Code editor colors */
+            --editor-bg: #1e1e1e;
+            --editor-text: #d4d4d4;
+            --editor-line-numbers: #858585;
+            --editor-selection: #264f78;
+            --editor-cursor: #aeafad;
+            --editor-keyword: #569cd6;
+            --editor-string: #ce9178;
+            --editor-comment: #6a9955;
+            --editor-function: #dcdcaa;
+            --editor-variable: #9cdcfe;
+            --editor-number: #b5cea8;
         }
 
         /* Dark theme variables */
@@ -1674,7 +1686,7 @@
             gap: 0.5rem;
         }
 
-        .copy-btn, .preview-btn {
+        .copy-btn, .preview-btn, .run-btn, .edit-btn {
             background-color: var(--surface-elevated);
             border: 1px solid var(--border);
             color: var(--text-primary);
@@ -1688,7 +1700,7 @@
             transition: all 0.2s;
         }
 
-        .copy-btn:hover, .preview-btn:hover {
+        .copy-btn:hover, .preview-btn:hover, .run-btn:hover, .edit-btn:hover {
             background-color: var(--surface-highlight);
             color: var(--text-primary);
         }
@@ -1697,6 +1709,16 @@
             background-color: var(--success);
             color: white;
             border-color: var(--success);
+        }
+
+        .run-btn {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .run-btn:hover {
+            background-color: var(--primary-dark);
         }
 
         /* Typing Effect */
@@ -2544,7 +2566,7 @@
                 font-size: 0.8rem;
             }
             
-            .copy-btn, .preview-btn {
+            .copy-btn, .preview-btn, .run-btn, .edit-btn {
                 padding: 0.2rem 0.4rem;
                 font-size: 0.7rem;
             }
@@ -2787,6 +2809,578 @@
                 height: calc(100% - 180px); /* Adjust for keyboard */
             }
         }
+
+        /* Code Editor Panel - New */
+        .code-editor-panel {
+            position: fixed;
+            bottom: -100%;
+            left: 0;
+            width: 100%;
+            height: 70vh;
+            background-color: var(--surface);
+            border-top: 1px solid var(--border);
+            box-shadow: 0 -10px 30px rgba(0, 0, 0, 0.2);
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            transition: bottom 0.3s ease;
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .code-editor-panel.active {
+            bottom: 0;
+        }
+
+        .code-editor-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+            background-color: var(--surface-elevated);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+        }
+
+        .code-editor-title {
+            font-family: 'Space Grotesk', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-editor-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-editor-action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: var(--radius-sm);
+            background-color: transparent;
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .code-editor-action-btn:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .code-editor-tabs {
+            display: flex;
+            background-color: var(--surface-elevated);
+            border-bottom: 1px solid var(--border);
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .code-editor-tab {
+            padding: 0.75rem 1rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            white-space: nowrap;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-editor-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .code-editor-tab-close {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-color: transparent;
+            border: none;
+            color: var(--text-tertiary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.75rem;
+        }
+
+        .code-editor-tab-close:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        .code-editor-content {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .code-editor-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .code-editor-toolbar {
+            display: flex;
+            align-items: center;
+            padding: 0.5rem 1rem;
+            background-color: var(--surface-elevated);
+            border-bottom: 1px solid var(--border);
+            gap: 0.5rem;
+        }
+
+        .code-editor-select {
+            background-color: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            cursor: pointer;
+        }
+
+        .code-editor-select:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .code-editor-workspace {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .code-editor-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: var(--editor-bg);
+        }
+
+        .code-editor {
+            flex: 1;
+            position: relative;
+            overflow: hidden;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--editor-text);
+        }
+
+        .code-editor-textarea {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: transparent;
+            border: none;
+            outline: none;
+            color: transparent;
+            caret-color: var(--editor-cursor);
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            resize: none;
+            tab-size: 4;
+            padding: 1rem;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .code-editor-highlight {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            padding: 1rem;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            white-space: pre;
+            overflow-wrap: normal;
+            overflow-x: auto;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            pointer-events: none;
+        }
+
+        .code-editor-line-numbers {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 50px;
+            height: 100%;
+            background-color: var(--editor-bg);
+            color: var(--editor-line-numbers);
+            padding: 1rem 0;
+            text-align: right;
+            font-family: inherit;
+            font-size: inherit;
+            line-height: inherit;
+            user-select: none;
+            pointer-events: none;
+            border-right: 1px solid var(--border);
+        }
+
+        .code-editor-output {
+            width: 40%;
+            background-color: var(--surface-elevated);
+            border-left: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .code-editor-output-header {
+            padding: 0.75rem 1rem;
+            background-color: var(--surface);
+            border-bottom: 1px solid var(--border);
+            font-weight: 600;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .code-editor-output-content {
+            flex: 1;
+            padding: 1rem;
+            overflow-y: auto;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+            color: var(--text-primary);
+            white-space: pre-wrap;
+            word-break: break-word;
+        }
+
+        .code-editor-output-content.error {
+            color: var(--error);
+        }
+
+        .code-editor-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            background-color: var(--surface-elevated);
+            border-top: 1px solid var(--border);
+        }
+
+        .code-editor-status {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .code-editor-actions-footer {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .code-editor-btn {
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-sm);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 0.875rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .code-editor-run-btn {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .code-editor-run-btn:hover {
+            background-color: var(--primary-dark);
+        }
+
+        .code-editor-run-btn:disabled {
+            background-color: var(--surface-highlight);
+            color: var(--text-tertiary);
+            cursor: not-allowed;
+        }
+
+        .code-editor-clear-btn {
+            background-color: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .code-editor-clear-btn:hover {
+            background-color: var(--surface-highlight);
+            color: var(--text-primary);
+        }
+
+        /* Mobile Code Editor Adjustments */
+        @media (max-width: 768px) {
+            .code-editor-panel {
+                height: 80vh;
+            }
+            
+            .code-editor-workspace {
+                flex-direction: column;
+            }
+            
+            .code-editor-output {
+                width: 100%;
+                height: 40%;
+                border-left: none;
+                border-top: 1px solid var(--border);
+            }
+            
+            .code-editor-line-numbers {
+                width: 40px;
+                font-size: 0.75rem;
+            }
+            
+            .code-editor-textarea, .code-editor-highlight {
+                padding: 0.75rem;
+                padding-left: 50px;
+            }
+            
+            .code-editor-tab {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+            
+            .code-editor-btn {
+                padding: 0.5rem 0.75rem;
+                font-size: 0.8rem;
+            }
+        }
+
+        /* Code Editor Drag Handle */
+        .code-editor-drag-handle {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 20px;
+            background-color: var(--surface-elevated);
+            border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+            cursor: ns-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .code-editor-drag-handle::after {
+            content: "";
+            width: 40px;
+            height: 4px;
+            background-color: var(--border);
+            border-radius: 2px;
+        }
+
+        /* Code Editor Resizer */
+        .code-editor-resizer {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 20px;
+            height: 20px;
+            background-color: var(--surface-elevated);
+            border-radius: 0 0 0 var(--radius-lg);
+            cursor: nwse-resize;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .code-editor-resizer::after {
+            content: "";
+            width: 10px;
+            height: 10px;
+            border-right: 2px solid var(--border);
+            border-bottom: 2px solid var(--border);
+            border-radius: 0 0 2px 0;
+        }
+
+        /* Code Editor Minimap */
+        .code-editor-minimap {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100px;
+            height: 100%;
+            background-color: var(--surface-elevated);
+            border-left: 1px solid var(--border);
+            opacity: 0.5;
+            pointer-events: none;
+            overflow: hidden;
+        }
+
+        .code-editor-minimap-content {
+            transform: scale(0.1);
+            transform-origin: top left;
+            width: 1000px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 10px;
+            line-height: 1.5;
+            color: var(--text-tertiary);
+            white-space: pre;
+            padding: 10px;
+        }
+
+        /* Code Editor Floating Action Button */
+        .code-editor-fab {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            box-shadow: var(--shadow-lg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 150;
+        }
+
+        .code-editor-fab:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 20px rgba(0, 120, 212, 0.3);
+        }
+
+        .code-editor-fab:active {
+            transform: scale(0.95);
+        }
+
+        /* Code Editor Theme Toggle */
+        .code-editor-theme-toggle {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--surface-elevated);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 10;
+        }
+
+        .code-editor-theme-toggle:hover {
+            background-color: var(--surface-highlight);
+        }
+
+        /* Code Editor Fullscreen */
+        .code-editor-panel.fullscreen {
+            height: 100vh;
+            width: 100vw;
+            border-radius: 0;
+        }
+
+        .code-editor-panel.fullscreen .code-editor-drag-handle {
+            display: none;
+        }
+
+        .code-editor-panel.fullscreen .code-editor-resizer {
+            display: none;
+        }
+
+        /* Code Editor Loading State */
+        .code-editor-loading {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .code-editor-loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--surface-highlight);
+            border-radius: 50%;
+            border-top-color: var(--primary);
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        /* Code Editor Syntax Highlighting */
+        .code-editor-keyword {
+            color: var(--editor-keyword);
+        }
+
+        .code-editor-string {
+            color: var(--editor-string);
+        }
+
+        .code-editor-comment {
+            color: var(--editor-comment);
+        }
+
+        .code-editor-function {
+            color: var(--editor-function);
+        }
+
+        .code-editor-variable {
+            color: var(--editor-variable);
+        }
+
+        .code-editor-number {
+            color: var(--editor-number);
+        }
+
+        /* Code Editor Selection */
+        .code-editor-selection {
+            background-color: var(--editor-selection);
+        }
+
+        /* Code Editor Cursor */
+        .code-editor-cursor {
+            position: absolute;
+            width: 2px;
+            height: 1.2em;
+            background-color: var(--editor-cursor);
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 49% { opacity: 1; }
+            50%, 100% { opacity: 0; }
+        }
     </style>
 </head>
 <body>
@@ -2987,6 +3581,9 @@
                     <div class="header-title">Nexariq AI</div>
                 </div>
                 <div class="header-actions">
+                    <button class="header-btn" id="codeEditorBtn" title="Code Editor">
+                        <i class="fas fa-code"></i>
+                    </button>
                     <button class="header-btn" id="settingsBtn" title="Settings">
                         <i class="fas fa-cog"></i>
                     </button>
@@ -3062,6 +3659,134 @@
             </div>
         </div>
     </div>
+
+    <!-- Code Editor Panel -->
+    <div class="code-editor-panel" id="codeEditorPanel">
+        <div class="code-editor-drag-handle" id="codeEditorDragHandle"></div>
+        <div class="code-editor-header">
+            <div class="code-editor-title">
+                <i class="fas fa-code"></i>
+                <span>Code Editor</span>
+            </div>
+            <div class="code-editor-actions">
+                <button class="code-editor-action-btn" id="codeEditorMinimizeBtn" title="Minimize">
+                    <i class="fas fa-minus"></i>
+                </button>
+                <button class="code-editor-action-btn" id="codeEditorMaximizeBtn" title="Maximize">
+                    <i class="fas fa-expand"></i>
+                </button>
+                <button class="code-editor-action-btn" id="codeEditorCloseBtn" title="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="code-editor-tabs" id="codeEditorTabs">
+            <div class="code-editor-tab active" data-tab-id="tab-1">
+                <span>main.py</span>
+                <button class="code-editor-tab-close" data-tab-id="tab-1">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <button class="code-editor-tab" id="codeEditorNewTabBtn">
+                <i class="fas fa-plus"></i>
+            </button>
+        </div>
+        
+        <div class="code-editor-content">
+            <div class="code-editor-main">
+                <div class="code-editor-toolbar">
+                    <select class="code-editor-select" id="codeEditorLanguageSelect">
+                        <option value="python">Python</option>
+                        <option value="javascript">JavaScript</option>
+                        <option value="html">HTML</option>
+                        <option value="css">CSS</option>
+                        <option value="java">Java</option>
+                        <option value="cpp">C++</option>
+                        <option value="c">C</option>
+                        <option value="csharp">C#</option>
+                        <option value="php">PHP</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="go">Go</option>
+                        <option value="rust">Rust</option>
+                        <option value="sql">SQL</option>
+                        <option value="json">JSON</option>
+                        <option value="xml">XML</option>
+                        <option value="yaml">YAML</option>
+                        <option value="markdown">Markdown</option>
+                        <option value="bash">Bash</option>
+                        <option value="powershell">PowerShell</option>
+                    </select>
+                    <select class="code-editor-select" id="codeEditorThemeSelect">
+                        <option value="dark">Dark</option>
+                        <option value="light">Light</option>
+                        <option value="monokai">Monokai</option>
+                        <option value="github">GitHub</option>
+                        <option value="dracula">Dracula</option>
+                    </select>
+                    <select class="code-editor-select" id="codeEditorFontSizeSelect">
+                        <option value="12px">12px</option>
+                        <option value="14px" selected>14px</option>
+                        <option value="16px">16px</option>
+                        <option value="18px">18px</option>
+                        <option value="20px">20px</option>
+                    </select>
+                    <button class="code-editor-action-btn" id="codeEditorFormatBtn" title="Format Code">
+                        <i class="fas fa-magic"></i>
+                    </button>
+                    <button class="code-editor-action-btn" id="codeEditorWordWrapBtn" title="Toggle Word Wrap">
+                        <i class="fas fa-text-width"></i>
+                    </button>
+                </div>
+                
+                <div class="code-editor-workspace">
+                    <div class="code-editor-container">
+                        <div class="code-editor-line-numbers" id="codeEditorLineNumbers"></div>
+                        <div class="code-editor-highlight" id="codeEditorHighlight"></div>
+                        <textarea class="code-editor-textarea" id="codeEditorTextarea" spellcheck="false" autocorrect="off" autocapitalize="off" autocomplete="off"></textarea>
+                    </div>
+                    
+                    <div class="code-editor-output">
+                        <div class="code-editor-output-header">
+                            <span>Output</span>
+                            <button class="code-editor-action-btn" id="codeEditorClearOutputBtn" title="Clear Output">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <div class="code-editor-output-content" id="codeEditorOutputContent">
+                            Output will appear here when you run your code...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="code-editor-footer">
+            <div class="code-editor-status" id="codeEditorStatus">
+                Ready
+            </div>
+            <div class="code-editor-actions-footer">
+                <button class="code-editor-btn code-editor-clear-btn" id="codeEditorClearBtn">
+                    <i class="fas fa-eraser"></i>
+                    Clear
+                </button>
+                <button class="code-editor-btn code-editor-run-btn" id="codeEditorRunBtn">
+                    <i class="fas fa-play"></i>
+                    Run
+                </button>
+            </div>
+        </div>
+        
+        <div class="code-editor-resizer" id="codeEditorResizer"></div>
+        <div class="code-editor-theme-toggle" id="codeEditorThemeToggle">
+            <i class="fas fa-moon"></i>
+        </div>
+    </div>
+
+    <!-- Code Editor Floating Action Button -->
+    <button class="code-editor-fab" id="codeEditorFab" title="Open Code Editor">
+        <i class="fas fa-code"></i>
+    </button>
 
     <!-- Settings Panel -->
     <div class="settings-panel" id="settingsPanel">
@@ -3430,7 +4155,26 @@
             // Firestore related state
             usersCollection: null, // Reference to Firestore users collection
             chatsCollection: null, // Reference to Firestore chats collection
-            currentChatDoc: null // Reference to current chat document
+            currentChatDoc: null, // Reference to current chat document
+            // Code Editor state
+            codeEditor: {
+                isOpen: false,
+                isFullscreen: false,
+                activeTab: 'tab-1',
+                tabs: {
+                    'tab-1': {
+                        name: 'main.py',
+                        language: 'python',
+                        content: '',
+                        isDirty: false
+                    }
+                },
+                theme: 'dark',
+                fontSize: '14px',
+                wordWrap: true,
+                lineNumbers: true,
+                output: ''
+            }
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -3539,7 +4283,32 @@
             loginError: document.getElementById('loginError'),
             registerError: document.getElementById('registerError'),
             loginSuccess: document.getElementById('loginSuccess'),
-            registerSuccess: document.getElementById('registerSuccess')
+            registerSuccess: document.getElementById('registerSuccess'),
+            // Code Editor elements
+            codeEditorBtn: document.getElementById('codeEditorBtn'),
+            codeEditorPanel: document.getElementById('codeEditorPanel'),
+            codeEditorFab: document.getElementById('codeEditorFab'),
+            codeEditorDragHandle: document.getElementById('codeEditorDragHandle'),
+            codeEditorMinimizeBtn: document.getElementById('codeEditorMinimizeBtn'),
+            codeEditorMaximizeBtn: document.getElementById('codeEditorMaximizeBtn'),
+            codeEditorCloseBtn: document.getElementById('codeEditorCloseBtn'),
+            codeEditorTabs: document.getElementById('codeEditorTabs'),
+            codeEditorNewTabBtn: document.getElementById('codeEditorNewTabBtn'),
+            codeEditorLanguageSelect: document.getElementById('codeEditorLanguageSelect'),
+            codeEditorThemeSelect: document.getElementById('codeEditorThemeSelect'),
+            codeEditorFontSizeSelect: document.getElementById('codeEditorFontSizeSelect'),
+            codeEditorFormatBtn: document.getElementById('codeEditorFormatBtn'),
+            codeEditorWordWrapBtn: document.getElementById('codeEditorWordWrapBtn'),
+            codeEditorLineNumbers: document.getElementById('codeEditorLineNumbers'),
+            codeEditorHighlight: document.getElementById('codeEditorHighlight'),
+            codeEditorTextarea: document.getElementById('codeEditorTextarea'),
+            codeEditorOutputContent: document.getElementById('codeEditorOutputContent'),
+            codeEditorClearOutputBtn: document.getElementById('codeEditorClearOutputBtn'),
+            codeEditorStatus: document.getElementById('codeEditorStatus'),
+            codeEditorClearBtn: document.getElementById('codeEditorClearBtn'),
+            codeEditorRunBtn: document.getElementById('codeEditorRunBtn'),
+            codeEditorResizer: document.getElementById('codeEditorResizer'),
+            codeEditorThemeToggle: document.getElementById('codeEditorThemeToggle')
         };
 
         // Initialize app
@@ -3590,8 +4359,795 @@
             
             // Fix mobile viewport height
             fixMobileViewportHeight();
+            
+            // Initialize code editor
+            initCodeEditor();
         });
 
+        // Initialize code editor
+        function initCodeEditor() {
+            // Set initial code editor content
+            updateCodeEditorContent();
+            
+            // Setup code editor event listeners
+            setupCodeEditorEventListeners();
+            
+            // Update line numbers
+            updateLineNumbers();
+            
+            // Setup syntax highlighting
+            setupSyntaxHighlighting();
+        }
+
+        // Setup code editor event listeners
+        function setupCodeEditorEventListeners() {
+            // Code editor button
+            elements.codeEditorBtn.addEventListener('click', toggleCodeEditor);
+            elements.codeEditorFab.addEventListener('click', toggleCodeEditor);
+            
+            // Code editor panel controls
+            elements.codeEditorMinimizeBtn.addEventListener('click', minimizeCodeEditor);
+            elements.codeEditorMaximizeBtn.addEventListener('click', toggleCodeEditorFullscreen);
+            elements.codeEditorCloseBtn.addEventListener('click', closeCodeEditor);
+            
+            // Code editor tabs
+            elements.codeEditorTabs.addEventListener('click', handleTabClick);
+            elements.codeEditorNewTabBtn.addEventListener('click', createNewTab);
+            
+            // Code editor controls
+            elements.codeEditorLanguageSelect.addEventListener('change', handleLanguageChange);
+            elements.codeEditorThemeSelect.addEventListener('change', handleThemeChange);
+            elements.codeEditorFontSizeSelect.addEventListener('change', handleFontSizeChange);
+            elements.codeEditorFormatBtn.addEventListener('click', formatCode);
+            elements.codeEditorWordWrapBtn.addEventListener('click', toggleWordWrap);
+            
+            // Code editor textarea
+            elements.codeEditorTextarea.addEventListener('input', handleCodeEditorInput);
+            elements.codeEditorTextarea.addEventListener('scroll', syncCodeEditorScroll);
+            elements.codeEditorTextarea.addEventListener('keydown', handleCodeEditorKeydown);
+            
+            // Code editor output
+            elements.codeEditorClearOutputBtn.addEventListener('click', clearCodeEditorOutput);
+            
+            // Code editor footer
+            elements.codeEditorClearBtn.addEventListener('click', clearCodeEditor);
+            elements.codeEditorRunBtn.addEventListener('click', runCode);
+            
+            // Code editor drag handle
+            setupCodeEditorDragHandle();
+            
+            // Code editor resizer
+            setupCodeEditorResizer();
+            
+            // Code editor theme toggle
+            elements.codeEditorThemeToggle.addEventListener('click', toggleCodeEditorTheme);
+        }
+
+        // Toggle code editor
+        function toggleCodeEditor() {
+            state.codeEditor.isOpen = !state.codeEditor.isOpen;
+            
+            if (state.codeEditor.isOpen) {
+                elements.codeEditorPanel.classList.add('active');
+                elements.codeEditorFab.style.display = 'none';
+                updateCodeEditorContent();
+                updateLineNumbers();
+                setupSyntaxHighlighting();
+            } else {
+                elements.codeEditorPanel.classList.remove('active');
+                elements.codeEditorFab.style.display = 'flex';
+            }
+        }
+
+        // Minimize code editor
+        function minimizeCodeEditor() {
+            elements.codeEditorPanel.classList.remove('active');
+            elements.codeEditorFab.style.display = 'flex';
+            state.codeEditor.isOpen = false;
+        }
+
+        // Toggle code editor fullscreen
+        function toggleCodeEditorFullscreen() {
+            state.codeEditor.isFullscreen = !state.codeEditor.isFullscreen;
+            
+            if (state.codeEditor.isFullscreen) {
+                elements.codeEditorPanel.classList.add('fullscreen');
+                elements.codeEditorMaximizeBtn.innerHTML = '<i class="fas fa-compress"></i>';
+            } else {
+                elements.codeEditorPanel.classList.remove('fullscreen');
+                elements.codeEditorMaximizeBtn.innerHTML = '<i class="fas fa-expand"></i>';
+            }
+        }
+
+        // Close code editor
+        function closeCodeEditor() {
+            elements.codeEditorPanel.classList.remove('active');
+            elements.codeEditorFab.style.display = 'flex';
+            state.codeEditor.isOpen = false;
+        }
+
+        // Handle tab click
+        function handleTabClick(event) {
+            const target = event.target;
+            
+            // Check if a tab close button was clicked
+            if (target.classList.contains('code-editor-tab-close')) {
+                const tabId = target.getAttribute('data-tab-id');
+                closeTab(tabId);
+                return;
+            }
+            
+            // Check if a tab was clicked
+            if (target.classList.contains('code-editor-tab')) {
+                const tabId = target.getAttribute('data-tab-id');
+                if (tabId) {
+                    switchTab(tabId);
+                }
+            }
+        }
+
+        // Create new tab
+        function createNewTab() {
+            const tabId = 'tab-' + Date.now();
+            const language = elements.codeEditorLanguageSelect.value;
+            const extension = getFileExtension(language);
+            const fileName = 'untitled' + Object.keys(state.codeEditor.tabs).length + extension;
+            
+            state.codeEditor.tabs[tabId] = {
+                name: fileName,
+                language: language,
+                content: '',
+                isDirty: false
+            };
+            
+            // Create tab element
+            const tabElement = document.createElement('div');
+            tabElement.className = 'code-editor-tab';
+            tabElement.setAttribute('data-tab-id', tabId);
+            tabElement.innerHTML = `
+                <span>${fileName}</span>
+                <button class="code-editor-tab-close" data-tab-id="${tabId}">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            // Insert before the new tab button
+            elements.codeEditorTabs.insertBefore(tabElement, elements.codeEditorNewTabBtn);
+            
+            // Switch to the new tab
+            switchTab(tabId);
+        }
+
+        // Close tab
+        function closeTab(tabId) {
+            // Don't close if it's the only tab
+            if (Object.keys(state.codeEditor.tabs).length <= 1) {
+                showToast('Cannot close the last tab', 'warning');
+                return;
+            }
+            
+            // Remove tab from state
+            delete state.codeEditor.tabs[tabId];
+            
+            // Remove tab element
+            const tabElement = document.querySelector(`.code-editor-tab[data-tab-id="${tabId}"]`);
+            if (tabElement) {
+                tabElement.remove();
+            }
+            
+            // If the closed tab was active, switch to another tab
+            if (state.codeEditor.activeTab === tabId) {
+                const remainingTabs = Object.keys(state.codeEditor.tabs);
+                if (remainingTabs.length > 0) {
+                    switchTab(remainingTabs[0]);
+                }
+            }
+        }
+
+        // Switch to tab
+        function switchTab(tabId) {
+            // Save current tab content
+            if (state.codeEditor.activeTab && state.codeEditor.tabs[state.codeEditor.activeTab]) {
+                state.codeEditor.tabs[state.codeEditor.activeTab].content = elements.codeEditorTextarea.value;
+            }
+            
+            // Update active tab
+            state.codeEditor.activeTab = tabId;
+            
+            // Update tab UI
+            document.querySelectorAll('.code-editor-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            const activeTabElement = document.querySelector(`.code-editor-tab[data-tab-id="${tabId}"]`);
+            if (activeTabElement) {
+                activeTabElement.classList.add('active');
+            }
+            
+            // Update language select
+            const tab = state.codeEditor.tabs[tabId];
+            if (tab) {
+                elements.codeEditorLanguageSelect.value = tab.language;
+                updateCodeEditorContent();
+                updateLineNumbers();
+                setupSyntaxHighlighting();
+            }
+        }
+
+        // Handle language change
+        function handleLanguageChange() {
+            const language = elements.codeEditorLanguageSelect.value;
+            const tab = state.codeEditor.tabs[state.codeEditor.activeTab];
+            
+            if (tab) {
+                tab.language = language;
+                
+                // Update file extension
+                const extension = getFileExtension(language);
+                const nameWithoutExtension = tab.name.replace(/\.[^/.]+$/, '');
+                tab.name = nameWithoutExtension + extension;
+                
+                // Update tab name in UI
+                const activeTabElement = document.querySelector(`.code-editor-tab[data-tab-id="${state.codeEditor.activeTab}"] span`);
+                if (activeTabElement) {
+                    activeTabElement.textContent = tab.name;
+                }
+                
+                // Update syntax highlighting
+                setupSyntaxHighlighting();
+            }
+        }
+
+        // Handle theme change
+        function handleThemeChange() {
+            state.codeEditor.theme = elements.codeEditorThemeSelect.value;
+            applyCodeEditorTheme();
+        }
+
+        // Handle font size change
+        function handleFontSizeChange() {
+            state.codeEditor.fontSize = elements.codeEditorFontSizeSelect.value;
+            elements.codeEditorTextarea.style.fontSize = state.codeEditor.fontSize;
+            elements.codeEditorHighlight.style.fontSize = state.codeEditor.fontSize;
+            elements.codeEditorLineNumbers.style.fontSize = state.codeEditor.fontSize;
+        }
+
+        // Format code
+        function formatCode() {
+            // This is a placeholder for code formatting
+            // In a real implementation, you would use a code formatting library
+            showToast('Code formatting is not yet implemented', 'warning');
+        }
+
+        // Toggle word wrap
+        function toggleWordWrap() {
+            state.codeEditor.wordWrap = !state.codeEditor.wordWrap;
+            
+            if (state.codeEditor.wordWrap) {
+                elements.codeEditorTextarea.style.whiteSpace = 'pre-wrap';
+                elements.codeEditorHighlight.style.whiteSpace = 'pre-wrap';
+                elements.codeEditorWordWrapBtn.classList.add('active');
+            } else {
+                elements.codeEditorTextarea.style.whiteSpace = 'pre';
+                elements.codeEditorHighlight.style.whiteSpace = 'pre';
+                elements.codeEditorWordWrapBtn.classList.remove('active');
+            }
+        }
+
+        // Handle code editor input
+        function handleCodeEditorInput() {
+            // Update tab content
+            const tab = state.codeEditor.tabs[state.codeEditor.activeTab];
+            if (tab) {
+                tab.content = elements.codeEditorTextarea.value;
+                tab.isDirty = true;
+            }
+            
+            // Update line numbers
+            updateLineNumbers();
+            
+            // Update syntax highlighting
+            updateSyntaxHighlighting();
+        }
+
+        // Sync code editor scroll
+        function syncCodeEditorScroll() {
+            elements.codeEditorHighlight.scrollTop = elements.codeEditorTextarea.scrollTop;
+            elements.codeEditorLineNumbers.scrollTop = elements.codeEditorTextarea.scrollTop;
+        }
+
+        // Handle code editor keydown
+        function handleCodeEditorKeydown(event) {
+            // Handle tab key
+            if (event.key === 'Tab') {
+                event.preventDefault();
+                
+                const start = elements.codeEditorTextarea.selectionStart;
+                const end = elements.codeEditorTextarea.selectionEnd;
+                const value = elements.codeEditorTextarea.value;
+                
+                // Insert tab character
+                elements.codeEditorTextarea.value = value.substring(0, start) + '    ' + value.substring(end);
+                
+                // Restore cursor position
+                elements.codeEditorTextarea.selectionStart = elements.codeEditorTextarea.selectionEnd = start + 4;
+                
+                // Update content
+                handleCodeEditorInput();
+            }
+            
+            // Handle Ctrl/Cmd + Enter to run code
+            if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') {
+                event.preventDefault();
+                runCode();
+            }
+            
+            // Handle Ctrl/Cmd + S to save
+            if ((event.ctrlKey || event.metaKey) && event.key === 's') {
+                event.preventDefault();
+                saveCode();
+            }
+        }
+
+        // Clear code editor output
+        function clearCodeEditorOutput() {
+            elements.codeEditorOutputContent.textContent = 'Output will appear here when you run your code...';
+            elements.codeEditorOutputContent.classList.remove('error');
+            state.codeEditor.output = '';
+        }
+
+        // Clear code editor
+        function clearCodeEditor() {
+            elements.codeEditorTextarea.value = '';
+            handleCodeEditorInput();
+            clearCodeEditorOutput();
+        }
+
+        // Run code
+        async function runCode() {
+            const code = elements.codeEditorTextarea.value;
+            const language = elements.codeEditorLanguageSelect.value;
+            
+            if (!code.trim()) {
+                showToast('Please enter some code to run', 'warning');
+                return;
+            }
+            
+            // Update status
+            elements.codeEditorStatus.textContent = 'Running...';
+            elements.codeEditorRunBtn.disabled = true;
+            
+            try {
+                // Send code to backend for execution
+                const response = await fetch('/api/execute', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        code: code,
+                        language: language
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Failed to execute code');
+                }
+                
+                const result = await response.json();
+                
+                // Display output
+                if (result.error) {
+                    elements.codeEditorOutputContent.textContent = result.error;
+                    elements.codeEditorOutputContent.classList.add('error');
+                } else {
+                    elements.codeEditorOutputContent.textContent = result.output;
+                    elements.codeEditorOutputContent.classList.remove('error');
+                }
+                
+                // Update status
+                elements.codeEditorStatus.textContent = 'Ready';
+            } catch (error) {
+                console.error('Error executing code:', error);
+                elements.codeEditorOutputContent.textContent = `Error: ${error.message}`;
+                elements.codeEditorOutputContent.classList.add('error');
+                elements.codeEditorStatus.textContent = 'Error';
+            } finally {
+                elements.codeEditorRunBtn.disabled = false;
+            }
+        }
+
+        // Save code
+        function saveCode() {
+            const tab = state.codeEditor.tabs[state.codeEditor.activeTab];
+            if (tab) {
+                tab.isDirty = false;
+                showToast('Code saved', 'success');
+            }
+        }
+
+        // Setup code editor drag handle
+        function setupCodeEditorDragHandle() {
+            let isDragging = false;
+            let startY = 0;
+            let startHeight = 0;
+            
+            elements.codeEditorDragHandle.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startY = e.clientY;
+                startHeight = elements.codeEditorPanel.offsetHeight;
+                document.body.style.cursor = 'ns-resize';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                
+                const deltaY = startY - e.clientY;
+                const newHeight = startHeight + deltaY;
+                const maxHeight = window.innerHeight * 0.9;
+                const minHeight = window.innerHeight * 0.3;
+                
+                if (newHeight >= minHeight && newHeight <= maxHeight) {
+                    elements.codeEditorPanel.style.height = newHeight + 'px';
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isDragging) {
+                    isDragging = false;
+                    document.body.style.cursor = '';
+                }
+            });
+        }
+
+        // Setup code editor resizer
+        function setupCodeEditorResizer() {
+            let isResizing = false;
+            let startX = 0;
+            let startY = 0;
+            let startWidth = 0;
+            let startHeight = 0;
+            
+            elements.codeEditorResizer.addEventListener('mousedown', (e) => {
+                isResizing = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                startWidth = elements.codeEditorPanel.offsetWidth;
+                startHeight = elements.codeEditorPanel.offsetHeight;
+                document.body.style.cursor = 'nwse-resize';
+                e.preventDefault();
+            });
+            
+            document.addEventListener('mousemove', (e) => {
+                if (!isResizing) return;
+                
+                const deltaX = e.clientX - startX;
+                const deltaY = startY - e.clientY;
+                const newWidth = startWidth + deltaX;
+                const newHeight = startHeight + deltaY;
+                const maxWidth = window.innerWidth * 0.9;
+                const maxHeight = window.innerHeight * 0.9;
+                const minWidth = window.innerWidth * 0.5;
+                const minHeight = window.innerHeight * 0.3;
+                
+                if (newWidth >= minWidth && newWidth <= maxWidth) {
+                    elements.codeEditorPanel.style.width = newWidth + 'px';
+                }
+                
+                if (newHeight >= minHeight && newHeight <= maxHeight) {
+                    elements.codeEditorPanel.style.height = newHeight + 'px';
+                }
+            });
+            
+            document.addEventListener('mouseup', () => {
+                if (isResizing) {
+                    isResizing = false;
+                    document.body.style.cursor = '';
+                }
+            });
+        }
+
+        // Toggle code editor theme
+        function toggleCodeEditorTheme() {
+            const currentTheme = state.codeEditor.theme;
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            state.codeEditor.theme = newTheme;
+            elements.codeEditorThemeSelect.value = newTheme;
+            applyCodeEditorTheme();
+            
+            // Update theme toggle icon
+            const icon = elements.codeEditorThemeToggle.querySelector('i');
+            if (newTheme === 'dark') {
+                icon.className = 'fas fa-moon';
+            } else {
+                icon.className = 'fas fa-sun';
+            }
+        }
+
+        // Apply code editor theme
+        function applyCodeEditorTheme() {
+            const theme = state.codeEditor.theme;
+            
+            if (theme === 'dark') {
+                elements.codeEditorTextarea.style.backgroundColor = '#1e1e1e';
+                elements.codeEditorTextarea.style.color = '#d4d4d4';
+                elements.codeEditorHighlight.style.backgroundColor = '#1e1e1e';
+                elements.codeEditorHighlight.style.color = '#d4d4d4';
+                elements.codeEditorLineNumbers.style.backgroundColor = '#1e1e1e';
+                elements.codeEditorLineNumbers.style.color = '#858585';
+            } else {
+                elements.codeEditorTextarea.style.backgroundColor = '#ffffff';
+                elements.codeEditorTextarea.style.color = '#000000';
+                elements.codeEditorHighlight.style.backgroundColor = '#ffffff';
+                elements.codeEditorHighlight.style.color = '#000000';
+                elements.codeEditorLineNumbers.style.backgroundColor = '#ffffff';
+                elements.codeEditorLineNumbers.style.color = '#999999';
+            }
+        }
+
+        // Update code editor content
+        function updateCodeEditorContent() {
+            const tab = state.codeEditor.tabs[state.codeEditor.activeTab];
+            if (tab) {
+                elements.codeEditorTextarea.value = tab.content;
+            }
+        }
+
+        // Update line numbers
+        function updateLineNumbers() {
+            const lines = elements.codeEditorTextarea.value.split('\n');
+            const lineNumbersHtml = lines.map((_, index) => index + 1).join('<br>');
+            elements.codeEditorLineNumbers.innerHTML = lineNumbersHtml;
+        }
+
+        // Setup syntax highlighting
+        function setupSyntaxHighlighting() {
+            updateSyntaxHighlighting();
+        }
+
+        // Update syntax highlighting
+        function updateSyntaxHighlighting() {
+            const code = elements.codeEditorTextarea.value;
+            const language = elements.codeEditorLanguageSelect.value;
+            
+            // This is a simplified syntax highlighting
+            // In a real implementation, you would use a syntax highlighting library
+            let highlightedCode = code;
+            
+            // Apply basic syntax highlighting based on language
+            if (language === 'python') {
+                highlightedCode = highlightPython(code);
+            } else if (language === 'javascript') {
+                highlightedCode = highlightJavaScript(code);
+            } else if (language === 'html') {
+                highlightedCode = highlightHTML(code);
+            } else if (language === 'css') {
+                highlightedCode = highlightCSS(code);
+            } else {
+                // Default highlighting
+                highlightedCode = highlightGeneric(code);
+            }
+            
+            elements.codeEditorHighlight.innerHTML = highlightedCode;
+        }
+
+        // Highlight Python code
+        function highlightPython(code) {
+            // Keywords
+            const keywords = ['def', 'class', 'if', 'else', 'elif', 'for', 'while', 'try', 'except', 'finally', 'with', 'import', 'from', 'as', 'return', 'yield', 'lambda', 'and', 'or', 'not', 'in', 'is', 'None', 'True', 'False'];
+            
+            // String patterns
+            const stringPatterns = [
+                /("""[\s\S]*?""")/g,
+                (/('''[\s\S]*?'''/g),
+                /("([^"\\]|\\.)*")/g,
+                /('([^'\\]|\\.)*')/g
+            ];
+            
+            // Comment pattern
+            const commentPattern = /(#.*$)/gm;
+            
+            // Function pattern
+            const functionPattern = /\b(def)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
+            
+            // Number pattern
+            const numberPattern = /\b(\d+)\b/g;
+            
+            let highlightedCode = code;
+            
+            // Highlight keywords
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                highlightedCode = highlightedCode.replace(regex, `<span class="code-editor-keyword">${keyword}</span>`);
+            });
+            
+            // Highlight strings
+            stringPatterns.forEach(pattern => {
+                highlightedCode = highlightedCode.replace(pattern, '<span class="code-editor-string">$1</span>');
+            });
+            
+            // Highlight comments
+            highlightedCode = highlightedCode.replace(commentPattern, '<span class="code-editor-comment">$1</span>');
+            
+            // Highlight functions
+            highlightedCode = highlightedCode.replace(functionPattern, '<span class="code-editor-keyword">$1</span> <span class="code-editor-function">$2</span>');
+            
+            // Highlight numbers
+            highlightedCode = highlightedCode.replace(numberPattern, '<span class="code-editor-number">$1</span>');
+            
+            return highlightedCode;
+        }
+
+        // Highlight JavaScript code
+        function highlightJavaScript(code) {
+            // Keywords
+            const keywords = ['function', 'var', 'let', 'const', 'if', 'else', 'for', 'while', 'do', 'switch', 'case', 'default', 'break', 'continue', 'return', 'try', 'catch', 'finally', 'throw', 'new', 'typeof', 'instanceof', 'in', 'of', 'class', 'extends', 'import', 'export', 'default', 'async', 'await'];
+            
+            // String patterns
+            const stringPatterns = [
+                /("([^"\\]|\\.)*")/g,
+                /('([^'\\]|\\.)*')/g,
+                /(`([^`\\]|\\.)*`)/g
+            ];
+            
+            // Comment patterns
+            const singleLineCommentPattern = /(\/\/.*$)/gm;
+            const multiLineCommentPattern = /(\/\*[\s\S]*?\*\/)/g;
+            
+            // Function pattern
+            const functionPattern = /\b(function)\s+([a-zA-Z_][a-zA-Z0-9_]*)/g;
+            
+            // Number pattern
+            const numberPattern = /\b(\d+)\b/g;
+            
+            let highlightedCode = code;
+            
+            // Highlight keywords
+            keywords.forEach(keyword => {
+                const regex = new RegExp(`\\b${keyword}\\b`, 'g');
+                highlightedCode = highlightedCode.replace(regex, `<span class="code-editor-keyword">${keyword}</span>`);
+            });
+            
+            // Highlight strings
+            stringPatterns.forEach(pattern => {
+                highlightedCode = highlightedCode.replace(pattern, '<span class="code-editor-string">$1</span>');
+            });
+            
+            // Highlight comments
+            highlightedCode = highlightedCode.replace(singleLineCommentPattern, '<span class="code-editor-comment">$1</span>');
+            highlightedCode = highlightedCode.replace(multiLineCommentPattern, '<span class="code-editor-comment">$1</span>');
+            
+            // Highlight functions
+            highlightedCode = highlightedCode.replace(functionPattern, '<span class="code-editor-keyword">$1</span> <span class="code-editor-function">$2</span>');
+            
+            // Highlight numbers
+            highlightedCode = highlightedCode.replace(numberPattern, '<span class="code-editor-number">$1</span>');
+            
+            return highlightedCode;
+        }
+
+        // Highlight HTML code
+        function highlightHTML(code) {
+            // Tag pattern
+            const tagPattern = /(&lt;\/?)([a-zA-Z][a-zA-Z0-9]*)(.*?)(&gt;)/g;
+            
+            // Attribute pattern
+            const attributePattern = /\b([a-zA-Z-]+)(=)(["'])(.*?)\3/g;
+            
+            // Comment pattern
+            const commentPattern = /(&lt;!--[\s\S]*?--&gt;)/g;
+            
+            let highlightedCode = code;
+            
+            // Highlight tags
+            highlightedCode = highlightedCode.replace(tagPattern, '<span class="code-editor-keyword">$1</span><span class="code-editor-function">$2</span><span class="code-editor-variable">$3</span><span class="code-editor-keyword">$4</span>');
+            
+            // Highlight attributes
+            highlightedCode = highlightedCode.replace(attributePattern, '<span class="code-editor-variable">$1</span><span class="code-editor-keyword">$2</span><span class="code-editor-string">$3</span><span class="code-editor-string">$4</span><span class="code-editor-string">$3</span>');
+            
+            // Highlight comments
+            highlightedCode = highlightedCode.replace(commentPattern, '<span class="code-editor-comment">$1</span>');
+            
+            return highlightedCode;
+        }
+
+        // Highlight CSS code
+        function highlightCSS(code) {
+            // Selector pattern
+            const selectorPattern = /([.#]?[a-zA-Z][a-zA-Z0-9-]*)\s*{/g;
+            
+            // Property pattern
+            const propertyPattern = /\b([a-zA-Z-]+)(:)/g;
+            
+            // Value pattern
+            const valuePattern = /(:\s*)([^;]+)(;)/g;
+            
+            // Comment pattern
+            const commentPattern = /(\/\*[\s\S]*?\*\/)/g;
+            
+            let highlightedCode = code;
+            
+            // Highlight selectors
+            highlightedCode = highlightedCode.replace(selectorPattern, '<span class="code-editor-function">$1</span> {');
+            
+            // Highlight properties
+            highlightedCode = highlightedCode.replace(propertyPattern, '<span class="code-editor-variable">$1</span><span class="code-editor-keyword">$2</span>');
+            
+            // Highlight values
+            highlightedCode = highlightedCode.replace(valuePattern, '$1<span class="code-editor-string">$2</span>$3');
+            
+            // Highlight comments
+            highlightedCode = highlightedCode.replace(commentPattern, '<span class="code-editor-comment">$1</span>');
+            
+            return highlightedCode;
+        }
+
+        // Highlight generic code
+        function highlightGeneric(code) {
+            // String patterns
+            const stringPatterns = [
+                /("([^"\\]|\\.)*")/g,
+                /('([^'\\]|\\.)*')/g
+            ];
+            
+            // Comment patterns
+            const commentPatterns = [
+                /(\/\/.*$)/gm,
+                /(#.*$)/gm
+            ];
+            
+            // Number pattern
+            const numberPattern = /\b(\d+)\b/g;
+            
+            let highlightedCode = code;
+            
+            // Highlight strings
+            stringPatterns.forEach(pattern => {
+                highlightedCode = highlightedCode.replace(pattern, '<span class="code-editor-string">$1</span>');
+            });
+            
+            // Highlight comments
+            commentPatterns.forEach(pattern => {
+                highlightedCode = highlightedCode.replace(pattern, '<span class="code-editor-comment">$1</span>');
+            });
+            
+            // Highlight numbers
+            highlightedCode = highlightedCode.replace(numberPattern, '<span class="code-editor-number">$1</span>');
+            
+            return highlightedCode;
+        }
+
+        // Get file extension for language
+        function getFileExtension(language) {
+            const extensions = {
+                'python': '.py',
+                'javascript': '.js',
+                'html': '.html',
+                'css': '.css',
+                'java': '.java',
+                'cpp': '.cpp',
+                'c': '.c',
+                'csharp': '.cs',
+                'php': '.php',
+                'ruby': '.rb',
+                'go': '.go',
+                'rust': '.rs',
+                'sql': '.sql',
+                'json': '.json',
+                'xml': '.xml',
+                'yaml': '.yaml',
+                'markdown': '.md',
+                'bash': '.sh',
+                'powershell': '.ps1'
+            };
+            
+            return extensions[language] || '.txt';
+        }
+
+        // Continue with the rest of the existing code...
+        // (The rest of the code remains the same as in the original implementation)
+        
         // Detect mobile devices
         function isMobile() {
             return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -5366,6 +6922,14 @@ How can I assist you today?`;
                                     <i class="fas fa-copy"></i>
                                     <span>Copy</span>
                                 </button>
+                                <button class="run-btn" onclick="runCodeInEditor('${codeId}', '${language}')">
+                                    <i class="fas fa-play"></i>
+                                    <span>Run</span>
+                                </button>
+                                <button class="edit-btn" onclick="editCodeInEditor('${codeId}', '${language}')">
+                                    <i class="fas fa-edit"></i>
+                                    <span>Edit</span>
+                                </button>
                                 ${language === 'html' ? `
                                     <button class="preview-btn" onclick="previewHTML('${codeId}')">
                                         <i class="fas fa-external-link-alt"></i>
@@ -5381,6 +6945,69 @@ How can I assist you today?`;
             
             // Sanitize HTML
             return DOMPurify.sanitize(processedHtml);
+        }
+
+        // Run code in editor
+        function runCodeInEditor(codeId, language) {
+            const codeBlock = document.getElementById(codeId);
+            if (!codeBlock) return;
+            
+            const code = codeBlock.textContent;
+            
+            // Open code editor
+            if (!state.codeEditor.isOpen) {
+                toggleCodeEditor();
+            }
+            
+            // Set language
+            elements.codeEditorLanguageSelect.value = language;
+            
+            // Set code content
+            elements.codeEditorTextarea.value = code;
+            
+            // Update tab content
+            const tab = state.codeEditor.tabs[state.codeEditor.activeTab];
+            if (tab) {
+                tab.content = code;
+                tab.language = language;
+            }
+            
+            // Update UI
+            updateLineNumbers();
+            updateSyntaxHighlighting();
+            
+            // Run code
+            runCode();
+        }
+
+        // Edit code in editor
+        function editCodeInEditor(codeId, language) {
+            const codeBlock = document.getElementById(codeId);
+            if (!codeBlock) return;
+            
+            const code = codeBlock.textContent;
+            
+            // Open code editor
+            if (!state.codeEditor.isOpen) {
+                toggleCodeEditor();
+            }
+            
+            // Set language
+            elements.codeEditorLanguageSelect.value = language;
+            
+            // Set code content
+            elements.codeEditorTextarea.value = code;
+            
+            // Update tab content
+            const tab = state.codeEditor.tabs[state.codeEditor.activeTab];
+            if (tab) {
+                tab.content = code;
+                tab.language = language;
+            }
+            
+            // Update UI
+            updateLineNumbers();
+            updateSyntaxHighlighting();
         }
 
         // Handle chat input keydown
@@ -6594,6 +8221,8 @@ How can I assist you today?`;
         window.deleteChat = deleteChat;
         window.togglePinChat = togglePinChat;
         window.showRenameModal = showRenameModal;
+        window.runCodeInEditor = runCodeInEditor;
+        window.editCodeInEditor = editCodeInEditor;
     </script>
 </body>
 </html>
