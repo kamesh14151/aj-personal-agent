@@ -95,7 +95,6 @@
             --user-name-gradient-colorful: linear-gradient(90deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #ff9ff3 75%, #54a0ff 100%);
         }
 
-        /* All existing CSS styles remain unchanged */
         * {
             margin: 0;
             padding: 0;
@@ -112,7 +111,6 @@
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Login Screen - Grok inspired */
         .login-screen {
             position: fixed;
@@ -245,7 +243,6 @@
             font-size: 1.25rem;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* App Container */
         .app-container {
             display: flex;
@@ -257,7 +254,6 @@
             display: none;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Sidebar - Grok inspired */
         .sidebar {
             width: 260px;
@@ -539,7 +535,6 @@
             text-overflow: ellipsis;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Main Content */
         .main-content {
             flex: 1;
@@ -548,7 +543,6 @@
             overflow: hidden;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Header - Grok inspired */
         .header {
             height: 64px;
@@ -625,7 +619,6 @@
             background-color: var(--surface-highlight);
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Chat Container */
         .chat-container {
             flex: 1;
@@ -734,7 +727,6 @@
             word-break: break-word;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Table styles */
         .message-text table {
             width: 100%;
@@ -758,7 +750,6 @@
             background-color: var(--table-row-alt);
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Box styles */
         .message-text blockquote {
             border-left: 4px solid var(--box-border);
@@ -918,7 +909,6 @@
             display: block;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Typing Indicator */
         .typing-indicator {
             display: flex;
@@ -965,7 +955,6 @@
             }
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Chat Input - Grok inspired */
         .chat-input-container {
             padding: 1.5rem;
@@ -1058,7 +1047,6 @@
             transform: none;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Code Block Styles */
         .code-block {
             margin-top: 1rem;
@@ -1115,14 +1103,12 @@
             border-color: var(--success);
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Typing Effect */
         .typing-text {
             overflow: hidden;
             white-space: pre-wrap;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Settings Panel - Grok inspired */
         .settings-panel {
             position: fixed;
@@ -1342,7 +1328,6 @@
             background-color: #dc2626;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* User Profile Panel - Grok inspired */
         .user-profile-panel {
             position: fixed;
@@ -1476,7 +1461,6 @@
             color: var(--text-secondary);
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Toast Notifications - Grok inspired */
         .toast-container {
             position: fixed;
@@ -1556,7 +1540,6 @@
             color: var(--text-tertiary);
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Confirmation Modal - Grok inspired */
         .modal-overlay {
             position: fixed;
@@ -1606,7 +1589,6 @@
             gap: 1rem;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Search Modal - Grok inspired */
         .search-modal {
             position: fixed;
@@ -1694,7 +1676,6 @@
             margin-top: 0.25rem;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Rename Modal - Grok inspired */
         .rename-modal {
             position: fixed;
@@ -1713,7 +1694,6 @@
             display: flex;
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Chat History Features - Grok inspired */
         .chat-history-features {
             padding: 0.75rem;
@@ -1773,7 +1753,6 @@
             color: var(--text-primary);
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Mobile Responsiveness - Grok inspired */
         @media (max-width: 768px) {
             .sidebar {
@@ -1956,7 +1935,6 @@
             }
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Loading Spinner - Grok inspired */
         .spinner {
             width: 20px;
@@ -1973,7 +1951,6 @@
             }
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Custom Scrollbar - Grok inspired */
         ::-webkit-scrollbar {
             width: 8px;
@@ -1993,7 +1970,6 @@
             background: var(--surface-highlight);
         }
 
-        /* All existing CSS styles remain unchanged */
         /* Overlay - Grok inspired */
         .overlay {
             position: fixed;
@@ -2010,7 +1986,6 @@
             display: block;
         }
         
-        /* All existing CSS styles remain unchanged */
         /* Brand styling - Grok inspired */
         .brand-nexariq {
             font-family: 'Space Grotesk', sans-serif;
@@ -2032,7 +2007,6 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* All existing CSS styles remain unchanged */
         /* User name styling with colorful gradient - Grok inspired */
         .user-name-colorful {
             font-weight: 600;
@@ -2043,7 +2017,6 @@
             display: inline;
         }
         
-        /* All existing CSS styles remain unchanged */
         /* Mobile keyboard adjustments - Grok inspired */
         @media (max-width: 768px) and (orientation: portrait) {
             .keyboard-open .chat-messages {
@@ -3374,6 +3347,10 @@
 
         // Authentication functions
         function signInWithGoogle() {
+            // Show loading state
+            elements.googleSignInBtn.disabled = true;
+            elements.googleSignInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+            
             const provider = new firebase.auth.GoogleAuthProvider();
             auth.signInWithPopup(provider)
                 .then(result => {
@@ -3381,11 +3358,20 @@
                 })
                 .catch(error => {
                     console.error('Error signing in with Google:', error);
-                    showToast('Error signing in with Google', 'error');
+                    showToast('Error signing in with Google: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    elements.googleSignInBtn.disabled = false;
+                    elements.googleSignInBtn.innerHTML = '<i class="fab fa-google"></i> Sign in with Google';
                 });
         }
 
         function signInWithApple() {
+            // Show loading state
+            elements.appleSignInBtn.disabled = true;
+            elements.appleSignInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+            
             const provider = new firebase.auth.OAuthProvider('apple.com');
             auth.signInWithPopup(provider)
                 .then(result => {
@@ -3393,7 +3379,12 @@
                 })
                 .catch(error => {
                     console.error('Error signing in with Apple:', error);
-                    showToast('Error signing in with Apple', 'error');
+                    showToast('Error signing in with Apple: ' + error.message, 'error');
+                })
+                .finally(() => {
+                    // Reset button state
+                    elements.appleSignInBtn.disabled = false;
+                    elements.appleSignInBtn.innerHTML = '<i class="fab fa-apple"></i> Sign in with Apple';
                 });
         }
 
