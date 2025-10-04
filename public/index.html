@@ -243,6 +243,27 @@
             font-size: 1.25rem;
         }
 
+        .login-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+        }
+
+        /* Error message styling */
+        .login-error {
+            margin-top: 1rem;
+            padding: 0.75rem;
+            background-color: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--error);
+            border-radius: var(--radius);
+            color: var(--error);
+            font-size: 0.875rem;
+            display: none;
+        }
+
+        .login-error.show {
+            display: block;
+        }
+
         /* App Container */
         .app-container {
             display: flex;
@@ -2114,6 +2135,7 @@
                     Sign in with Apple
                 </button>
             </div>
+            <div class="login-error" id="loginError"></div>
         </div>
     </div>
 
@@ -2646,6 +2668,7 @@
             sortBy: 'date', // Sort by: 'date', 'title'
             currentChatTitle: 'Current Conversation', // Track the current chat title
             // Firestore related state
+            usersCollection: null, // Reference to Firestore users collection
             chatsCollection: null, // Reference to Firestore chats collection
             currentChatDoc: null // Reference to current chat document
         };
@@ -2741,7 +2764,9 @@
             renameModal: document.getElementById('renameModal'),
             renameInput: document.getElementById('renameInput'),
             renameCancelBtn: document.getElementById('renameCancelBtn'),
-            renameSaveBtn: document.getElementById('renameSaveBtn')
+            renameSaveBtn: document.getElementById('renameSaveBtn'),
+            // Login error element
+            loginError: document.getElementById('loginError')
         };
 
         // Initialize app
@@ -2763,11 +2788,13 @@
                     loadUserProfile();
                     loadUserMemory(); // Load user memory
                     // Initialize Firestore collection references
+                    state.usersCollection = db.collection('users');
                     state.chatsCollection = db.collection('users').doc(user.uid).collection('chats');
                     loadChatHistory(); // Load chat history from Firestore
                 } else {
                     // User is signed out
                     state.user = null;
+                    state.usersCollection = null;
                     state.chatsCollection = null;
                     showLogin();
                 }
@@ -3176,6 +3203,88 @@
             }
         }
 
+        // Validate email format
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(String(email).toLowerCase());
+        }
+
+        // Check if email exists (basic validation)
+        async function checkEmailExists(email) {
+            try {
+                // This is a simple validation - in a real app, you might use a service to verify email existence
+                if (!validateEmail(email)) {
+                    return { valid: false, message: 'Please enter a valid email address' };
+                }
+                
+                // For demonstration, we'll just check if the email domain is common
+                const domain = email.split('@')[1];
+                const commonDomains = ['gmail.com', 'yahoo.com', 'hotmail.com', 'outlook.com', 'icloud.com'];
+                
+                if (!commonDomains.includes(domain)) {
+                    return { valid: false, message: 'Please use a common email provider (Gmail, Yahoo, Outlook, etc.)' };
+                }
+                
+                return { valid: true };
+            } catch (error) {
+                console.error('Error checking email:', error);
+                return { valid: false, message: 'Error validating email' };
+            }
+        }
+
+        // Check if user exists in Firestore
+        async function checkUserExists(uid) {
+            try {
+                const userDoc = await db.collection('users').doc(uid).get();
+                return userDoc.exists;
+            } catch (error) {
+                console.error('Error checking user existence:', error);
+                return false;
+            }
+        }
+
+        // Create user in Firestore
+        async function createUserInFirestore(user) {
+            try {
+                const userRef = db.collection('users').doc(user.uid);
+                
+                // Check if user already exists
+                const userDoc = await userRef.get();
+                if (userDoc.exists) {
+                    return userRef;
+                }
+                
+                // Create new user document
+                await userRef.set({
+                    uid: user.uid,
+                    email: user.email,
+                    displayName: user.displayName || '',
+                    photoURL: user.photoURL || '',
+                    provider: user.providerData[0]?.providerId || '',
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    lastLoginAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    settings: state.settings,
+                    memory: {
+                        name: user.displayName || '',
+                        preferences: {},
+                        context: {}
+                    },
+                    preferences: {
+                        responseStyle: 'balanced',
+                        detailLevel: 'medium',
+                        formatting: true
+                    },
+                    likedMessages: [],
+                    dislikedMessages: []
+                });
+                
+                return userRef;
+            } catch (error) {
+                console.error('Error creating user in Firestore:', error);
+                throw error;
+            }
+        }
+
         // Load user data from Firestore
         function loadUserData() {
             if (!state.user) return;
@@ -3214,15 +3323,11 @@
                     updateMessageFeedbackUI();
                 } else {
                     // Create user document
-                    userRef.set({
-                        displayName: state.user.displayName,
-                        email: state.user.email,
-                        createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                        settings: state.settings,
-                        memory: state.userMemory, // Initialize with empty memory
-                        preferences: state.userPreferences, // Initialize with empty preferences
-                        likedMessages: [],
-                        dislikedMessages: []
+                    createUserInFirestore(state.user).then(() => {
+                        showToast('Account created successfully', 'success');
+                    }).catch(error => {
+                        console.error('Error creating user document:', error);
+                        showToast('Error creating user account', 'error');
                     });
                 }
             }).catch(error => {
@@ -3475,46 +3580,112 @@
         }
 
         // Authentication functions
-        function signInWithGoogle() {
+        async function signInWithGoogle() {
             // Show loading state
             elements.googleSignInBtn.disabled = true;
             elements.googleSignInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+            elements.loginError.classList.remove('show');
             
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider)
-                .then(result => {
-                    showToast('Signed in with Google', 'success');
-                })
-                .catch(error => {
-                    console.error('Error signing in with Google:', error);
-                    showToast('Error signing in with Google: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    // Reset button state
-                    elements.googleSignInBtn.disabled = false;
-                    elements.googleSignInBtn.innerHTML = '<i class="fab fa-google"></i> Sign in with Google';
-                });
+            try {
+                const provider = new firebase.auth.GoogleAuthProvider();
+                const result = await auth.signInWithPopup(provider);
+                
+                // Check if user exists in Firestore
+                const userExists = await checkUserExists(result.user.uid);
+                
+                if (!userExists) {
+                    // Create user in Firestore
+                    await createUserInFirestore(result.user);
+                    showToast('Account created successfully', 'success');
+                } else {
+                    // Update last login time
+                    await db.collection('users').doc(result.user.uid).update({
+                        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                showToast('Signed in with Google', 'success');
+            } catch (error) {
+                console.error('Error signing in with Google:', error);
+                
+                // Show appropriate error message
+                let errorMessage = 'Error signing in with Google';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Account not found. Please sign up first.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password. Please try again.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address. Please check and try again.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessage = 'This account has been disabled. Please contact support.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Too many unsuccessful login attempts. Please try again later.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                elements.loginError.textContent = errorMessage;
+                elements.loginError.classList.add('show');
+            } finally {
+                // Reset button state
+                elements.googleSignInBtn.disabled = false;
+                elements.googleSignInBtn.innerHTML = '<i class="fab fa-google"></i> Sign in with Google';
+            }
         }
 
-        function signInWithApple() {
+        async function signInWithApple() {
             // Show loading state
             elements.appleSignInBtn.disabled = true;
             elements.appleSignInBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+            elements.loginError.classList.remove('show');
             
-            const provider = new firebase.auth.OAuthProvider('apple.com');
-            auth.signInWithPopup(provider)
-                .then(result => {
-                    showToast('Signed in with Apple', 'success');
-                })
-                .catch(error => {
-                    console.error('Error signing in with Apple:', error);
-                    showToast('Error signing in with Apple: ' + error.message, 'error');
-                })
-                .finally(() => {
-                    // Reset button state
-                    elements.appleSignInBtn.disabled = false;
-                    elements.appleSignInBtn.innerHTML = '<i class="fab fa-apple"></i> Sign in with Apple';
-                });
+            try {
+                const provider = new firebase.auth.OAuthProvider('apple.com');
+                const result = await auth.signInWithPopup(provider);
+                
+                // Check if user exists in Firestore
+                const userExists = await checkUserExists(result.user.uid);
+                
+                if (!userExists) {
+                    // Create user in Firestore
+                    await createUserInFirestore(result.user);
+                    showToast('Account created successfully', 'success');
+                } else {
+                    // Update last login time
+                    await db.collection('users').doc(result.user.uid).update({
+                        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                    });
+                }
+                
+                showToast('Signed in with Apple', 'success');
+            } catch (error) {
+                console.error('Error signing in with Apple:', error);
+                
+                // Show appropriate error message
+                let errorMessage = 'Error signing in with Apple';
+                
+                if (error.code === 'auth/user-not-found') {
+                    errorMessage = 'Account not found. Please sign up first.';
+                } else if (error.code === 'auth/wrong-password') {
+                    errorMessage = 'Incorrect password. Please try again.';
+                } else if (error.code === 'auth/invalid-email') {
+                    errorMessage = 'Invalid email address. Please check and try again.';
+                } else if (error.code === 'auth/user-disabled') {
+                    errorMessage = 'This account has been disabled. Please contact support.';
+                } else if (error.code === 'auth/too-many-requests') {
+                    errorMessage = 'Too many unsuccessful login attempts. Please try again later.';
+                } else if (error.message) {
+                    errorMessage = error.message;
+                }
+                
+                elements.loginError.textContent = errorMessage;
+                elements.loginError.classList.add('show');
+            } finally {
+                // Reset button state
+                elements.appleSignInBtn.disabled = false;
+                elements.appleSignInBtn.innerHTML = '<i class="fab fa-apple"></i> Sign in with Apple';
+            }
         }
 
         function signOut() {
@@ -3998,29 +4169,38 @@ How can I assist you today?`;
             showToast(`Sorted by ${state.sortBy} (${state.sortDirection === 'asc' ? 'oldest first' : 'newest first'})`, 'success');
         }
 
-        // Load chat history from Firestore
+        // Load chat history from Firestore with optimized queries
         function loadChatHistory() {
             if (!state.chatsCollection) return;
             
-            state.chatsCollection.orderBy('createdAt', 'desc').get().then(querySnapshot => {
-                state.chatHistory = [];
-                
-                querySnapshot.forEach(doc => {
-                    const chatData = doc.data();
-                    state.chatHistory.push({
-                        id: doc.id,
-                        title: chatData.title || 'Untitled Chat',
-                        messages: chatData.messages || [],
-                        timestamp: chatData.createdAt?.toDate() || new Date(),
-                        pinned: chatData.pinned || false
+            // Show loading indicator
+            showToast('Loading chat history...', 'success');
+            
+            // Use Firestore query with ordering and limit for faster loading
+            state.chatsCollection
+                .orderBy('createdAt', 'desc')
+                .limit(50) // Limit initial load to 50 chats for better performance
+                .get()
+                .then(querySnapshot => {
+                    state.chatHistory = [];
+                    
+                    querySnapshot.forEach(doc => {
+                        const chatData = doc.data();
+                        state.chatHistory.push({
+                            id: doc.id,
+                            title: chatData.title || 'Untitled Chat',
+                            messages: chatData.messages || [],
+                            timestamp: chatData.createdAt?.toDate() || new Date(),
+                            pinned: chatData.pinned || false
+                        });
                     });
+                    
+                    renderChatHistory();
+                })
+                .catch(error => {
+                    console.error('Error loading chat history:', error);
+                    showToast('Error loading chat history', 'error');
                 });
-                
-                renderChatHistory();
-            }).catch(error => {
-                console.error('Error loading chat history:', error);
-                showToast('Error loading chat history', 'error');
-            });
         }
 
         // Render chat history
