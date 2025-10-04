@@ -1294,7 +1294,7 @@
         .message {
             display: flex;
             gap: 1rem;
-            max-width: 90%;
+            max-width: 100%;
             animation: fadeIn 0.3s ease;
         }
 
@@ -1353,6 +1353,7 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             max-width: 100%;
+            width: 100%;
         }
 
         .message:hover .message-content {
@@ -1480,76 +1481,9 @@
             margin-bottom: 0.5rem;
         }
 
+        /* Removed message actions */
         .message-actions {
-            display: flex;
-            gap: 0.5rem;
-            margin-top: 0.75rem;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-
-        .message:hover .message-actions {
-            opacity: 1;
-        }
-
-        .message-action-btn {
-            width: 28px;
-            height: 28px;
-            border-radius: var(--radius-sm);
-            background-color: var(--action-btn-bg);
-            border: none;
-            color: var(--text-secondary);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .message-action-btn:hover {
-            background-color: var(--action-btn-hover);
-            color: var(--text-primary);
-        }
-
-        .message-action-btn:active {
-            background-color: var(--action-btn-active);
-        }
-
-        .message-action-btn.liked {
-            color: var(--action-btn-like);
-        }
-
-        .message-action-btn.disliked {
-            color: var(--action-btn-dislike);
-        }
-
-        .message-action-btn.copied {
-            color: var(--success);
-        }
-
-        .message-action-btn .tooltip {
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            background-color: var(--surface-elevated);
-            color: var(--text-primary);
-            padding: 0.25rem 0.5rem;
-            border-radius: var(--radius-sm);
-            font-size: 0.75rem;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s ease;
-            margin-bottom: 0.5rem;
-            box-shadow: var(--shadow-sm);
-            z-index: 10;
-        }
-
-        .message-action-btn:hover .tooltip {
-            opacity: 1;
+            display: none;
         }
 
         .message-time {
@@ -2545,12 +2479,13 @@
             }
             
             .message {
-                max-width: 90%;
+                max-width: 100%;
             }
             
             .message-content {
                 padding: 0.75rem 1rem;
                 font-size: 0.95rem;
+                width: 100%;
             }
             
             .code-block {
@@ -2743,37 +2678,22 @@
             .chat-item-icon {
                 width: 36px;
                 height: 36px;
-            }
-            
-            /* Make current conversation title stand out more */
-            .chat-item.active .chat-item-title {
-                font-weight: 600;
-            }
-            
-            /* Mobile-specific chat history improvements */
-            .chat-item {
-                padding: 1rem;
-            }
-
-            .chat-item-icon {
-                width: 40px;
-                height: 40px;
                 font-size: 1.2rem;
             }
-
+            
             .chat-item-title {
                 font-size: 1rem;
                 font-weight: 500;
             }
-
+            
             .chat-item-date {
                 font-size: 0.8rem;
             }
-
+            
             .chat-item-actions {
                 opacity: 1; /* Always show actions on mobile for better accessibility */
             }
-
+            
             .chat-item-action-btn {
                 width: 32px;
                 height: 32px;
@@ -4296,29 +4216,6 @@
                                     <strong>Personalization:</strong> I'll remember your name and preferences throughout our conversations. Just tell me your name once, and I'll use it in all our future interactions!
                                 </blockquote>
                             </div>
-                            <div class="message-actions">
-                                <button class="message-action-btn" title="Copy" onclick="copyMessage('welcome-message')">
-                                    <i class="fas fa-copy"></i>
-                                    <span class="tooltip">Copy</span>
-                                </button>
-                                <button class="message-action-btn" title="Good response" onclick="likeMessage('welcome-message')">
-                                    <i class="fas fa-thumbs-up"></i>
-                                    <span class="tooltip">Good response</span>
-                                </button>
-                                <button class="message-action-btn" title="Bad response" onclick="dislikeMessage('welcome-message')">
-                                    <i class="fas fa-thumbs-down"></i>
-                                    <span class="tooltip">Bad response</span>
-                                </button>
-                                <button class="message-action-btn" title="React" onclick="toggleReactionPicker('welcome-message')">
-                                    <i class="fas fa-smile"></i>
-                                    <span class="tooltip">React</span>
-                                </button>
-                                <button class="message-action-btn" title="Thread" onclick="startThread('welcome-message')">
-                                    <i class="fas fa-comment-dots"></i>
-                                    <span class="tooltip">Thread</span>
-                                </button>
-                            </div>
-                            <div class="message-reactions" id="reactions-welcome-message"></div>
                             <div class="message-time">Just now</div>
                         </div>
                     </div>
@@ -7613,31 +7510,6 @@ How can I assist you today?`;
                     <div class="message-avatar">${avatar}</div>
                     <div class="message-content">
                         <div class="message-text">${formatMessageContent(message.content)}</div>
-                        ${message.role === 'assistant' ? `
-                            <div class="message-actions">
-                                <button class="message-action-btn ${state.likedMessages.has(message.id) ? 'liked' : ''}" title="Copy" onclick="copyMessage('${message.id}')">
-                                    <i class="fas fa-copy"></i>
-                                    <span class="tooltip">Copy</span>
-                                </button>
-                                <button class="message-action-btn ${state.likedMessages.has(message.id) ? 'liked' : ''}" title="Good response" onclick="likeMessage('${message.id}')">
-                                    <i class="fas fa-thumbs-up"></i>
-                                    <span class="tooltip">Good response</span>
-                                </button>
-                                <button class="message-action-btn ${state.dislikedMessages.has(message.id) ? 'disliked' : ''}" title="Bad response" onclick="dislikeMessage('${message.id}')">
-                                    <i class="fas fa-thumbs-down"></i>
-                                    <span class="tooltip">Bad response</span>
-                                </button>
-                                <button class="message-action-btn" title="React" onclick="toggleReactionPicker('${message.id}')">
-                                    <i class="fas fa-smile"></i>
-                                    <span class="tooltip">React</span>
-                                </button>
-                                <button class="message-action-btn" title="Thread" onclick="startThread('${message.id}')">
-                                    <i class="fas fa-comment-dots"></i>
-                                    <span class="tooltip">Thread</span>
-                                </button>
-                            </div>
-                            <div class="message-reactions" id="reactions-${message.id}"></div>
-                        ` : ''}
                         <div class="message-time">${time}</div>
                     </div>
                 `;
@@ -7960,29 +7832,6 @@ Remember the user's preferences and previous interactions to provide personalize
                     </div>
                     <div class="message-content">
                         <div class="message-text typing-text" id="text-${messageId}"></div>
-                        <div class="message-actions">
-                            <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')">
-                                <i class="fas fa-copy"></i>
-                                <span class="tooltip">Copy</span>
-                            </button>
-                            <button class="message-action-btn" title="Good response" onclick="likeMessage('${messageId}')">
-                                <i class="fas fa-thumbs-up"></i>
-                                <span class="tooltip">Good response</span>
-                            </button>
-                            <button class="message-action-btn" title="Bad response" onclick="dislikeMessage('${messageId}')">
-                                <i class="fas fa-thumbs-down"></i>
-                                <span class="tooltip">Bad response</span>
-                            </button>
-                            <button class="message-action-btn" title="React" onclick="toggleReactionPicker('${messageId}')">
-                                <i class="fas fa-smile"></i>
-                                <span class="tooltip">React</span>
-                            </button>
-                            <button class="message-action-btn" title="Thread" onclick="startThread('${messageId}')">
-                                <i class="fas fa-comment-dots"></i>
-                                <span class="tooltip">Thread</span>
-                            </button>
-                        </div>
-                        <div class="message-reactions" id="reactions-${messageId}"></div>
                         <div class="message-time">${time}</div>
                     </div>
                 `;
@@ -8166,29 +8015,6 @@ Remember the user's preferences and previous interactions to provide personalize
                 </div>
                 <div class="message-content">
                     <div class="message-text typing-text" id="text-${messageId}"></div>
-                    <div class="message-actions">
-                        <button class="message-action-btn" title="Copy" onclick="copyMessage('${messageId}')">
-                            <i class="fas fa-copy"></i>
-                            <span class="tooltip">Copy</span>
-                        </button>
-                        <button class="message-action-btn" title="Good response" onclick="likeMessage('${messageId}')">
-                            <i class="fas fa-thumbs-up"></i>
-                            <span class="tooltip">Good response</span>
-                        </button>
-                        <button class="message-action-btn" title="Bad response" onclick="dislikeMessage('${messageId}')">
-                            <i class="fas fa-thumbs-down"></i>
-                            <span class="tooltip">Bad response</span>
-                        </button>
-                        <button class="message-action-btn" title="React" onclick="toggleReactionPicker('${messageId}')">
-                            <i class="fas fa-smile"></i>
-                            <span class="tooltip">React</span>
-                        </button>
-                        <button class="message-action-btn" title="Thread" onclick="startThread('${messageId}')">
-                            <i class="fas fa-comment-dots"></i>
-                            <span class="tooltip">Thread</span>
-                        </button>
-                    </div>
-                    <div class="message-reactions" id="reactions-${messageId}"></div>
                     <div class="message-time">${time}</div>
                 </div>
             `;
