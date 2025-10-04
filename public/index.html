@@ -109,6 +109,13 @@
             --analytics-bg: rgba(0, 0, 0, 0.02);
             --analytics-card-bg: #ffffff;
             --analytics-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            /* Grok-style input variables */
+            --grok-input-bg: rgba(30, 30, 30, 0.8);
+            --grok-input-border: rgba(255, 255, 255, 0.1);
+            --grok-input-focus-border: rgba(0, 120, 212, 0.5);
+            --grok-input-text: #ffffff;
+            --grok-input-placeholder: rgba(255, 255, 255, 0.6);
+            --grok-input-radius: 24px;
         }
 
         /* Dark theme variables */
@@ -142,6 +149,12 @@
             --analytics-bg: rgba(255, 255, 255, 0.02);
             --analytics-card-bg: #2d2d2d;
             --analytics-card-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            /* Grok-style input dark theme */
+            --grok-input-bg: rgba(30, 30, 30, 0.9);
+            --grok-input-border: rgba(255, 255, 255, 0.15);
+            --grok-input-focus-border: rgba(0, 120, 212, 0.6);
+            --grok-input-text: #ffffff;
+            --grok-input-placeholder: rgba(255, 255, 255, 0.7);
         }
 
         * {
@@ -1611,31 +1624,49 @@
         }
 
         .chat-input-wrapper {
-            background-color: var(--surface-elevated);
-            border: 1px solid var(--border);
-            border-radius: var(--radius-lg);
+            background-color: var(--grok-input-bg);
+            border: 1px solid var(--grok-input-border);
+            border-radius: var(--grok-input-radius);
             padding: 1rem 1.25rem;
             display: flex;
             align-items: flex-end;
             gap: 0.75rem;
             transition: var(--transition);
-            box-shadow: var(--shadow-sm);
-            /* Grok-like styling */
-            background: rgba(255, 255, 255, 0.05);
+            box-shadow: var(--shadow-lg);
             backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            /* Grok-like styling */
+            position: relative;
+            overflow: hidden;
+        }
+
+        .chat-input-wrapper::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(0, 120, 212, 0.1) 0%, rgba(0, 90, 158, 0.1) 100%);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            border-radius: inherit;
         }
 
         .chat-input-wrapper:focus-within {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
+            border-color: var(--grok-input-focus-border);
+            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1), var(--shadow-lg);
+        }
+
+        .chat-input-wrapper:focus-within::before {
+            opacity: 1;
         }
 
         .chat-input {
             flex: 1;
             background: none;
             border: none;
-            color: var(--text-primary);
+            color: var(--grok-input-text);
             font-size: 1rem;
             resize: none;
             outline: none;
@@ -1644,24 +1675,28 @@
             font-family: inherit;
             /* Prevent zoom on iOS */
             font-size: 16px;
+            position: relative;
+            z-index: 1;
         }
 
         .chat-input::placeholder {
-            color: var(--text-tertiary);
+            color: var(--grok-input-placeholder);
         }
 
         .chat-actions {
             display: flex;
             gap: 0.5rem;
+            position: relative;
+            z-index: 1;
         }
 
         .chat-action-btn {
             width: 36px;
             height: 36px;
-            border-radius: var(--radius);
-            background-color: transparent;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
             border: none;
-            color: var(--text-secondary);
+            color: var(--grok-input-text);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -1670,14 +1705,14 @@
         }
 
         .chat-action-btn:hover {
-            background-color: var(--surface-highlight);
-            color: var(--text-primary);
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: scale(1.05);
         }
 
         .chat-send-btn {
             width: 36px;
             height: 36px;
-            border-radius: var(--radius);
+            border-radius: 50%;
             background: var(--grok-gradient);
             border: none;
             color: white;
@@ -1686,11 +1721,12 @@
             justify-content: center;
             cursor: pointer;
             transition: var(--transition);
+            box-shadow: 0 2px 8px rgba(0, 120, 212, 0.3);
         }
 
         .chat-send-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+            transform: translateY(-2px) scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 120, 212, 0.4);
         }
 
         .chat-send-btn:disabled {
@@ -2477,9 +2513,9 @@
                 display: flex;
                 align-items: center;
                 gap: 0.75rem;
-                background-color: var(--surface-elevated);
-                border: 1px solid var(--border);
-                border-radius: var(--radius-lg);
+                background-color: var(--grok-input-bg);
+                border: 1px solid var(--grok-input-border);
+                border-radius: var(--grok-input-radius);
                 padding: 0.75rem;
             }
             
@@ -2487,7 +2523,7 @@
                 flex: 1;
                 border: none;
                 background: transparent;
-                color: var(--text-primary);
+                color: var(--grok-input-text);
                 font-size: 16px; /* Prevent zoom on iOS */
                 outline: none;
                 resize: none;
@@ -2694,7 +2730,7 @@
             }
             
             .chat-input-wrapper {
-                border-radius: var(--radius-lg); /* Keep rounded corners on mobile */
+                border-radius: var(--grok-input-radius); /* Keep rounded corners on mobile */
                 border-left: none;
                 border-right: none;
             }
@@ -5011,7 +5047,12 @@
             // Context menu
             contextMenuTarget: null,
             // FAB menu
-            fabMenuOpen: false
+            fabMenuOpen: false,
+            // Firebase permission state
+            firestorePermissions: {
+                canRead: false,
+                canWrite: false
+            }
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -5187,7 +5228,12 @@
                     // Initialize Firestore collection references
                     state.usersCollection = db.collection('users');
                     state.chatsCollection = db.collection('users').doc(user.uid).collection('chats');
-                    loadChatHistory(); // Load chat history from Firestore
+                    
+                    // Check Firestore permissions
+                    checkFirestorePermissions().then(() => {
+                        loadChatHistory(); // Load chat history from Firestore
+                    });
+                    
                     initializeVoiceRecognition(); // Initialize voice recognition
                     initializeAnalytics(); // Initialize analytics
                 } else {
@@ -5226,6 +5272,38 @@
             // Initialize FAB menu
             initializeFabMenu();
         });
+
+        // Check Firestore permissions
+        async function checkFirestorePermissions() {
+            try {
+                // Try to read a test document to check permissions
+                const testDoc = await db.collection('permissions').doc('test').get();
+                state.firestorePermissions.canRead = true;
+            } catch (error) {
+                console.log('Firestore read permission check failed:', error);
+                state.firestorePermissions.canRead = false;
+            }
+            
+            try {
+                // Try to write a test document to check permissions
+                await db.collection('permissions').doc('test').set({
+                    test: true,
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                state.firestorePermissions.canWrite = true;
+                
+                // Clean up test document
+                await db.collection('permissions').doc('test').delete();
+            } catch (error) {
+                console.log('Firestore write permission check failed:', error);
+                state.firestorePermissions.canWrite = false;
+            }
+            
+            // Show warning if permissions are missing
+            if (!state.firestorePermissions.canRead || !state.firestorePermissions.canWrite) {
+                showToast('Limited functionality due to Firestore permissions. Some features may not work properly.', 'warning');
+            }
+        }
 
         // Initialize voice recognition
         function initializeVoiceRecognition() {
@@ -5855,6 +5933,12 @@
         function loadUserMemory() {
             if (!state.user) return;
             
+            // Only proceed if we have read permissions
+            if (!state.firestorePermissions.canRead) {
+                console.log('Skipping user memory load due to missing permissions');
+                return;
+            }
+            
             const userRef = db.collection('users').doc(state.user.uid);
             
             userRef.get().then(doc => {
@@ -5910,6 +5994,12 @@
         // Save user memory to Firestore
         function saveUserMemory() {
             if (!state.user) return;
+            
+            // Only proceed if we have write permissions
+            if (!state.firestorePermissions.canWrite) {
+                console.log('Skipping user memory save due to missing permissions');
+                return;
+            }
             
             const userRef = db.collection('users').doc(state.user.uid);
             
@@ -6126,6 +6216,11 @@
 
         // Check if user exists in Firestore
         async function checkUserExists(uid) {
+            // Only proceed if we have read permissions
+            if (!state.firestorePermissions.canRead) {
+                return false; // Assume user doesn't exist if we can't check
+            }
+            
             try {
                 const userDoc = await db.collection('users').doc(uid).get();
                 return userDoc.exists;
@@ -6137,6 +6232,12 @@
 
         // Create user in Firestore
         async function createUserInFirestore(user) {
+            // Only proceed if we have write permissions
+            if (!state.firestorePermissions.canWrite) {
+                console.log('Skipping user creation in Firestore due to missing permissions');
+                return null;
+            }
+            
             try {
                 const userRef = db.collection('users').doc(user.uid);
                 
@@ -6182,6 +6283,12 @@
         // Load user data from Firestore
         function loadUserData() {
             if (!state.user) return;
+            
+            // Only proceed if we have read permissions
+            if (!state.firestorePermissions.canRead) {
+                console.log('Skipping user data load due to missing permissions');
+                return;
+            }
             
             const userRef = db.collection('users').doc(state.user.uid);
             
@@ -6301,6 +6408,12 @@
         // Save user data to Firestore
         function saveUserData() {
             if (!state.user) return;
+            
+            // Only proceed if we have write permissions
+            if (!state.firestorePermissions.canWrite) {
+                console.log('Skipping user data save due to missing permissions');
+                return;
+            }
             
             const userRef = db.collection('users').doc(state.user.uid);
             
@@ -6608,9 +6721,11 @@
                     showToast('Account created successfully', 'success');
                 } else {
                     // Update last login time
-                    await db.collection('users').doc(result.user.uid).update({
-                        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    if (state.firestorePermissions.canWrite) {
+                        await db.collection('users').doc(result.user.uid).update({
+                            lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
                 }
                 
                 // Show success message
@@ -6746,9 +6861,11 @@
                     showToast('Account created successfully', 'success');
                 } else {
                     // Update last login time
-                    await db.collection('users').doc(result.user.uid).update({
-                        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    if (state.firestorePermissions.canWrite) {
+                        await db.collection('users').doc(result.user.uid).update({
+                            lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
                 }
                 
                 showToast('Signed in with Google', 'success');
@@ -6800,9 +6917,11 @@
                     showToast('Account created successfully', 'success');
                 } else {
                     // Update last login time
-                    await db.collection('users').doc(result.user.uid).update({
-                        lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
-                    });
+                    if (state.firestorePermissions.canWrite) {
+                        await db.collection('users').doc(result.user.uid).update({
+                            lastLoginAt: firebase.firestore.FieldValue.serverTimestamp()
+                        });
+                    }
                 }
                 
                 showToast('Signed up with Google', 'success');
