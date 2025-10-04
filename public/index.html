@@ -338,10 +338,12 @@
             background-color: var(--surface-elevated);
         }
 
+        /* Chat history with improved organization */
         .chat-history {
             flex: 1;
             overflow-y: auto;
             padding: 1rem;
+            -webkit-overflow-scrolling: touch;
         }
 
         .chat-history-header {
@@ -383,8 +385,24 @@
             color: var(--text-primary);
         }
 
+        /* Chat group headers for date grouping */
+        .chat-group-header {
+            padding: 0.5rem 1rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: var(--text-tertiary);
+            text-transform: uppercase;
+            background-color: var(--surface);
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            margin-top: 0.5rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Improved chat item layout */
         .chat-item {
-            padding: 0.75rem;
+            padding: 0.75rem 1rem;
             border-radius: var(--radius);
             cursor: pointer;
             transition: var(--transition);
@@ -1933,6 +1951,56 @@
             .chat-item.active .chat-item-title {
                 font-weight: 600;
             }
+            
+            /* Mobile-specific chat history improvements */
+            .chat-item {
+                padding: 1rem;
+            }
+
+            .chat-item-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 1.2rem;
+            }
+
+            .chat-item-title {
+                font-size: 1rem;
+                font-weight: 500;
+            }
+
+            .chat-item-date {
+                font-size: 0.8rem;
+            }
+
+            .chat-item-actions {
+                opacity: 1; /* Always show actions on mobile for better accessibility */
+            }
+
+            .chat-item-action-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 1rem;
+            }
+            
+            /* Improve touch targets */
+            .chat-item {
+                min-height: 60px;
+            }
+            
+            /* Better scrolling for chat history */
+            .chat-history {
+                -webkit-overflow-scrolling: touch;
+                scroll-behavior: smooth;
+            }
+            
+            /* Make group headers more prominent on mobile */
+            .chat-group-header {
+                padding: 0.75rem 1rem;
+                font-size: 0.875rem;
+                font-weight: 700;
+                background-color: var(--surface-elevated);
+                border-bottom: 1px solid var(--border);
+            }
         }
 
         /* Loading Spinner - Grok inspired */
@@ -2789,6 +2857,67 @@
             
             // Combine all parts
             return `${hours}:${formattedMinutes} ${ampm}`;
+        }
+
+        // Format chat item date with relative time
+        function formatChatItemDate(date) {
+            if (!date) return '';
+            
+            // Convert to Date object if it's a string
+            if (typeof date === 'string') {
+                date = new Date(date);
+            }
+            
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const chatDate = new Date(date.getFullYear(), date.getMonth(), date.getDate());
+            
+            if (chatDate.getTime() === today.getTime()) {
+                // For today, show time only (e.g., "1:25 PM")
+                return formatTime(date);
+            } else if (chatDate.getTime() === yesterday.getTime()) {
+                return 'Yesterday';
+            } else {
+                // Show date in a compact format: e.g., "Sep 28"
+                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+                return `${monthNames[date.getMonth()]} ${date.getDate()}`;
+            }
+        }
+
+        // Group chats by date categories
+        function groupChatsByDate(chats) {
+            const now = new Date();
+            const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+            const oneWeekAgo = new Date(today);
+            oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+            const groups = {
+                today: [],
+                yesterday: [],
+                thisWeek: [],
+                earlier: []
+            };
+
+            chats.forEach(chat => {
+                const chatDate = new Date(chat.timestamp);
+                const chatDay = new Date(chatDate.getFullYear(), chatDate.getMonth(), chatDate.getDate());
+
+                if (chatDay.getTime() === today.getTime()) {
+                    groups.today.push(chat);
+                } else if (chatDay.getTime() === yesterday.getTime()) {
+                    groups.yesterday.push(chat);
+                } else if (chatDay >= oneWeekAgo) {
+                    groups.thisWeek.push(chat);
+                } else {
+                    groups.earlier.push(chat);
+                }
+            });
+
+            return groups;
         }
 
         // Detect keyboard open/close on mobile
@@ -3652,6 +3781,10 @@ I can format my responses with tables and boxes for better readability. How can 
             // If switching to current chat, just render messages
             if (chatId === 'current') {
                 renderMessages();
+                // Close sidebar on mobile after selecting a chat
+                if (window.innerWidth <= 768) {
+                    closeSidebar();
+                }
                 return;
             }
             
@@ -3678,6 +3811,11 @@ I can format my responses with tables and boxes for better readability. How can 
                     const activeChatItem = document.querySelector(`.chat-item[data-chat-id="${chatId}"]`);
                     if (activeChatItem) {
                         activeChatItem.classList.add('active');
+                    }
+                    
+                    // Close sidebar on mobile after selecting a chat
+                    if (window.innerWidth <= 768) {
+                        closeSidebar();
                     }
                 }
             }).catch(error => {
@@ -3924,6 +4062,9 @@ How can I assist you today?`;
                 }
             });
             
+            // Group chats by date
+            const groupedChats = groupChatsByDate(filteredChats);
+            
             // Add current chat if no active chat
             if (!state.currentChatId || state.currentChatId === 'current' || state.messages.length > 0) {
                 const activeChat = document.createElement('div');
@@ -3942,38 +4083,58 @@ How can I assist you today?`;
                 elements.chatHistory.appendChild(activeChat);
             }
             
-            // Add filtered and sorted chat history
-            filteredChats.forEach(chat => {
-                const chatItem = document.createElement('div');
-                chatItem.className = `chat-item ${chat.pinned ? 'pinned' : ''}`;
-                chatItem.setAttribute('data-chat-id', chat.id);
-                chatItem.onclick = () => loadChat(chat.id);
-                
-                const date = new Date(chat.timestamp);
-                const formattedDate = formatDateTime(date);
-                
-                chatItem.innerHTML = `
-                    <div class="chat-item-icon">
-                        <i class="fas fa-comment"></i>
-                    </div>
-                    <div class="chat-item-content">
-                        <div class="chat-item-title">${chat.title}</div>
-                        <div class="chat-item-date">${formattedDate}</div>
-                    </div>
-                    <div class="chat-item-actions">
-                        <button class="chat-item-action-btn pin" onclick="event.stopPropagation(); togglePinChat('${chat.id}')" title="${chat.pinned ? 'Unpin chat' : 'Pin chat'}">
-                            <i class="fas fa-thumbtack"></i>
-                        </button>
-                        <button class="chat-item-action-btn rename" onclick="event.stopPropagation(); showRenameModal('${chat.id}')" title="Rename chat">
-                            <i class="fas fa-edit"></i>
-                        </button>
-                        <button class="chat-item-action-btn delete" onclick="event.stopPropagation(); showDeleteChatConfirm('${chat.id}')" title="Delete chat">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                
-                elements.chatHistory.appendChild(chatItem);
+            // Render grouped chats
+            const groupOrder = ['today', 'yesterday', 'thisWeek', 'earlier'];
+            const groupLabels = {
+                today: 'Today',
+                yesterday: 'Yesterday',
+                thisWeek: 'This Week',
+                earlier: 'Earlier'
+            };
+            
+            groupOrder.forEach(groupKey => {
+                const group = groupedChats[groupKey];
+                if (group.length > 0) {
+                    // Add group header
+                    const groupHeader = document.createElement('div');
+                    groupHeader.className = 'chat-group-header';
+                    groupHeader.textContent = groupLabels[groupKey];
+                    elements.chatHistory.appendChild(groupHeader);
+                    
+                    // Add chats in this group
+                    group.forEach(chat => {
+                        const chatItem = document.createElement('div');
+                        chatItem.className = `chat-item ${chat.pinned ? 'pinned' : ''}`;
+                        chatItem.setAttribute('data-chat-id', chat.id);
+                        chatItem.onclick = () => loadChat(chat.id);
+                        
+                        const date = new Date(chat.timestamp);
+                        const formattedDate = formatChatItemDate(date);
+                        
+                        chatItem.innerHTML = `
+                            <div class="chat-item-icon">
+                                <i class="fas fa-comment"></i>
+                            </div>
+                            <div class="chat-item-content">
+                                <div class="chat-item-title">${chat.title}</div>
+                                <div class="chat-item-date">${formattedDate}</div>
+                            </div>
+                            <div class="chat-item-actions">
+                                <button class="chat-item-action-btn pin" onclick="event.stopPropagation(); togglePinChat('${chat.id}')" title="${chat.pinned ? 'Unpin chat' : 'Pin chat'}">
+                                    <i class="fas fa-thumbtack"></i>
+                                </button>
+                                <button class="chat-item-action-btn rename" onclick="event.stopPropagation(); showRenameModal('${chat.id}')" title="Rename chat">
+                                    <i class="fas fa-edit"></i>
+                                </button>
+                                <button class="chat-item-action-btn delete" onclick="event.stopPropagation(); showDeleteChatConfirm('${chat.id}')" title="Delete chat">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        `;
+                        
+                        elements.chatHistory.appendChild(chatItem);
+                    });
+                }
             });
         }
 
