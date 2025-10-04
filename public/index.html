@@ -24,80 +24,80 @@
     <style>
         /* All existing CSS styles remain unchanged */
         :root {
-            /* Grok-inspired color palette */
-            --primary: #8b5cf6;
-            --primary-dark: #7c3aed;
-            --secondary: #6366f1;
-            --accent: #ec4899;
-            --background: #0a0a0a;
-            --surface: #18181b;
-            --surface-elevated: #27272a;
-            --surface-highlight: #3f3f46;
-            --border: #3f3f46;
-            --text-primary: #fafafa;
-            --text-secondary: #a1a1aa;
-            --text-tertiary: #71717a;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --error: #ef4444;
-            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-            --shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
-            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.3);
-            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.3);
+            /* Copilot-inspired color palette */
+            --primary: #0078d4;
+            --primary-dark: #005a9e;
+            --secondary: #404040;
+            --accent: #0078d4;
+            --background: #f3f2f1;
+            --surface: #ffffff;
+            --surface-elevated: #f3f2f1;
+            --surface-highlight: #e1dfdd;
+            --border: #e1dfdd;
+            --text-primary: #323130;
+            --text-secondary: #605e5c;
+            --text-tertiary: #a19f9d;
+            --success: #107c10;
+            --warning: #ff8c00;
+            --error: #e81123;
+            --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.1);
+            --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 10px 15px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 25px rgba(0, 0, 0, 0.1);
             --radius-sm: 0.5rem;
             --radius: 0.75rem;
             --radius-lg: 1rem;
             --transition: all 0.2s ease;
             --logo-size: 40px;
-            --gradient-primary: linear-gradient(135deg, #8b5cf6 0%, #6366f1 50%, #ec4899 100%);
-            --gradient-accent: linear-gradient(135deg, #ec4899 0%, #8b5cf6 100%);
-            --code-bg: #1e1e1e;
-            --code-border: #3f3f46;
-            --code-text: #e5e5e5;
-            --table-header-bg: rgba(139, 92, 246, 0.2);
-            --table-row-alt: rgba(255, 255, 255, 0.03);
-            --box-bg: rgba(139, 92, 246, 0.1);
+            --gradient-primary: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+            --gradient-accent: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+            --code-bg: #f1f1f1;
+            --code-border: #e1dfdd;
+            --code-text: #323130;
+            --table-header-bg: rgba(0, 120, 212, 0.1);
+            --table-row-alt: rgba(0, 0, 0, 0.03);
+            --box-bg: rgba(0, 120, 212, 0.05);
             --box-border: var(--primary);
-            --user-name-gradient: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
-            --action-btn-bg: rgba(255, 255, 255, 0.1);
-            --action-btn-hover: rgba(255, 255, 255, 0.2);
-            --action-btn-active: rgba(139, 92, 246, 0.3);
-            --action-btn-like: #10b981;
-            --action-btn-dislike: #ef4444;
+            --user-name-gradient: linear-gradient(135deg, #323130 0%, #605e5c 100%);
+            --action-btn-bg: rgba(0, 0, 0, 0.05);
+            --action-btn-hover: rgba(0, 0, 0, 0.1);
+            --action-btn-active: rgba(0, 120, 212, 0.1);
+            --action-btn-like: #107c10;
+            --action-btn-dislike: #e81123;
             /* New gradient for user name */
-            --user-name-gradient-colorful: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 25%, #fad0c4 50%, #a1c4fd 75%, #c2e9fb 100%);
-            /* Grok-inspired gradients */
-            --grok-gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
-            --grok-gradient-alt: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
-            --grok-glow: 0 0 20px rgba(139, 92, 246, 0.3);
+            --user-name-gradient-colorful: linear-gradient(90deg, #0078d4 0%, #404040 25%, #0078d4 50%, #404040 75%, #0078d4 100%);
+            /* Copilot-inspired gradients */
+            --grok-gradient: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+            --grok-gradient-alt: linear-gradient(135deg, #0078d4 0%, #005a9e 100%);
+            --grok-glow: 0 0 20px rgba(0, 120, 212, 0.3);
             /* Nexariq brand colors */
             --nexariq-primary: #e46033;
             --nexariq-secondary: #25252b;
             --nexariq-accent: #ff6b35;
         }
 
-        /* Light theme variables */
-        [data-theme="light"] {
-            --background: #ffffff;
-            --surface: #f8fafc;
-            --surface-elevated: #f1f5f9;
-            --surface-highlight: #e2e8f0;
-            --border: #e2e8f0;
-            --text-primary: #1e293b;
-            --text-secondary: #64748b;
-            --text-tertiary: #94a3b8;
-            --code-bg: #f1f5f9;
-            --code-border: #cbd5e1;
-            --code-text: #1e293b;
-            --table-header-bg: rgba(139, 92, 246, 0.1);
-            --table-row-alt: rgba(0, 0, 0, 0.03);
-            --box-bg: rgba(139, 92, 246, 0.05);
-            --user-name-gradient: linear-gradient(135deg, #1e293b 0%, #475569 100%);
-            --action-btn-bg: rgba(0, 0, 0, 0.05);
-            --action-btn-hover: rgba(0, 0, 0, 0.1);
-            --action-btn-active: rgba(139, 92, 246, 0.1);
-            /* Light theme colorful gradient */
-            --user-name-gradient-colorful: linear-gradient(90deg, #ff6b6b 0%, #feca57 25%, #48dbfb 50%, #ff9ff3 75%, #54a0ff 100%);
+        /* Dark theme variables */
+        [data-theme="dark"] {
+            --background: #1f1f1f;
+            --surface: #2d2d2d;
+            --surface-elevated: #3d3d3d;
+            --surface-highlight: #4d4d4d;
+            --border: #3d3d3d;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-tertiary: #999999;
+            --code-bg: #1e1e1e;
+            --code-border: #3d3d3d;
+            --code-text: #e5e5e5;
+            --table-header-bg: rgba(0, 120, 212, 0.2);
+            --table-row-alt: rgba(255, 255, 255, 0.03);
+            --box-bg: rgba(0, 120, 212, 0.1);
+            --user-name-gradient: linear-gradient(135deg, #ffffff 0%, #e0e0e0 100%);
+            --action-btn-bg: rgba(255, 255, 255, 0.1);
+            --action-btn-hover: rgba(255, 255, 255, 0.2);
+            --action-btn-active: rgba(0, 120, 212, 0.3);
+            /* Dark theme colorful gradient */
+            --user-name-gradient-colorful: linear-gradient(90deg, #ff9a9e 0%, #fad0c4 25%, #fad0c4 50%, #a1c4fd 75%, #c2e9fb 100%);
         }
 
         * {
@@ -643,15 +643,16 @@
             }
             
             .container {
-                width: 100%;
-                height: 100vh;
-                max-height: 90vh;
+                width: 90%;
+                height: auto;
+                max-height: 80vh;
                 border-radius: 15px;
                 border: 2px solid var(--nexariq-primary);
                 box-shadow: 0 0 20px rgba(228, 96, 51, 0.4);
                 flex-direction: column;
                 overflow: hidden;
                 position: relative;
+                margin: 20px auto;
             }
             
             .container .form-box {
@@ -777,8 +778,10 @@
         /* Mobile Responsive - Small Phones */
         @media (max-width: 480px) {
             .container {
-                max-height: 95vh;
+                width: 95%;
+                max-height: 85vh;
                 border-radius: 10px;
+                margin: 15px auto;
             }
             
             .brand-logo {
@@ -812,8 +815,10 @@
         /* Mobile Responsive - Very Small Phones */
         @media (max-width: 360px) {
             .container {
-                max-height: 98vh;
+                width: 98%;
+                max-height: 90vh;
                 border-radius: 8px;
+                margin: 10px auto;
             }
             
             .brand-logo {
@@ -850,7 +855,7 @@
             display: none;
         }
 
-        /* Sidebar - Grok inspired */
+        /* Sidebar - Copilot inspired */
         .sidebar {
             width: 260px;
             background-color: var(--surface);
@@ -900,9 +905,9 @@
         }
 
         @keyframes pulse {
-            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.7); }
-            70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
-            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+            0% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(0, 120, 212, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(0, 120, 212, 0); }
         }
 
         .logo-text {
@@ -1157,7 +1162,7 @@
             overflow: hidden;
         }
 
-        /* Header - Grok inspired */
+        /* Header - Copilot inspired */
         .header {
             height: 64px;
             background-color: var(--surface);
@@ -1324,7 +1329,7 @@
         }
 
         .message.user .message-content {
-            background: var(--grok-gradient);
+            background: var(--primary);
             color: white;
             border-bottom-right-radius: var(--radius-sm);
         }
@@ -1426,7 +1431,7 @@
 
         .message-text code {
             font-family: 'JetBrains Mono', monospace;
-            background-color: rgba(255, 255, 255, 0.1);
+            background-color: rgba(0, 0, 0, 0.05);
             padding: 0.125rem 0.25rem;
             border-radius: 0.25rem;
             font-size: 0.875em;
@@ -1569,7 +1574,7 @@
             }
         }
 
-        /* Chat Input - Grok inspired */
+        /* Chat Input - Copilot inspired */
         .chat-input-container {
             padding: 1.5rem;
             background-color: var(--surface);
@@ -1592,7 +1597,7 @@
 
         .chat-input-wrapper:focus-within {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.1);
+            box-shadow: 0 0 0 3px rgba(0, 120, 212, 0.1);
         }
 
         .chat-input {
@@ -1723,7 +1728,7 @@
             white-space: pre-wrap;
         }
 
-        /* Settings Panel - Grok inspired */
+        /* Settings Panel - Copilot inspired */
         .settings-panel {
             position: fixed;
             right: -400px;
@@ -1942,7 +1947,7 @@
             background-color: #dc2626;
         }
 
-        /* User Profile Panel - Grok inspired */
+        /* User Profile Panel - Copilot inspired */
         .user-profile-panel {
             position: fixed;
             left: -300px;
@@ -2075,7 +2080,7 @@
             color: var(--text-secondary);
         }
 
-        /* Toast Notifications - Grok inspired */
+        /* Toast Notifications - Copilot inspired */
         .toast-container {
             position: fixed;
             bottom: 1.5rem;
@@ -2154,7 +2159,7 @@
             color: var(--text-tertiary);
         }
 
-        /* Confirmation Modal - Grok inspired */
+        /* Confirmation Modal - Copilot inspired */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -2203,7 +2208,7 @@
             gap: 1rem;
         }
 
-        /* Search Modal - Grok inspired */
+        /* Search Modal - Copilot inspired */
         .search-modal {
             position: fixed;
             top: 0;
@@ -2290,7 +2295,7 @@
             margin-top: 0.25rem;
         }
 
-        /* Rename Modal - Grok inspired */
+        /* Rename Modal - Copilot inspired */
         .rename-modal {
             position: fixed;
             top: 0;
@@ -2308,7 +2313,7 @@
             display: flex;
         }
 
-        /* Chat History Features - Grok inspired */
+        /* Chat History Features - Copilot inspired */
         .chat-history-features {
             padding: 0.75rem;
             border-bottom: 1px solid var(--border);
@@ -2367,7 +2372,7 @@
             color: var(--text-primary);
         }
 
-        /* Mobile Responsiveness - Grok inspired */
+        /* Mobile Responsiveness - Copilot inspired */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -2599,7 +2604,7 @@
             }
         }
 
-        /* Loading Spinner - Grok inspired */
+        /* Loading Spinner - Copilot inspired */
         .spinner {
             width: 20px;
             height: 20px;
@@ -2615,7 +2620,7 @@
             }
         }
 
-        /* Custom Scrollbar - Grok inspired */
+        /* Custom Scrollbar - Copilot inspired */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
@@ -2634,7 +2639,7 @@
             background: var(--surface-highlight);
         }
 
-        /* Overlay - Grok inspired */
+        /* Overlay - Copilot inspired */
         .overlay {
             position: fixed;
             top: 0;
@@ -2650,7 +2655,7 @@
             display: block;
         }
         
-        /* Brand styling - Grok inspired */
+        /* Brand styling - Copilot inspired */
         .brand-nexariq {
             font-family: 'Space Grotesk', sans-serif;
             font-weight: 700;
@@ -2671,7 +2676,7 @@
             -webkit-text-fill-color: transparent;
         }
         
-        /* User name styling with colorful gradient - Grok inspired */
+        /* User name styling with colorful gradient - Copilot inspired */
         .user-name-colorful {
             font-weight: 600;
             background: var(--user-name-gradient-colorful);
@@ -2681,7 +2686,7 @@
             display: inline;
         }
         
-        /* Mobile keyboard adjustments - Grok inspired */
+        /* Mobile keyboard adjustments - Copilot inspired */
         @media (max-width: 768px) and (orientation: portrait) {
             .keyboard-open .chat-messages {
                 height: calc(100% - 180px); /* Adjust for keyboard */
@@ -2887,15 +2892,6 @@
                     <div class="header-title">Nexariq AI</div>
                 </div>
                 <div class="header-actions">
-                    <button class="header-btn" id="knowledgeBtn" title="Knowledge Base">
-                        <i class="fas fa-book"></i>
-                    </button>
-                    <button class="header-btn" id="projectsBtn" title="Projects">
-                        <i class="fas fa-folder"></i>
-                    </button>
-                    <button class="header-btn" id="toolsBtn" title="Tools">
-                        <i class="fas fa-tools"></i>
-                    </button>
                     <button class="header-btn" id="settingsBtn" title="Settings">
                         <i class="fas fa-cog"></i>
                     </button>
@@ -3297,7 +3293,7 @@
                 workflow: false
             },
             settings: {
-                theme: 'dark',
+                theme: 'light',
                 fontSize: 'medium',
                 typingSpeed: 'medium',
                 autoExecute: false,
@@ -3454,7 +3450,7 @@
         // Initialize app
         document.addEventListener('DOMContentLoaded', () => {
             // Check for saved theme preference
-            const savedTheme = localStorage.getItem('theme') || 'dark';
+            const savedTheme = localStorage.getItem('theme') || 'light';
             state.settings.theme = savedTheme;
             applyTheme(savedTheme);
             
