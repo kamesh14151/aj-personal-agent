@@ -1294,7 +1294,7 @@
         .message {
             display: flex;
             gap: 1rem;
-            max-width: 100%;
+            max-width: 90%;
             animation: fadeIn 0.3s ease;
         }
 
@@ -1310,6 +1310,7 @@
 
         .message.ai {
             align-self: flex-start;
+            width: 100%; /* Full width for AI messages like Grok */
         }
 
         .message-avatar {
@@ -1353,7 +1354,6 @@
             word-wrap: break-word;
             overflow-wrap: break-word;
             max-width: 100%;
-            width: 100%;
         }
 
         .message:hover .message-content {
@@ -1369,6 +1369,7 @@
 
         .message.ai .message-content {
             border-bottom-left-radius: var(--radius-sm);
+            width: 100%; /* Full width for AI messages like Grok */
         }
 
         .message-text {
@@ -1481,9 +1482,78 @@
             margin-bottom: 0.5rem;
         }
 
-        /* Removed message actions */
+        /* Message actions - Simplified for Grok-like interface */
         .message-actions {
-            display: none;
+            display: none; /* Hide action buttons by default */
+            gap: 0.5rem;
+            margin-top: 0.75rem;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+
+        .message:hover .message-actions {
+            display: flex; /* Show on hover */
+            opacity: 1;
+        }
+
+        .message-action-btn {
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-sm);
+            background-color: var(--action-btn-bg);
+            border: none;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .message-action-btn:hover {
+            background-color: var(--action-btn-hover);
+            color: var(--text-primary);
+        }
+
+        .message-action-btn:active {
+            background-color: var(--action-btn-active);
+        }
+
+        .message-action-btn.liked {
+            color: var(--action-btn-like);
+        }
+
+        .message-action-btn.disliked {
+            color: var(--action-btn-dislike);
+        }
+
+        .message-action-btn.copied {
+            color: var(--success);
+        }
+
+        .message-action-btn .tooltip {
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: var(--surface-elevated);
+            color: var(--text-primary);
+            padding: 0.25rem 0.5rem;
+            border-radius: var(--radius-sm);
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            margin-bottom: 0.5rem;
+            box-shadow: var(--shadow-sm);
+            z-index: 10;
+        }
+
+        .message-action-btn:hover .tooltip {
+            opacity: 1;
         }
 
         .message-time {
@@ -1669,13 +1739,14 @@
             transform: none;
         }
 
-        /* Code Block Styles */
+        /* Code Block Styles - Grok-like */
         .code-block {
             margin-top: 1rem;
             border-radius: var(--radius);
             overflow: hidden;
             background-color: var(--code-bg);
             border: 1px solid var(--code-border);
+            width: 100%; /* Full width for code blocks */
         }
 
         .code-header {
@@ -2479,13 +2550,12 @@
             }
             
             .message {
-                max-width: 100%;
+                max-width: 90%;
             }
             
             .message-content {
                 padding: 0.75rem 1rem;
                 font-size: 0.95rem;
-                width: 100%;
             }
             
             .code-block {
@@ -2678,7 +2748,6 @@
             .chat-item-icon {
                 width: 36px;
                 height: 36px;
-                font-size: 1.2rem;
             }
             
             .chat-item-title {
@@ -3966,6 +4035,106 @@
         .status-dot.busy {
             background-color: var(--error);
         }
+        
+        /* More Options Menu - Grok-like */
+        .more-options-menu {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--surface);
+            z-index: 200;
+            display: none;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+            transform: translateX(100%);
+        }
+        
+        .more-options-menu.active {
+            display: flex;
+            transform: translateX(0);
+        }
+        
+        .more-options-header {
+            display: flex;
+            align-items: center;
+            padding: 1rem;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .more-options-back-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius);
+            background-color: transparent;
+            border: none;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 1rem;
+        }
+        
+        .more-options-back-btn:hover {
+            background-color: var(--surface-highlight);
+        }
+        
+        .more-options-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+        
+        .more-options-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+        }
+        
+        .more-options-section {
+            margin-bottom: 2rem;
+        }
+        
+        .more-options-section-title {
+            font-size: 0.875rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+        }
+        
+        .more-options-item {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        
+        .more-options-item:hover {
+            background-color: var(--surface-highlight);
+        }
+        
+        .more-options-item-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 1rem;
+            color: var(--text-secondary);
+        }
+        
+        .more-options-item-text {
+            flex: 1;
+            font-size: 1rem;
+            color: var(--text-primary);
+        }
+        
+        .more-options-item-arrow {
+            color: var(--text-tertiary);
+        }
     </style>
 </head>
 <body>
@@ -4166,17 +4335,8 @@
                     <div class="header-title">Nexariq AI</div>
                 </div>
                 <div class="header-actions">
-                    <button class="header-btn" id="analyticsBtn" title="Analytics">
-                        <i class="fas fa-chart-bar"></i>
-                    </button>
-                    <button class="header-btn" id="shortcutsBtn" title="Keyboard Shortcuts">
-                        <i class="fas fa-keyboard"></i>
-                    </button>
-                    <button class="header-btn" id="settingsBtn" title="Settings">
-                        <i class="fas fa-cog"></i>
-                    </button>
-                    <button class="header-btn" id="signOutBtn" title="Sign Out">
-                        <i class="fas fa-sign-out-alt"></i>
+                    <button class="header-btn" id="moreOptionsBtn" title="More Options">
+                        <i class="fas fa-ellipsis-v"></i>
                     </button>
                 </div>
             </div>
@@ -4223,7 +4383,7 @@
 
                 <div class="chat-input-container">
                     <div class="chat-input-wrapper">
-                        <textarea class="chat-input" id="chatInput" placeholder="Message Lynxa Pro..." rows="1"></textarea>
+                        <textarea class="chat-input" id="chatInput" placeholder="Ask anything..." rows="1"></textarea>
                         <div class="chat-actions">
                             <button class="chat-action-btn" id="attachBtn" title="Attach file">
                                 <i class="fas fa-paperclip"></i>
@@ -4231,65 +4391,77 @@
                             <button class="voice-input-btn" id="voiceInputBtn" title="Voice input">
                                 <i class="fas fa-microphone"></i>
                             </button>
-                            <button class="chat-action-btn" id="templatesBtn" title="Templates">
-                                <i class="fas fa-lightbulb"></i>
-                            </button>
                             <button class="chat-send-btn" id="sendBtn">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
                     </div>
-                    <div class="templates-container" id="templatesContainer" style="display: none;">
-                        <button class="template-btn" data-template="explain">Explain concept</button>
-                        <button class="template-btn" data-template="code">Generate code</button>
-                        <button class="template-btn" data-template="summarize">Summarize text</button>
-                        <button class="template-btn" data-template="translate">Translate</button>
-                        <button class="template-btn" data-template="brainstorm">Brainstorm ideas</button>
-                    </div>
                 </div>
             </div>
-            
-            <!-- Analytics Dashboard -->
-            <div class="analytics-dashboard" id="analyticsDashboard">
-                <div class="analytics-header">
-                    <div class="analytics-title">Conversation Analytics</div>
-                    <div class="analytics-period">
-                        <button class="period-btn active" data-period="week">Week</button>
-                        <button class="period-btn" data-period="month">Month</button>
-                        <button class="period-btn" data-period="year">Year</button>
-                    </div>
+        </div>
+    </div>
+
+    <!-- More Options Menu - Grok-like -->
+    <div class="more-options-menu" id="moreOptionsMenu">
+        <div class="more-options-header">
+            <button class="more-options-back-btn" id="moreOptionsBackBtn">
+                <i class="fas fa-arrow-left"></i>
+            </button>
+            <div class="more-options-title">More Options</div>
+        </div>
+        <div class="more-options-content">
+            <div class="more-options-section">
+                <div class="more-options-section-title">Chat</div>
+                <div class="more-options-item" id="newChatOption">
+                    <i class="fas fa-plus more-options-item-icon"></i>
+                    <div class="more-options-item-text">New Chat</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
                 </div>
-                <div class="analytics-cards">
-                    <div class="analytics-card">
-                        <div class="analytics-card-title">Total Messages</div>
-                        <div class="analytics-card-value" id="totalMessagesCard">0</div>
-                        <div class="analytics-card-change positive">+12% from last week</div>
-                    </div>
-                    <div class="analytics-card">
-                        <div class="analytics-card-title">Conversation Length</div>
-                        <div class="analytics-card-value" id="avgConversationLength">0</div>
-                        <div class="analytics-card-change positive">+5% from last week</div>
-                    </div>
-                    <div class="analytics-card">
-                        <div class="analytics-card-title">Most Used Topics</div>
-                        <div class="analytics-card-value" id="topTopics">-</div>
-                        <div class="analytics-card-change neutral">No change</div>
-                    </div>
-                    <div class="analytics-card">
-                        <div class="analytics-card-title">Response Quality</div>
-                        <div class="analytics-card-value" id="responseQuality">0%</div>
-                        <div class="analytics-card-change positive">+8% from last week</div>
-                    </div>
+                <div class="more-options-item" id="searchChatOption">
+                    <i class="fas fa-search more-options-item-icon"></i>
+                    <div class="more-options-item-text">Search Chats</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
                 </div>
-                <div class="analytics-charts">
-                    <div class="chart-container">
-                        <div class="chart-title">Message Volume</div>
-                        <canvas id="messageVolumeChart"></canvas>
-                    </div>
-                    <div class="chart-container">
-                        <div class="chart-title">Topic Distribution</div>
-                        <canvas id="topicDistributionChart"></canvas>
-                    </div>
+                <div class="more-options-item" id="exportChatOption">
+                    <i class="fas fa-download more-options-item-icon"></i>
+                    <div class="more-options-item-text">Export Chats</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
+                </div>
+                <div class="more-options-item" id="clearChatOption">
+                    <i class="fas fa-trash more-options-item-icon"></i>
+                    <div class="more-options-item-text">Clear Chats</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
+                </div>
+            </div>
+            <div class="more-options-section">
+                <div class="more-options-section-title">Settings</div>
+                <div class="more-options-item" id="settingsOption">
+                    <i class="fas fa-cog more-options-item-icon"></i>
+                    <div class="more-options-item-text">Settings</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
+                </div>
+                <div class="more-options-item" id="profileOption">
+                    <i class="fas fa-user more-options-item-icon"></i>
+                    <div class="more-options-item-text">Profile</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
+                </div>
+                <div class="more-options-item" id="analyticsOption">
+                    <i class="fas fa-chart-bar more-options-item-icon"></i>
+                    <div class="more-options-item-text">Analytics</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
+                </div>
+                <div class="more-options-item" id="shortcutsOption">
+                    <i class="fas fa-keyboard more-options-item-icon"></i>
+                    <div class="more-options-item-text">Keyboard Shortcuts</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
+                </div>
+            </div>
+            <div class="more-options-section">
+                <div class="more-options-section-title">Account</div>
+                <div class="more-options-item" id="signOutOption">
+                    <i class="fas fa-sign-out-alt more-options-item-icon"></i>
+                    <div class="more-options-item-text">Sign Out</div>
+                    <i class="fas fa-chevron-right more-options-item-arrow"></i>
                 </div>
             </div>
         </div>
@@ -4801,45 +4973,47 @@
     <!-- Toast Container -->
     <div class="toast-container" id="toastContainer"></div>
     
-    <!-- Floating Action Button -->
-    <button class="floating-action-btn" id="fabBtn">
-        <i class="fas fa-plus"></i>
-    </button>
-    
-    <!-- FAB Menu -->
-    <div class="fab-menu" id="fabMenu">
-        <button class="fab-menu-item" id="fabVoiceBtn" title="Voice Input">
-            <i class="fas fa-microphone"></i>
-        </button>
-        <button class="fab-menu-item" id="fabCameraBtn" title="Camera">
-            <i class="fas fa-camera"></i>
-        </button>
-        <button class="fab-menu-item" id="fabImageBtn" title="Upload Image">
-            <i class="fas fa-image"></i>
-        </button>
-        <button class="fab-menu-item" id="fabCodeBtn" title="Code Editor">
-            <i class="fas fa-code"></i>
-        </button>
-    </div>
-    
-    <!-- Context Menu -->
-    <div class="context-menu" id="contextMenu">
-        <div class="context-menu-item" id="contextCopy">
-            <i class="fas fa-copy"></i>
-            Copy
+    <!-- Analytics Dashboard -->
+    <div class="analytics-dashboard" id="analyticsDashboard">
+        <div class="analytics-header">
+            <div class="analytics-title">Conversation Analytics</div>
+            <div class="analytics-period">
+                <button class="period-btn active" data-period="week">Week</button>
+                <button class="period-btn" data-period="month">Month</button>
+                <button class="period-btn" data-period="year">Year</button>
+            </div>
         </div>
-        <div class="context-menu-item" id="contextEdit">
-            <i class="fas fa-edit"></i>
-            Edit
+        <div class="analytics-cards">
+            <div class="analytics-card">
+                <div class="analytics-card-title">Total Messages</div>
+                <div class="analytics-card-value" id="totalMessagesCard">0</div>
+                <div class="analytics-card-change positive">+12% from last week</div>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-card-title">Conversation Length</div>
+                <div class="analytics-card-value" id="avgConversationLength">0</div>
+                <div class="analytics-card-change positive">+5% from last week</div>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-card-title">Most Used Topics</div>
+                <div class="analytics-card-value" id="topTopics">-</div>
+                <div class="analytics-card-change neutral">No change</div>
+            </div>
+            <div class="analytics-card">
+                <div class="analytics-card-title">Response Quality</div>
+                <div class="analytics-card-value" id="responseQuality">0%</div>
+                <div class="analytics-card-change positive">+8% from last week</div>
+            </div>
         </div>
-        <div class="context-menu-item" id="contextDelete">
-            <i class="fas fa-trash"></i>
-            Delete
-        </div>
-        <div class="context-menu-divider"></div>
-        <div class="context-menu-item" id="contextShare">
-            <i class="fas fa-share"></i>
-            Share
+        <div class="analytics-charts">
+            <div class="chart-container">
+                <div class="chart-title">Message Volume</div>
+                <canvas id="messageVolumeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <div class="chart-title">Topic Distribution</div>
+                <canvas id="topicDistributionChart"></canvas>
+            </div>
         </div>
     </div>
 
@@ -4949,7 +5123,9 @@
             firestorePermissions: {
                 canRead: false,
                 canWrite: false
-            }
+            },
+            // More options menu state
+            moreOptionsMenuOpen: false
         };
 
         // Typing speeds (characters per millisecond) - adjusted for Copilot-like slow typing
@@ -5089,19 +5265,19 @@
             shareLinkInput: document.getElementById('shareLinkInput'),
             copyShareLinkBtn: document.getElementById('copyShareLinkBtn'),
             shareCancelBtn: document.getElementById('shareCancelBtn'),
-            // FAB elements
-            fabBtn: document.getElementById('fabBtn'),
-            fabMenu: document.getElementById('fabMenu'),
-            fabVoiceBtn: document.getElementById('fabVoiceBtn'),
-            fabCameraBtn: document.getElementById('fabCameraBtn'),
-            fabImageBtn: document.getElementById('fabImageBtn'),
-            fabCodeBtn: document.getElementById('fabCodeBtn'),
-            // Context menu elements
-            contextMenu: document.getElementById('contextMenu'),
-            contextCopy: document.getElementById('contextCopy'),
-            contextEdit: document.getElementById('contextEdit'),
-            contextDelete: document.getElementById('contextDelete'),
-            contextShare: document.getElementById('contextShare')
+            // More options menu elements
+            moreOptionsBtn: document.getElementById('moreOptionsBtn'),
+            moreOptionsMenu: document.getElementById('moreOptionsMenu'),
+            moreOptionsBackBtn: document.getElementById('moreOptionsBackBtn'),
+            newChatOption: document.getElementById('newChatOption'),
+            searchChatOption: document.getElementById('searchChatOption'),
+            exportChatOption: document.getElementById('exportChatOption'),
+            clearChatOption: document.getElementById('clearChatOption'),
+            settingsOption: document.getElementById('settingsOption'),
+            profileOption: document.getElementById('profileOption'),
+            analyticsOption: document.getElementById('analyticsOption'),
+            shortcutsOption: document.getElementById('shortcutsOption'),
+            signOutOption: document.getElementById('signOutOption')
         };
 
         // Initialize app
@@ -5165,9 +5341,6 @@
             
             // Initialize context menu
             initializeContextMenu();
-            
-            // Initialize FAB menu
-            initializeFabMenu();
         });
 
         // Check Firestore permissions
@@ -5464,192 +5637,8 @@
         function initializeContextMenu() {
             // Hide context menu when clicking outside
             document.addEventListener('click', () => {
-                elements.contextMenu.classList.remove('active');
+                // Context menu implementation would go here
             });
-            
-            // Context menu item handlers
-            elements.contextCopy.addEventListener('click', () => {
-                if (state.contextMenuTarget) {
-                    copyToClipboard(state.contextMenuTarget.textContent);
-                }
-                elements.contextMenu.classList.remove('active');
-            });
-            
-            elements.contextEdit.addEventListener('click', () => {
-                if (state.contextMenuTarget) {
-                    // Implementation depends on what is being edited
-                    showToast('Edit feature coming soon', 'info');
-                }
-                elements.contextMenu.classList.remove('active');
-            });
-            
-            elements.contextDelete.addEventListener('click', () => {
-                if (state.contextMenuTarget) {
-                    // Implementation depends on what is being deleted
-                    showToast('Delete feature coming soon', 'info');
-                }
-                elements.contextMenu.classList.remove('active');
-            });
-            
-            elements.contextShare.addEventListener('click', () => {
-                elements.shareModal.classList.add('active');
-                elements.overlay.classList.add('active');
-                elements.contextMenu.classList.remove('active');
-            });
-        }
-
-        // Initialize FAB menu
-        function initializeFabMenu() {
-            elements.fabBtn.addEventListener('click', () => {
-                state.fabMenuOpen = !state.fabMenuOpen;
-                elements.fabMenu.classList.toggle('active');
-                
-                // Rotate the FAB button
-                if (state.fabMenuOpen) {
-                    elements.fabBtn.style.transform = 'rotate(45deg)';
-                } else {
-                    elements.fabBtn.style.transform = 'rotate(0)';
-                }
-            });
-            
-            // FAB menu item handlers
-            elements.fabVoiceBtn.addEventListener('click', () => {
-                if (state.isRecording) {
-                    stopVoiceRecording();
-                } else {
-                    startVoiceRecording();
-                }
-                toggleFabMenu();
-            });
-            
-            elements.fabCameraBtn.addEventListener('click', () => {
-                // Open camera
-                showToast('Camera feature coming soon', 'info');
-                toggleFabMenu();
-            });
-            
-            elements.fabImageBtn.addEventListener('click', () => {
-                // Open file picker for images
-                const input = document.createElement('input');
-                input.type = 'file';
-                input.accept = 'image/*';
-                input.onchange = handleImageSelect;
-                input.click();
-                toggleFabMenu();
-            });
-            
-            elements.fabCodeBtn.addEventListener('click', () => {
-                // Open code editor
-                showToast('Code editor feature coming soon', 'info');
-                toggleFabMenu();
-            });
-        }
-
-        // Toggle FAB menu
-        function toggleFabMenu() {
-            state.fabMenuOpen = false;
-            elements.fabMenu.classList.remove('active');
-            elements.fabBtn.style.transform = 'rotate(0)';
-        }
-
-        // Handle image selection
-        function handleImageSelect(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            // Check if it's an image
-            if (!file.type.startsWith('image/')) {
-                showToast('Please select an image file', 'error');
-                return;
-            }
-            
-            // Create a preview
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const imageData = e.target.result;
-                
-                // Add image message
-                const imageMessage = {
-                    id: generateId(),
-                    role: 'user',
-                    content: `![Image](${imageData})`,
-                    timestamp: new Date().toISOString(),
-                    attachments: [{
-                        id: generateId(),
-                        name: file.name,
-                        size: file.size,
-                        type: file.type,
-                        data: imageData
-                    }]
-                };
-                
-                state.messages.push(imageMessage);
-                renderMessages();
-                saveState();
-                
-                // Process with OCR if needed
-                if (state.settings.ocrProcessing) {
-                    processImageWithOCR(imageData);
-                }
-                
-                showToast('Image attached', 'success');
-            };
-            
-            reader.readAsDataURL(file);
-        }
-
-        // Process image with OCR
-        function processImageWithOCR(imageData) {
-            showToast('Processing image with OCR...', 'info');
-            
-            Tesseract.recognize(
-                imageData,
-                'eng',
-                { logger: m => console.log(m) }
-            ).then(({ data: { text } }) => {
-                // Add OCR result as a user message
-                const ocrMessage = {
-                    id: generateId(),
-                    role: 'user',
-                    content: `OCR Result:\n\n${text}`,
-                    timestamp: new Date().toISOString()
-                };
-                
-                state.messages.push(ocrMessage);
-                renderMessages();
-                saveState();
-                
-                showToast('OCR processing complete', 'success');
-            }).catch(error => {
-                console.error('OCR Error:', error);
-                showToast('OCR processing failed', 'error');
-            });
-        }
-
-        // Close all modals
-        function closeAllModals() {
-            elements.settingsPanel.classList.remove('active');
-            elements.userProfilePanel.classList.remove('active');
-            elements.searchModal.classList.remove('active');
-            elements.renameModal.classList.remove('active');
-            elements.shortcutsModal.classList.remove('active');
-            elements.shareModal.classList.remove('active');
-            elements.confirmModal.classList.remove('active');
-            elements.overlay.classList.remove('active');
-            elements.contextMenu.classList.remove('active');
-            toggleFabMenu();
-        }
-
-        // Copy to clipboard
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text)
-                .then(() => {
-                    showToast('Copied to clipboard', 'success');
-                })
-                .catch(err => {
-                    showToast('Failed to copy', 'error');
-                    console.error('Failed to copy:', err);
-                });
         }
 
         // Detect mobile devices
@@ -6399,17 +6388,6 @@
                 });
             }
             
-            // Templates
-            if (elements.templatesBtn) elements.templatesBtn.addEventListener('click', toggleTemplates);
-            
-            // Template buttons
-            document.querySelectorAll('.template-btn').forEach(btn => {
-                btn.addEventListener('click', () => {
-                    const template = btn.getAttribute('data-template');
-                    applyTemplate(template);
-                });
-            });
-            
             // Settings panel
             if (elements.settingsBtn) elements.settingsBtn.addEventListener('click', toggleSettingsPanel);
             if (elements.settingsClose) elements.settingsClose.addEventListener('click', closeSettingsPanel);
@@ -6497,6 +6475,56 @@
             if (elements.copyShareLinkBtn) elements.copyShareLinkBtn.addEventListener('click', copyShareLink);
             if (elements.shareCancelBtn) elements.shareCancelBtn.addEventListener('click', hideShareModal);
             
+            // More options menu
+            if (elements.moreOptionsBtn) elements.moreOptionsBtn.addEventListener('click', toggleMoreOptionsMenu);
+            if (elements.moreOptionsBackBtn) elements.moreOptionsBackBtn.addEventListener('click', closeMoreOptionsMenu);
+            
+            // More options menu items
+            if (elements.newChatOption) elements.newChatOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                startNewChat();
+            });
+            
+            if (elements.searchChatOption) elements.searchChatOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                showSearchModal();
+            });
+            
+            if (elements.exportChatOption) elements.exportChatOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                exportChatHistory();
+            });
+            
+            if (elements.clearChatOption) elements.clearChatOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                showClearChatsConfirm();
+            });
+            
+            if (elements.settingsOption) elements.settingsOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                toggleSettingsPanel();
+            });
+            
+            if (elements.profileOption) elements.profileOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                toggleUserProfilePanel();
+            });
+            
+            if (elements.analyticsOption) elements.analyticsOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                toggleAnalytics();
+            });
+            
+            if (elements.shortcutsOption) elements.shortcutsOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                showShortcutsModal();
+            });
+            
+            if (elements.signOutOption) elements.signOutOption.addEventListener('click', () => {
+                closeMoreOptionsMenu();
+                signOut();
+            });
+            
             // Window resize
             window.addEventListener('resize', handleWindowResize);
             
@@ -6507,12 +6535,6 @@
                 document.addEventListener('touchmove', handleTouchMove, { passive: true });
                 document.addEventListener('touchend', handleTouchEnd, { passive: true });
             }
-            
-            // Context menu
-            document.addEventListener('contextmenu', (e) => {
-                e.preventDefault();
-                showContextMenu(e.pageX, e.pageY, e.target);
-            });
         }
 
         // Touch event handlers for mobile
@@ -6967,6 +6989,7 @@
             elements.settingsPanel.classList.remove('active');
             elements.userProfilePanel.classList.remove('active');
             elements.overlay.classList.remove('active');
+            closeMoreOptionsMenu();
             
             // Reset to chat view
             state.currentView = 'chat';
@@ -8210,39 +8233,6 @@ Remember the user's preferences and previous interactions to provide personalize
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        // Toggle templates
-        function toggleTemplates() {
-            const isVisible = elements.templatesContainer.style.display !== 'none';
-            elements.templatesContainer.style.display = isVisible ? 'none' : 'flex';
-        }
-
-        // Apply template
-        function applyTemplate(template) {
-            let prompt = '';
-            
-            switch (template) {
-                case 'explain':
-                    prompt = 'Explain the concept of [topic] in simple terms.';
-                    break;
-                case 'code':
-                    prompt = 'Generate code for [task] in [language].';
-                    break;
-                case 'summarize':
-                    prompt = 'Summarize the following text:\n\n[paste text here]';
-                    break;
-                case 'translate':
-                    prompt = 'Translate the following text from [source language] to [target language]:\n\n[paste text here]';
-                    break;
-                case 'brainstorm':
-                    prompt = 'Brainstorm ideas for [topic].';
-                    break;
-            }
-            
-            elements.chatInput.value = prompt;
-            elements.chatInput.focus();
-            toggleTemplates();
-        }
-
         // Toggle settings panel
         function toggleSettingsPanel() {
             state.viewHistory.push(state.currentView);
@@ -8554,15 +8544,6 @@ Remember the user's preferences and previous interactions to provide personalize
             
             navigator.clipboard.writeText(message.content)
                 .then(() => {
-                    // Update button state
-                    const copyBtn = document.querySelector(`button[onclick="copyMessage('${messageId}')"]`);
-                    if (copyBtn) {
-                        copyBtn.classList.add('copied');
-                        setTimeout(() => {
-                            copyBtn.classList.remove('copied');
-                        }, 2000);
-                    }
-                    
                     showToast('Message copied to clipboard', 'success');
                 })
                 .catch(err => {
@@ -8614,201 +8595,6 @@ Remember the user's preferences and previous interactions to provide personalize
             updateMessageFeedbackUI();
             
             // Save to database
-            saveUserMemory();
-        }
-
-        // Toggle reaction picker
-        function toggleReactionPicker(messageId) {
-            // Find the message element
-            const messageEl = document.getElementById(`message-${messageId}`);
-            if (!messageEl) return;
-            
-            // Check if reaction picker already exists
-            let picker = messageEl.querySelector('.reaction-picker');
-            
-            if (picker) {
-                // Toggle visibility
-                picker.style.display = picker.style.display === 'none' ? 'flex' : 'none';
-            } else {
-                // Create reaction picker
-                picker = document.createElement('div');
-                picker.className = 'reaction-picker';
-                
-                const emojis = ['👍', '👎', '😄', '❤️', '😂', '😮', '😢', '🔥'];
-                
-                emojis.forEach(emoji => {
-                    const emojiEl = document.createElement('div');
-                    emojiEl.className = 'reaction-emoji';
-                    emojiEl.textContent = emoji;
-                    emojiEl.onclick = () => addReaction(messageId, emoji);
-                    picker.appendChild(emojiEl);
-                });
-                
-                // Add to message actions
-                const actionsEl = messageEl.querySelector('.message-actions');
-                actionsEl.appendChild(picker);
-            }
-        }
-
-        // Add reaction to message
-        function addReaction(messageId, emoji) {
-            // Initialize reactions for this message if not exists
-            if (!state.messageReactions[messageId]) {
-                state.messageReactions[messageId] = {};
-            }
-            
-            // Toggle reaction
-            if (state.messageReactions[messageId][emoji]) {
-                delete state.messageReactions[messageId][emoji];
-            } else {
-                state.messageReactions[messageId][emoji] = 1;
-            }
-            
-            // Update UI
-            updateMessageReactions(messageId);
-            
-            // Save to database
-            saveUserMemory();
-            
-            // Hide reaction picker
-            const picker = document.querySelector(`#message-${messageId} .reaction-picker`);
-            if (picker) {
-                picker.style.display = 'none';
-            }
-        }
-
-        // Update message reactions UI
-        function updateMessageReactions(messageId) {
-            const reactionsEl = document.getElementById(`reactions-${messageId}`);
-            if (!reactionsEl) return;
-            
-            reactionsEl.innerHTML = '';
-            
-            const reactions = state.messageReactions[messageId];
-            if (!reactions) return;
-            
-            Object.entries(reactions).forEach(([emoji, count]) => {
-                const reactionEl = document.createElement('div');
-                reactionEl.className = 'message-reaction';
-                reactionEl.textContent = `${emoji} ${count}`;
-                reactionEl.onclick = () => addReaction(messageId, emoji);
-                reactionsEl.appendChild(reactionEl);
-            });
-        }
-
-        // Start message thread
-        function startThread(messageId) {
-            // Initialize thread for this message if not exists
-            if (!state.messageThreads[messageId]) {
-                state.messageThreads[messageId] = {
-                    messages: [],
-                    collapsed: false
-                };
-            }
-            
-            // Show thread input
-            const messageEl = document.getElementById(`message-${messageId}`);
-            if (!messageEl) return;
-            
-            // Check if thread input already exists
-            let threadInput = messageEl.querySelector('.thread-input');
-            
-            if (threadInput) {
-                // Focus on existing input
-                threadInput.focus();
-            } else {
-                // Create thread input
-                threadInput = document.createElement('div');
-                threadInput.className = 'thread-input';
-                threadInput.innerHTML = `
-                    <textarea class="thread-textarea" placeholder="Reply to this message..."></textarea>
-                    <button class="thread-send-btn">Send</button>
-                `;
-                
-                // Add to message content
-                const contentEl = messageEl.querySelector('.message-content');
-                contentEl.appendChild(threadInput);
-                
-                // Focus on textarea
-                threadInput.querySelector('.thread-textarea').focus();
-                
-                // Add event listeners
-                const textarea = threadInput.querySelector('.thread-textarea');
-                const sendBtn = threadInput.querySelector('.thread-send-btn');
-                
-                const sendReply = () => {
-                    const replyText = textarea.value.trim();
-                    if (!replyText) return;
-                    
-                    // Add reply to thread
-                    const reply = {
-                        id: generateId(),
-                        role: 'user',
-                        content: replyText,
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    state.messageThreads[messageId].messages.push(reply);
-                    
-                    // Clear input
-                    textarea.value = '';
-                    
-                    // Update UI
-                    renderMessages();
-                    
-                    // Save to database
-                    saveUserMemory();
-                    
-                    // Send reply to AI
-                    sendThreadReply(messageId, replyText);
-                };
-                
-                sendBtn.addEventListener('click', sendReply);
-                textarea.addEventListener('keydown', (e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendReply();
-                    }
-                });
-            }
-        }
-
-        // Send thread reply to AI
-        function sendThreadReply(parentMessageId, replyText) {
-            // Find the parent message
-            const parentMessage = state.messages.find(m => m.id === parentMessageId);
-            if (!parentMessage) return;
-            
-            // Create a new message with the thread context
-            const threadContext = state.messageThreads[parentMessageId].messages.map(m => m.content).join('\n');
-            
-            // Add AI response to thread
-            const aiReply = {
-                id: generateId(),
-                role: 'assistant',
-                content: 'Processing your reply...',
-                timestamp: new Date().toISOString()
-            };
-            
-            state.messageThreads[parentMessageId].messages.push(aiReply);
-            renderMessages();
-            
-            // Send to AI with context
-            // This is a simplified implementation
-            // In a real app, you would send the entire thread context to the AI
-            setTimeout(() => {
-                aiReply.content = `This is a response to your reply in the thread. In a real implementation, this would be a contextual response from the AI based on the thread history and the parent message.`;
-                renderMessages();
-                saveUserMemory();
-            }, 2000);
-        }
-
-        // Toggle thread
-        function toggleThread(messageId) {
-            if (!state.messageThreads[messageId]) return;
-            
-            state.messageThreads[messageId].collapsed = !state.messageThreads[messageId].collapsed;
-            renderMessages();
             saveUserMemory();
         }
 
@@ -9289,13 +9075,36 @@ How can I assist you today?`;
                 });
         }
 
-        // Show context menu
-        function showContextMenu(x, y, target) {
-            state.contextMenuTarget = target;
+        // Toggle more options menu
+        function toggleMoreOptionsMenu() {
+            state.moreOptionsMenuOpen = !state.moreOptionsMenuOpen;
             
-            elements.contextMenu.style.left = `${x}px`;
-            elements.contextMenu.style.top = `${y}px`;
-            elements.contextMenu.classList.add('active');
+            if (state.moreOptionsMenuOpen) {
+                elements.moreOptionsMenu.classList.add('active');
+                elements.overlay.classList.add('active');
+            } else {
+                closeMoreOptionsMenu();
+            }
+        }
+
+        // Close more options menu
+        function closeMoreOptionsMenu() {
+            state.moreOptionsMenuOpen = false;
+            elements.moreOptionsMenu.classList.remove('active');
+            elements.overlay.classList.remove('active');
+        }
+
+        // Close all modals
+        function closeAllModals() {
+            elements.settingsPanel.classList.remove('active');
+            elements.userProfilePanel.classList.remove('active');
+            elements.searchModal.classList.remove('active');
+            elements.renameModal.classList.remove('active');
+            elements.shortcutsModal.classList.remove('active');
+            elements.shareModal.classList.remove('active');
+            elements.confirmModal.classList.remove('active');
+            elements.overlay.classList.remove('active');
+            closeMoreOptionsMenu();
         }
 
         // Global functions for onclick handlers
@@ -9309,9 +9118,6 @@ How can I assist you today?`;
         window.showRenameModal = showRenameModal;
         window.runCodeInEditor = runCodeInEditor;
         window.editCodeInEditor = editCodeInEditor;
-        window.toggleReactionPicker = toggleReactionPicker;
-        window.startThread = startThread;
-        window.toggleThread = toggleThread;
     </script>
 </body>
 </html>
