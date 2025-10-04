@@ -70,6 +70,10 @@
             --grok-gradient: linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%);
             --grok-gradient-alt: linear-gradient(135deg, #6366f1 0%, #ec4899 100%);
             --grok-glow: 0 0 20px rgba(139, 92, 246, 0.3);
+            /* Nexariq brand colors */
+            --nexariq-primary: #e46033;
+            --nexariq-secondary: #25252b;
+            --nexariq-accent: #ff6b35;
         }
 
         /* Light theme variables */
@@ -119,7 +123,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: #25252b;
+            background: var(--nexariq-secondary);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -138,7 +142,7 @@
             position: relative;
             width: 820px;
             height: 550px;
-            border: 2px solid #e46033;
+            border: 2px solid var(--nexariq-primary);
             box-shadow: 0 0 30px rgba(228, 96, 51, 0.5);
             overflow: hidden;
             border-radius: 20px;
@@ -218,7 +222,7 @@
             height: 50px;
             margin-bottom: 8px;
             border-radius: 50%;
-            border: 2px solid #e46033;
+            border: 2px solid var(--nexariq-primary);
             box-shadow: 0 0 15px rgba(228, 96, 51, 0.6);
             transition: all 0.3s ease;
             object-fit: cover;
@@ -239,6 +243,10 @@
             margin-top: 5px;
             text-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
             line-height: 1.2;
+            background: var(--grok-gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         /* RGB blinking animation */
@@ -318,7 +326,7 @@
             top: -8px;
             left: 8px;
             font-size: 10px;
-            color: #e46033;
+            color: var(--nexariq-primary);
             background: #25252b;
             padding: 0 4px;
             border-radius: 3px;
@@ -336,14 +344,14 @@
 
         .input-box input:focus ~ i,
         .input-box input:valid ~ i {
-            color: #e46033;
+            color: var(--nexariq-primary);
         }
 
         .btn {
             position: relative;
             width: 100%;
             height: 38px;
-            background: linear-gradient(45deg, #e46033, #ff6b35);
+            background: linear-gradient(45deg, var(--nexariq-primary), var(--nexariq-accent));
             border-radius: 20px;
             cursor: pointer;
             font-size: 13px;
@@ -370,7 +378,7 @@
             position: absolute;
             height: 100%;
             width: 100%;
-            background: linear-gradient(45deg, #ff6b35, #e46033);
+            background: linear-gradient(45deg, var(--nexariq-accent), var(--nexariq-primary));
             top: 0;
             left: 0;
             z-index: -1;
@@ -448,14 +456,14 @@
 
         .regi-link a {
             text-decoration: none;
-            color: #e46033;
+            color: var(--nexariq-primary);
             font-weight: 600;
             transition: all 0.3s ease;
         }
 
         .regi-link a:hover {
             text-decoration: underline;
-            color: #ff6b35;
+            color: var(--nexariq-accent);
         }
 
         .info-content {
@@ -559,7 +567,7 @@
             height: 750px;
             width: 920px;
             background: rgba(37, 37, 43, 0.9);
-            border-top: 3px solid #e46033;
+            border-top: 3px solid var(--nexariq-primary);
             transform: rotate(0deg) skewY(0deg);
             transform-origin: bottom left;
             transition: 1.5s ease;
@@ -629,41 +637,53 @@
                 padding: 0;
             }
             
+            .login-screen {
+                padding: 10px;
+                background: var(--nexariq-secondary);
+            }
+            
             .container {
                 width: 100%;
                 height: 100vh;
-                border-radius: 0;
-                border: none;
-                display: flex;
+                max-height: 90vh;
+                border-radius: 15px;
+                border: 2px solid var(--nexariq-primary);
+                box-shadow: 0 0 20px rgba(228, 96, 51, 0.4);
                 flex-direction: column;
-                background: #25252b;
+                overflow: hidden;
+                position: relative;
             }
             
             .container .form-box {
+                position: absolute;
+                top: 0;
+                left: 0;
                 width: 100%;
-                padding: 15px;
+                height: 100%;
+                padding: 20px;
                 z-index: 10;
-                position: relative;
-                max-width: 100%;
+                box-sizing: border-box;
+                transition: transform 0.7s ease, opacity 0.7s ease;
             }
             
             .form-box.Login {
-                left: 0;
-                padding: 15px;
+                transform: translateY(0);
+                opacity: 1;
             }
             
             .form-box.Register {
-                right: 0;
-                padding: 15px;
-                display: none;
+                transform: translateY(100%);
+                opacity: 0;
             }
             
             .container.active .form-box.Login {
-                display: none;
+                transform: translateY(-100%);
+                opacity: 0;
             }
             
             .container.active .form-box.Register {
-                display: flex;
+                transform: translateY(0);
+                opacity: 1;
             }
             
             .info-content {
@@ -675,179 +695,147 @@
             }
             
             .brand-logo {
-                width: 45px;
-                height: 45px;
-            }
-            
-            .brand-name {
-                font-size: 16px;
-                letter-spacing: 1px;
-            }
-            
-            .form-box h2 {
-                font-size: 20px;
+                width: 60px;
+                height: 60px;
                 margin-bottom: 10px;
             }
             
+            .brand-name {
+                font-size: 20px;
+                letter-spacing: 1px;
+                margin-bottom: 20px;
+            }
+            
+            .form-box h2 {
+                font-size: 22px;
+                margin-bottom: 15px;
+            }
+            
             .input-box {
-                height: 40px;
-                margin-top: 10px;
+                height: 45px;
+                margin-top: 15px;
             }
             
             .input-box input {
-                font-size: 14px;
-                padding: 0 35px 0 12px;
+                font-size: 16px;
+                padding: 0 40px 0 15px;
             }
             
             .input-box label {
-                font-size: 13px;
+                font-size: 14px;
             }
             
             .input-box i {
-                font-size: 15px;
-                right: 12px;
+                font-size: 18px;
+                right: 15px;
             }
             
             .btn, .google-btn {
-                height: 40px;
-                font-size: 14px;
-                margin-top: 12px;
+                height: 45px;
+                font-size: 16px;
+                margin-top: 20px;
             }
             
             .google-btn i {
-                font-size: 15px;
-                margin-right: 6px;
+                font-size: 18px;
+                margin-right: 8px;
             }
             
             .divider {
-                margin: 10px 0;
+                margin: 15px 0;
             }
             
             .regi-link {
-                font-size: 12px;
-                margin: 10px 0;
+                font-size: 14px;
+                margin: 15px 0;
+            }
+            
+            /* Mobile-specific animations */
+            .form-box.Login .animation {
+                transform: translateY(0);
+                opacity: 1;
+                transition: transform 0.7s ease, opacity 0.7s ease;
+            }
+            
+            .container.active .form-box.Login .animation {
+                transform: translateY(-20px);
+                opacity: 0;
+            }
+            
+            .form-box.Register .animation {
+                transform: translateY(20px);
+                opacity: 0;
+                transition: transform 0.7s ease, opacity 0.7s ease;
+            }
+            
+            .container.active .form-box.Register .animation {
+                transform: translateY(0);
+                opacity: 1;
             }
         }
         
         /* Mobile Responsive - Small Phones */
         @media (max-width: 480px) {
             .container {
-                padding: 10px;
+                max-height: 95vh;
+                border-radius: 10px;
             }
             
             .brand-logo {
-                width: 40px;
-                height: 40px;
+                width: 50px;
+                height: 50px;
             }
             
             .brand-name {
-                font-size: 14px;
-                letter-spacing: 0.5px;
+                font-size: 18px;
             }
             
             .form-box h2 {
-                font-size: 18px;
-                margin-bottom: 8px;
+                font-size: 20px;
             }
             
             .input-box {
-                height: 36px;
-                margin-top: 8px;
+                height: 40px;
+                margin-top: 12px;
             }
             
             .input-box input {
-                font-size: 13px;
-                padding: 0 30px 0 10px;
-            }
-            
-            .input-box label {
-                font-size: 12px;
-            }
-            
-            .input-box i {
                 font-size: 14px;
-                right: 10px;
             }
             
             .btn, .google-btn {
-                height: 36px;
-                font-size: 13px;
-                margin-top: 10px;
-            }
-            
-            .google-btn i {
+                height: 40px;
                 font-size: 14px;
-                margin-right: 5px;
-            }
-            
-            .divider {
-                margin: 8px 0;
-            }
-            
-            .regi-link {
-                font-size: 11px;
-                margin: 8px 0;
             }
         }
         
         /* Mobile Responsive - Very Small Phones */
         @media (max-width: 360px) {
             .container {
-                padding: 5px;
+                max-height: 98vh;
+                border-radius: 8px;
             }
             
             .brand-logo {
-                width: 35px;
-                height: 35px;
+                width: 45px;
+                height: 45px;
             }
             
             .brand-name {
-                font-size: 12px;
-                letter-spacing: 0.5px;
+                font-size: 16px;
             }
             
             .form-box h2 {
-                font-size: 16px;
-                margin-bottom: 6px;
+                font-size: 18px;
             }
             
             .input-box {
-                height: 34px;
-                margin-top: 6px;
-            }
-            
-            .input-box input {
-                font-size: 12px;
-                padding: 0 25px 0 8px;
-            }
-            
-            .input-box label {
-                font-size: 11px;
-            }
-            
-            .input-box i {
-                font-size: 13px;
-                right: 8px;
+                height: 38px;
             }
             
             .btn, .google-btn {
-                height: 34px;
-                font-size: 12px;
-                margin-top: 8px;
-            }
-            
-            .google-btn i {
+                height: 38px;
                 font-size: 13px;
-                margin-right: 4px;
-            }
-            
-            .divider {
-                margin: 6px 0;
-            }
-            
-            .regi-link {
-                font-size: 10px;
-                margin: 6px 0;
             }
         }
 
@@ -2711,8 +2699,8 @@
             <!-- Login Form -->
             <div class="form-box Login">
                 <div class="brand-container animation" style="--D:0; --S:20">
-                    <img src="https://z-cdn-media.chatglm.cn/files/8f17050e-c397-482c-862b-632e26cb3191_pasted_image_1759505799564.jpg?auth_key=1791041897-ed8cd9b14d1a4d9cbcec62f20e50b779-0-8db20ad0edfc1d6e96945c35f3076192" alt="AJ Logo" class="brand-logo">
-                    <h1 class="brand-name">AJ STUDIOZ</h1>
+                    <img src="https://z-cdn-media.chatglm.cn/files/1d46b5c3-4a2c-43e0-8129-a67c7ca4c80b_pasted_image_1759040841309.jpg?auth_key=1790577586-d5291ba80bda4631918430ba65a8f682-0-c874bd93ec0e0b7077d1d0c132d27af3" alt="Nexariq Logo" class="brand-logo">
+                    <h1 class="brand-name">Nexariq AI</h1>
                 </div>
                 
                 <h2 class="animation" style="--D:0; --S:21">Login</h2>
@@ -2763,8 +2751,8 @@
             <!-- Register Form -->
             <div class="form-box Register">
                 <div class="brand-container animation" style="--li:17; --S:0">
-                    <img src="https://z-cdn-media.chatglm.cn/files/8f17050e-c397-482c-862b-632e26cb3191_pasted_image_1759505799564.jpg?auth_key=1791041897-ed8cd9b14d1a4d9cbcec62f20e50b779-0-8db20ad0edfc1d6e96945c35f3076192" alt="AJ Logo" class="brand-logo">
-                    <h1 class="brand-name">AJ STUDIOZ</h1>
+                    <img src="https://z-cdn-media.chatglm.cn/files/1d46b5c3-4a2c-43e0-8129-a67c7ca4c80b_pasted_image_1759040841309.jpg?auth_key=1790577586-d5291ba80bda4631918430ba65a8f682-0-c874bd93ec0e0b7077d1d0c132d27af3" alt="Nexariq Logo" class="brand-logo">
+                    <h1 class="brand-name">Nexariq AI</h1>
                 </div>
                 
                 <h2 class="animation" style="--li:17; --S:0">Register</h2>
